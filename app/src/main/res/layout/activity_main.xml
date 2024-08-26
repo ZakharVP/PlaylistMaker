@@ -19,7 +19,7 @@
             android:textColor="@color/white"
             android:padding="4dp"
             android:textSize="@dimen/main_screen_primary_text_size"
-            android:fontFamily="serif"/>
+            android:textStyle="bold"/>
 
         <LinearLayout
             android:id="@+id/group_two"
@@ -41,6 +41,7 @@
                 android:textSize="@dimen/main_screen_primary_text_size"
                 android:textAllCaps="false"
                 android:textColor="@color/figma_black"
+                android:textStyle="bold"
                 app:cornerRadius="@dimen/primary_indent_size"
                 app:icon="@drawable/ic_search"
                 app:iconGravity="textStart"
@@ -60,6 +61,7 @@
                 android:textSize="@dimen/main_screen_primary_text_size"
                 android:textAllCaps="false"
                 android:textColor="@color/figma_black"
+                android:textStyle="bold"
                 app:cornerRadius="@dimen/primary_indent_size"
                 app:icon="@drawable/ic_media"
                 app:iconGravity="textStart"
@@ -79,6 +81,7 @@
                 android:textSize="@dimen/main_screen_primary_text_size"
                 android:textAllCaps="false"
                 android:textColor="@color/figma_black"
+                android:textStyle="bold"
                 app:cornerRadius="@dimen/primary_indent_size"
                 app:icon="@drawable/ic_settings"
                 app:iconGravity="textStart"
