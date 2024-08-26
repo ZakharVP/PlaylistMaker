@@ -11,5 +11,15 @@
 /build
 /captures
 .externalNativeBuild
+
+gradle.properties
+.idea
+.navigation
+/captures
+gradlew
+gradlew.bat
+
 .cxx
 local.properties
+
+.idea/deploymentTargetSelector.xml
