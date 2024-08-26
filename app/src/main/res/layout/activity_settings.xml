@@ -18,7 +18,7 @@
         <Button
             android:id="@+id/back_to_main"
             android:layout_width="wrap_content"
-            android:layout_height="56dp"
+            android:layout_height="61dp"
             android:backgroundTint="@color/white"
             android:text="@string/main_screen_settings"
             android:textColor="@color/figma_black"
@@ -26,6 +26,7 @@
             android:textStyle="bold"
             app:icon="@drawable/ic_s_top_arrow_back"
             app:iconTint="@color/figma_black"
+            android:padding="12dp"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Switch
@@ -34,6 +35,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginTop="21dp"
             android:text="@string/settings_screen_theme"
+            android:fontFamily="sans-serif-condensed"
             android:textSize="@dimen/settings_screen_primary_text_size"
             app:iconTint="@color/figma_black"
             android:padding="@dimen/primary_indent_size" />
@@ -47,6 +49,7 @@
             android:gravity="start|center_vertical"
             android:text="@string/settings_screen_share"
             android:textAllCaps="false"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="@color/figma_black_settings_text"
             android:textSize="@dimen/settings_screen_primary_text_size"
             app:icon="@drawable/ic_s_share"
@@ -67,6 +70,7 @@
             android:textColor="@color/figma_black_settings_text"
             android:gravity="start|center_vertical"
             android:textAllCaps="false"
+            android:fontFamily="sans-serif-condensed"
             android:textSize="@dimen/settings_screen_primary_text_size"
             android:padding="@dimen/primary_indent_size"
             style="?android:attr/borderlessButtonStyle"/>
@@ -83,6 +87,7 @@
             android:textColor="@color/figma_black_settings_text"
             android:gravity="start|center_vertical"
             android:textAllCaps="false"
+            android:fontFamily="sans-serif-condensed"
             android:textSize="@dimen/settings_screen_primary_text_size"
             android:padding="@dimen/primary_indent_size"
             style="?android:attr/borderlessButtonStyle"/>
