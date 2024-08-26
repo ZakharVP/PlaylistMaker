@@ -12,7 +12,4 @@
     <string name="settings_screen_support">To support</string>
     <string name="settings_screen_agreement">Write agriments</string>
 
-    <string name="b_action_search">You click button "Search"</string>
-    <string name="b_action_media">You click button "Mediateka"</string>
-    <string name="b_action_settings">You click button "Settings"</string>
 </resources>

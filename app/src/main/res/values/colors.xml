@@ -2,8 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="y_black">#1A1B22</color>
-    <color name="y_black2">#000000</color>
-    <color name="y_gray">#AEAFB4</color>
-    <color name="y_blue">#3772E7</color>
+    <color name="figma_black">#1A1B22</color>
+    <color name="figma_black_settings_text">#000000</color>
+    <color name="figma_gray">#AEAFB4</color>
+    <color name="figma_blue">#3772E7</color>
 </resources>

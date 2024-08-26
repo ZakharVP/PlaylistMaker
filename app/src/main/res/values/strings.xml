@@ -11,8 +11,4 @@
     <string name="settings_screen_support">Написать в поддержку</string>
     <string name="settings_screen_agreement">Пользовательское соглашение</string>
 
-    <string name="b_action_search">Вы нажали на кнопку "Поиск"</string>
-    <string name="b_action_media">Вы нажали на кнопку "Медиатека"</string>
-    <string name="b_action_settings">Вы нажали на кнопку "Настройки"</string>
-
 </resources>
