@@ -19,12 +19,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val button_search = findViewById<Button>(R.id.b_search)
-        /*val button_searchClickListener: View.OnClickListener = object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                Toast.makeText(this@MainActivity, R.string.b_action_search, Toast.LENGTH_SHORT).show()
-                }
-        }
-        button_search.setOnClickListener(button_searchClickListener)*/
         button_search.setOnClickListener{
             val displayIntent = Intent(this, FindActivity::class.java)
             startActivity(displayIntent)
@@ -32,14 +26,12 @@ class MainActivity : AppCompatActivity() {
 
         val button_media = findViewById<Button>(R.id.b_media)
         button_media.setOnClickListener {
-            //Toast.makeText(this@MainActivity,R.string.b_action_media, Toast.LENGTH_SHORT).show()
             val displayIntent = Intent(this, MediatekaActivity::class.java)
             startActivity(displayIntent)
         }
 
         val button_settings = findViewById<Button>(R.id.b_settings)
         button_settings.setOnClickListener {
-            //Toast.makeText(this@MainActivity,R.string.b_action_settings, Toast.LENGTH_SHORT).show()
             val displayIntent = Intent(this, SettingsActivity::class.java)
             startActivity(displayIntent)
         }
