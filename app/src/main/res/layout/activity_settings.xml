@@ -25,7 +25,7 @@
             android:textSize="@dimen/main_screen_primary_text_size"
             android:textStyle="bold"
             app:icon="@drawable/ic_s_top_arrow_back"
-            app:iconTint="@color/figma_gray"
+            app:iconTint="@color/figma_black"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Switch
