@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,13 +8,89 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/figma_blue">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/title"
+            android:textColor="@color/white"
+            android:padding="4dp"
+            android:textSize="@dimen/main_screen_primary_text_size"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:id="@+id/group_two"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginBottom="28dp">
+
+            <Button
+                android:id="@+id/b_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/primary_indent_size"
+                android:layout_marginTop="@dimen/primary_indent_size"
+                android:layout_marginRight="@dimen/primary_indent_size"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:text="@string/main_screen_find"
+                android:textSize="@dimen/main_screen_primary_text_size"
+                android:textAllCaps="false"
+                android:textColor="@color/figma_black"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/primary_indent_size"
+                app:icon="@drawable/ic_search"
+                app:iconGravity="textStart"
+                app:iconPadding="11dp"
+                app:iconTint="@color/figma_black" />
+
+            <Button
+                android:id="@+id/b_media"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/primary_indent_size"
+                android:layout_marginTop="@dimen/primary_indent_size"
+                android:layout_marginRight="@dimen/primary_indent_size"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:text="@string/main_screen_media"
+                android:textSize="@dimen/main_screen_primary_text_size"
+                android:textAllCaps="false"
+                android:textColor="@color/figma_black"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/primary_indent_size"
+                app:icon="@drawable/ic_media"
+                app:iconGravity="textStart"
+                app:iconPadding="11dp"
+                app:iconTint="@color/figma_black" />
+
+            <Button
+                android:id="@+id/b_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/primary_indent_size"
+                android:layout_marginTop="@dimen/primary_indent_size"
+                android:layout_marginRight="@dimen/primary_indent_size"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:text="@string/main_screen_settings"
+                android:textSize="@dimen/main_screen_primary_text_size"
+                android:textAllCaps="false"
+                android:textColor="@color/figma_black"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/primary_indent_size"
+                app:icon="@drawable/ic_settings"
+                app:iconGravity="textStart"
+                app:iconPadding="11dp"
+                app:iconTint="@color/figma_black" />
+        </LinearLayout>
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
