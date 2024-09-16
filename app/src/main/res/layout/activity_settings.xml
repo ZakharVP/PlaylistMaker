@@ -16,7 +16,7 @@
         android:padding="2dp">
 
         <Button
-            android:id="@+id/back_to_main"
+            android:id="@+id/backToMain"
             android:layout_width="wrap_content"
             android:layout_height="61dp"
             app:icon="@drawable/ic_s_top_arrow_back"
@@ -31,8 +31,8 @@
             style="?android:attr/borderlessButtonStyle"/>
 
         <Switch
+            android:id="@+id/switchTheme"
             style="@style/ButtonSettingsStyle"
-            android:id="@+id/switch_theme"
             android:layout_gravity="bottom|end"
             android:layout_marginTop="21dp"
             android:text="@string/settings_screen_theme"
@@ -40,12 +40,12 @@
             android:thumbTint="?attr/colorOnSecondary"/>
 
         <Button
-            app:icon="@drawable/ic_s_share"
             android:id="@+id/share"
+            app:icon="@drawable/ic_s_share"
             android:text="@string/settings_screen_share"
             style="@style/ButtonSettingsStyle"/>
         <Button
-            android:id="@+id/send_to_support"
+            android:id="@+id/sendToSupport"
             app:icon="@drawable/ic_s_support"
             android:text="@string/settings_screen_support"
             style="@style/ButtonSettingsStyle"/>

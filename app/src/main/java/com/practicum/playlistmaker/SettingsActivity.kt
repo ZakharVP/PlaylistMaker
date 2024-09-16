@@ -18,12 +18,12 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
-        val button_back = findViewById<Button>(R.id.back_to_main)
+        val button_back = findViewById<Button>(R.id.backToMain)
         button_back.setOnClickListener{
             val displayIntent = Intent(this, MainActivity::class.java)
             startActivity(displayIntent)
         }
-        val switch_to_theme: Switch = findViewById<Switch>(R.id.switch_theme)
+        val switch_to_theme: Switch = findViewById<Switch>(R.id.switchTheme)
         switch_to_theme.setOnCheckedChangeListener{ _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -42,7 +42,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent,getString(R.string.title_share)))
         }
 
-        val button_send_to_support = findViewById<Button>(R.id.send_to_support)
+        val button_send_to_support = findViewById<Button>(R.id.sendToSupport)
         button_send_to_support.setOnClickListener{
             val email = getString(R.string.mail_address)
             val subject = getString(R.string.mail_theme)

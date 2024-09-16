@@ -16,7 +16,7 @@
         android:padding="2dp">
 
     <Button
-        android:id="@+id/back_to_main"
+        android:id="@+id/backToMain"
         android:layout_width="wrap_content"
         android:layout_height="61dp"
         app:icon="@drawable/ic_s_top_arrow_back"
@@ -31,7 +31,7 @@
         style="?android:attr/borderlessButtonStyle"/>
 
     <EditText
-        android:id="@+id/find_edit_text"
+        android:id="@+id/findEditText"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:inputType="text"
