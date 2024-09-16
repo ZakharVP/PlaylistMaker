@@ -20,12 +20,13 @@ class FindActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_find)
+
         val button_back = findViewById<Button>(R.id.backToMain)
         button_back.setOnClickListener{
             val displayIntent = Intent(this, MainActivity::class.java)
             startActivity(displayIntent)
         }
-        val editText = findViewById<EditText>(R.id.findEditText)
+        editText = findViewById(R.id.findEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
 
         saveText = savedInstanceState?.getString("text", "") ?: ""
