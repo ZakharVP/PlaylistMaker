@@ -6,6 +6,7 @@
     <dimen name="primary_indent_size_8">8dp</dimen>
     <dimen name="primary_indent_size_11">11dp</dimen>
     <dimen name="primary_indent_size_12">12dp</dimen>
+    <dimen name="primary_indent_size_14">14dp</dimen>
     <dimen name="primary_indent_size">16dp</dimen>
     <dimen name="primary_indent_size_21">21dp</dimen>
     <dimen name="primary_indent_size_28">28dp</dimen>
