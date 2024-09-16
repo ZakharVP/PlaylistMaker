@@ -38,7 +38,7 @@
         android:hint="@string/main_screen_find"
         android:maxLines="1"
         android:background="@drawable/rounded_edittext_background"
-        android:layout_margin_horizontal="@dimen/primary_indent_size"
+        android:layout_marginHorizontal="@dimen/primary_indent_size"
         android:layout_marginVertical="@dimen/primary_indent_size_8"
         android:drawableStart="@drawable/search_icon"
         android:paddingStart="@dimen/primary_indent_size_12"

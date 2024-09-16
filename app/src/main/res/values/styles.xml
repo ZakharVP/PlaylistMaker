@@ -19,6 +19,7 @@
         <item name="iconTint">@color/yp_black</item>
         <item name="elevation">@dimen/primary_indent_size_0</item>
         <item name="android:translationZ">@dimen/primary_indent_size_0</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="ButtonSettingsStyle" parent="Widget.AppCompat.Button.Borderless">
