@@ -30,33 +30,43 @@
         android:textAllCaps="false"
         style="?android:attr/borderlessButtonStyle"/>
 
-    <EditText
-        android:id="@+id/findEditText"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/primary_indent_size_36"
-        android:inputType="text"
-        android:hint="@string/main_screen_find"
-        android:maxLines="1"
-        android:background="@drawable/rounded_edittext_background"
-        android:layout_marginHorizontal="@dimen/primary_indent_size"
+        android:layout_height="@dimen/primary_indent_size_52"
+        android:orientation="horizontal"
         android:layout_marginVertical="@dimen/primary_indent_size_8"
-        android:drawableStart="@drawable/search_icon"
-        android:paddingStart="@dimen/primary_indent_size_12"
-        android:drawablePadding="@dimen/primary_indent_size_12"
-        android:textSize="@dimen/settings_screen_primary_text_size"
-        android:drawableTint="?attr/colorPrimaryContainer"
-        android:textColor="?attr/colorPrimaryContainer"
-        android:textColorHint="?attr/colorPrimaryContainer"
-        />
+        android:layout_marginHorizontal="@dimen/primary_indent_size"
+        android:background="@drawable/rounded_edittext_background"
+        android:gravity="center_vertical">
 
-        <ImageView
-            android:id="@+id/clearIcon"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/findEditText"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:visibility="visible" />
+            android:inputType="text"
+            android:hint="@string/main_screen_find"
+            android:maxLines="1"
+            android:drawableStart="@drawable/search_icon"
+            android:textSize="@dimen/settings_screen_primary_text_size"
+            android:drawableTint="?attr/colorPrimaryContainer"
+            android:textColor="?attr/colorPrimaryContainer"
+            android:textColorHint="?attr/colorPrimaryContainer"
+            android:drawablePadding="@dimen/primary_indent_size_11"
+            android:paddingStart="@dimen/primary_indent_size_12"
+            android:background="@android:color/transparent"
+            android:layout_weight="4"/>
 
-    </LinearLayout>>
+            <ImageView
+                android:id="@+id/clearIcon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:visibility="gone"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
