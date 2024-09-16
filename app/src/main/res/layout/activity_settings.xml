@@ -19,79 +19,41 @@
             android:id="@+id/back_to_main"
             android:layout_width="wrap_content"
             android:layout_height="61dp"
-            android:backgroundTint="@color/white"
+            app:icon="@drawable/ic_s_top_arrow_back"
+            app:iconTint="?attr/colorOnPrimary"
             android:text="@string/main_screen_settings"
-            android:textColor="@color/figma_black"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/main_screen_primary_text_size"
             android:textStyle="bold"
-            app:icon="@drawable/ic_s_top_arrow_back"
-            app:iconTint="@color/figma_black"
             android:padding="12dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:textAllCaps="false"
             style="?android:attr/borderlessButtonStyle"/>
 
         <Switch
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
+            style="@style/ButtonSettingsStyle"
+            android:id="@+id/switch_theme"
             android:layout_gravity="bottom|end"
             android:layout_marginTop="21dp"
             android:text="@string/settings_screen_theme"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="@dimen/settings_screen_primary_text_size"
-            app:iconTint="@color/figma_black"
-            android:padding="@dimen/primary_indent_size" />
+            android:trackTint="?attr/colorSecondary"
+            android:thumbTint="?attr/colorOnSecondary"/>
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:layout_gravity="start"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/white"
-            android:gravity="start|center_vertical"
-            android:text="@string/settings_screen_share"
-            android:textAllCaps="false"
-            android:fontFamily="sans-serif-condensed"
-            android:textColor="@color/figma_black_settings_text"
-            android:textSize="@dimen/settings_screen_primary_text_size"
             app:icon="@drawable/ic_s_share"
-            app:iconGravity="end"
-            app:iconTint="@color/figma_gray"
-            android:padding="@dimen/primary_indent_size"
-            style="?android:attr/borderlessButtonStyle"/>
-
+            android:id="@+id/share"
+            android:text="@string/settings_screen_share"
+            style="@style/ButtonSettingsStyle"/>
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/white"
+            android:id="@+id/send_to_support"
             app:icon="@drawable/ic_s_support"
-            app:iconGravity="end"
-            app:iconTint="@color/figma_gray"
             android:text="@string/settings_screen_support"
-            android:textColor="@color/figma_black_settings_text"
-            android:gravity="start|center_vertical"
-            android:textAllCaps="false"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="@dimen/settings_screen_primary_text_size"
-            android:padding="@dimen/primary_indent_size"
-            style="?android:attr/borderlessButtonStyle"/>
-
+            style="@style/ButtonSettingsStyle"/>
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/white"
+            android:id="@+id/agreement"
             app:icon="@drawable/ic_s_arrow_forward"
-            app:iconGravity="end"
-            app:iconTint="@color/figma_gray"
             android:text="@string/settings_screen_agreement"
-            android:textColor="@color/figma_black_settings_text"
-            android:gravity="start|center_vertical"
-            android:textAllCaps="false"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="@dimen/settings_screen_primary_text_size"
-            android:padding="@dimen/primary_indent_size"
-            style="?android:attr/borderlessButtonStyle"/>
-
+            style="@style/ButtonSettingsStyle"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

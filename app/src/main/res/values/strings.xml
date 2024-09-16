@@ -11,4 +11,11 @@
     <string name="settings_screen_support">Написать в поддержку</string>
     <string name="settings_screen_agreement">Пользовательское соглашение</string>
 
+    <string name="mail_address" translatable="false">zakhar-panchenko@yandex.ru</string>
+    <string name="mail_theme" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="mail_body" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="title_share" translatable="false">Поделится приложением</string>
+    <string name="url_share" translatable="false">Попробуйте курс https://practicum.yandex.ru/android-developer/</string>
+    <string name="offer_address" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+
 </resources>
