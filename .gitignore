@@ -1,24 +1,16 @@
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 
 gradle.properties
-.idea
+.idea/
 .navigation
 gradlew
 gradlew.bat
 
 .cxx
 local.properties
-
-.idea/deploymentTargetSelector.xml

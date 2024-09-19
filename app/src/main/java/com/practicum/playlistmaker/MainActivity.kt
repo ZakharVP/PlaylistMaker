@@ -14,19 +14,19 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val button_search = findViewById<Button>(R.id.b_search)
+        val button_search = findViewById<Button>(R.id.bSearch)
         button_search.setOnClickListener{
             val displayIntent = Intent(this, FindActivity::class.java)
             startActivity(displayIntent)
         }
 
-        val button_media = findViewById<Button>(R.id.b_media)
+        val button_media = findViewById<Button>(R.id.bMedia)
         button_media.setOnClickListener {
             val displayIntent = Intent(this, MediatekaActivity::class.java)
             startActivity(displayIntent)
         }
 
-        val button_settings = findViewById<Button>(R.id.b_settings)
+        val button_settings = findViewById<Button>(R.id.bSettings)
         button_settings.setOnClickListener {
             val displayIntent = Intent(this, SettingsActivity::class.java)
             startActivity(displayIntent)

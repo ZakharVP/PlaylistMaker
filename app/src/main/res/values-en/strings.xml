@@ -12,4 +12,6 @@
     <string name="settings_screen_support">To support</string>
     <string name="settings_screen_agreement">Write agriments</string>
 
+    <string name="clear_icon">clear string</string>
+
 </resources>
