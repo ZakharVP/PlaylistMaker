@@ -56,8 +56,6 @@ class FindActivity : AppCompatActivity() {
 
         editText.addTextChangedListener(simpleTextWatcher)
 
-        val trackList = ArrayList<Track>()
-
         val track1 = Track(
             trackName = "Smells Like Teen Spirit",
             artistName = "Nirvana",
@@ -93,11 +91,7 @@ class FindActivity : AppCompatActivity() {
             artWorkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg)"
         )
 
-        trackList.add(track1)
-        trackList.add(track2)
-        trackList.add(track3)
-        trackList.add(track4)
-        trackList.add(track5)
+        val trackList = listOf(track1, track2, track3, track4, track5)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         val trackAdapter = TrackAdapter(trackList)
