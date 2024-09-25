@@ -4,8 +4,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.internal.ViewUtils.dpToPx
 
 class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -21,6 +24,7 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         Glide.with(itemView)
             .load(imageUrl)
             .placeholder(sourcePlaceholder)
+            .transform(RoundedCorners(4))
             .into(sourceUrlPoster)
 
         sourceNameTrack.text = model.trackName
