@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.internal.ViewUtils.dpToPx
+import kotlin.math.roundToInt
 
 class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -24,12 +26,16 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         Glide.with(itemView)
             .load(imageUrl)
             .placeholder(sourcePlaceholder)
-            .transform(RoundedCorners(4))
+            .transform(RoundedCorners(dpToPx(2f,itemView.context)))
             .into(sourceUrlPoster)
 
         sourceNameTrack.text = model.trackName
         sourceNameSinger.text = model.artistName
         sourceDuration.text = model.trackTime
 
+    }
+
+    fun dpToPx(dp: Float, context: Context): Int {
+        return (dp * context.resources.displayMetrics.density).toInt()
     }
 }
