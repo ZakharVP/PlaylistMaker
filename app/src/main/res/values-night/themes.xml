@@ -14,5 +14,6 @@
         <item name="colorOnPrimary">@color/yp_white</item>
         <item name="colorSecondaryVariant">@color/yp_white</item>
         <item name="colorPrimaryContainer">@color/yp_black</item>
+        <item name="colorOnPrimarySurface">@color/yp_white</item>
     </style>
 </resources>
