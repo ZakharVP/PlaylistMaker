@@ -20,4 +20,9 @@
     <string name="url_share" translatable="false">Попробуйте курс https://practicum.yandex.ru/android-developer/</string>
     <string name="offer_address" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
 
+    <string name="no_find_songs" translatable="false">Ничего не нашлось</string>
+    <string name="network_error_top_message" translatable="false">Проблемы со связью</string>
+    <string name="network_error_bottom_message" translatable="false">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="network_error_button" translatable="false">Обновить</string>
+
 </resources>

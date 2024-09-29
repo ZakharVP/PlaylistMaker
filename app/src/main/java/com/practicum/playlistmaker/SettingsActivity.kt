@@ -24,6 +24,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(displayIntent)
         }
         val switch_to_theme: Switch = findViewById<Switch>(R.id.switchTheme)
+        switch_to_theme.isChecked = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
         switch_to_theme.setOnCheckedChangeListener{ _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

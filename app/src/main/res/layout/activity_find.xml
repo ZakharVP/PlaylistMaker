@@ -55,7 +55,9 @@
             android:drawablePadding="@dimen/primary_indent_size_11"
             android:paddingHorizontal="@dimen/primary_indent_size_12"
             android:background="@android:color/transparent"
-            android:layout_weight="6"/>
+            android:layout_weight="6"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
             <ImageView
                 android:id="@+id/clearIcon"
@@ -75,6 +77,80 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="@dimen/primary_indent_size_24"
+            android:layout_marginTop="@dimen/primary_indent_size_210"
+            android:gravity="center"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:id="@+id/no_songs">
+
+                <ImageView
+                    android:id="@+id/no_songs_screen"
+                    android:layout_width="@dimen/primary_indent_size_120"
+                    android:layout_height="@dimen/primary_indent_size_120"
+                    android:src="@drawable/no_songs_light_mode"
+                    ></ImageView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_find_songs"
+                    android:textSize="@dimen/text_size_19"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:id="@+id/network_error">
+
+                <ImageView
+                    android:id="@+id/network_error_screen"
+                    android:layout_width="@dimen/primary_indent_size_120"
+                    android:layout_height="@dimen/primary_indent_size_120"
+                    android:src="@drawable/no_network_light_mode"
+                    ></ImageView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/network_error_top_message"
+                    android:textSize="@dimen/text_size_19"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/network_error_bottom_message"
+                    android:textSize="@dimen/text_size_19"
+                    android:textAlignment="center"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textStyle="bold"/>
+                <Button
+                    android:id="@+id/button_update"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/network_error_button"
+                    android:textColor="?attr/colorPrimary"
+                    android:backgroundTint="?attr/colorOnPrimary"/>
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
