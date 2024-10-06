@@ -2,6 +2,7 @@ package com.practicum.playlistmaker
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,8 +13,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
@@ -45,11 +49,18 @@ class FindActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_find)
 
-        val button_back = findViewById<Button>(R.id.backToMain)
-        button_back.setOnClickListener{
+        val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarFind)
+        val colorIcon = if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            R.color.yp_white
+        } else {
+            R.color.yp_black
+        }
+        tool_bar_button_back.navigationIcon?.setTint(ContextCompat.getColor(this,colorIcon))
+        tool_bar_button_back.setNavigationOnClickListener {
             val displayIntent = Intent(this, MainActivity::class.java)
             startActivity(displayIntent)
         }
+
         editText = findViewById(R.id.findEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
 

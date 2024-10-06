@@ -8,6 +8,7 @@
         <!-- Фон -->
         <item name="colorPrimary">@color/yp_white</item>
         <item name="colorPrimaryVariant">@color/yp_blue</item>
+        <item name="colorPrimaryFixed">@color/yp_white</item>
         <!-- Переключатель track и knob-->
         <item name="colorSecondary">@color/yp_gray</item>
         <item name="colorOnSecondary">@color/yp_light_gray</item>
@@ -17,6 +18,10 @@
         <item name="colorPrimaryContainer">@color/yp_gray</item>
         <item name="colorOnPrimarySurface">@color/yp_gray</item>
 
+    </style>
+
+    <style name="AppToolbar" parent="Theme.AppCompat.Light">
+        <item name="android:textColorPrimary">@color/yp_black</item>
     </style>
 
 </resources>
