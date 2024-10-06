@@ -27,7 +27,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarSettings)
-        val colorIcon = if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+        val colorIcon = if (isNightMode()) {
             R.color.yp_white
         } else {
             R.color.yp_black
@@ -38,19 +38,9 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(displayIntent)
         }
 
-        val listener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    println("state is True")
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                } else {
-                    println("state is False")
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                }
-        }
-
         themeSwitch = findViewById<Switch>(R.id.switchTheme)
 
-        if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+        if (isNightMode()) {
             themeSwitch.setChecked(true)
         } else {
             themeSwitch.setChecked(false)
@@ -95,5 +85,11 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(openUrlAgreement)
         }
+
+
+    }
+
+    private fun isNightMode(): Boolean {
+        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 }

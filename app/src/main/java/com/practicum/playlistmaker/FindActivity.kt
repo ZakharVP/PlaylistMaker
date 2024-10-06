@@ -45,12 +45,15 @@ class FindActivity : AppCompatActivity() {
         .build()
     val itunesService = retrofit.create(ItunesApplicationApi::class.java)
 
+    val songsList: ArrayList<Track> = ArrayList()
+    var trackAdapter: TrackAdapter = TrackAdapter(songsList)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_find)
 
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarFind)
-        val colorIcon = if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+        val colorIcon = if (isNightMode()) {
             R.color.yp_white
         } else {
             R.color.yp_black
@@ -64,7 +67,8 @@ class FindActivity : AppCompatActivity() {
         editText = findViewById(R.id.findEditText)
 
         val clearButton = findViewById<ImageButton>(R.id.clearIcon)
-        val colorClearButtonIcon = if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+        clearButton.visibility = View.GONE
+        val colorClearButtonIcon = if (isNightMode()) {
             R.color.yp_black
         } else {
             R.color.yp_gray
@@ -76,6 +80,9 @@ class FindActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener{
             editText.setText("")
+            songsList.clear()
+            trackAdapter = TrackAdapter(songsList)
+            recyclerView.adapter = trackAdapter
         }
 
         noSongsView = findViewById<LinearLayout>(R.id.no_songs)
@@ -109,7 +116,7 @@ class FindActivity : AppCompatActivity() {
             networkView.visibility = View.GONE
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 Log.d("FindActivity","Текст поиска: $textSearch")
-                /*findSongs(textSearch)*/
+                findSongs(textSearch)
                 true
             } else {
                 false
