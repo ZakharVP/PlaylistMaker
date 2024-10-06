@@ -9,7 +9,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBarFind"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/primary_indent_size_0"
         android:layout_height="@dimen/primary_indent_size_61"
         android:background="?attr/colorPrimaryFixed"
         app:title="@string/main_screen_find"
