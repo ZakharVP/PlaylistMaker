@@ -11,6 +11,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -62,7 +63,14 @@ class FindActivity : AppCompatActivity() {
         }
 
         editText = findViewById(R.id.findEditText)
-        val clearButton = findViewById<ImageView>(R.id.clearIcon)
+
+        val clearButton = findViewById<ImageButton>(R.id.clearIcon)
+        val colorClearButtonIcon = if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            R.color.yp_black
+        } else {
+            R.color.yp_gray
+        }
+        clearButton.setColorFilter(ContextCompat.getColor(this, colorClearButtonIcon))
 
         saveText = savedInstanceState?.getString("text", "") ?: ""
         editText.setText(saveText)
