@@ -25,6 +25,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 class FindActivity : AppCompatActivity() {
 
@@ -147,8 +148,9 @@ class FindActivity : AppCompatActivity() {
         return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 
-    private fun findSongs(textSearch: String){
+    private fun findSongs(textSearch: String) {
         val call = itunesService.search(textSearch)
+
         call.enqueue(object : Callback<SongResponse> {
             override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
                 Log.d("FindActivity", "Ответ получен после отправки: $textSearch")
@@ -165,33 +167,49 @@ class FindActivity : AppCompatActivity() {
                         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
                         val trackAdapter = TrackAdapter(songsList)
                         recyclerView.adapter = trackAdapter
-                    } else{
+                    } else {
                         recyclerView.visibility = View.GONE
                         networkView.visibility = View.GONE
                         noSongsView.visibility = View.VISIBLE
-                        if(isNightMode()) {
+                        if (isNightMode()) {
                             imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_dark_mode)
-                        }else {
+                        } else {
                             imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_light_mode)
                         }
                     }
 
                 } else {
-                    Log.e("FindActivity", "Ошибка: ${response.code()}")
-                    recyclerView.visibility = View.GONE
-                    noSongsView.visibility = View.GONE
-                    networkView.visibility = View.VISIBLE
-                    if(isNightMode()) {
-                        imageScreenNetworkError.setImageResource(R.drawable.no_network_dark_mode)
-                    }else {
-                        imageScreenNetworkError.setImageResource(R.drawable.no_network_light_mode)
-                    }
+                    handleError(response.code())
                 }
             }
+
             override fun onFailure(call: Call<SongResponse>, t: Throwable) {
-                Log.d("FindActivity", "Ошибка: ${t.message}")
+                if (t is IOException) {
+                    handleNetworkError()
+                } else {
+                    handleError(t)
+                }
+
             }
         })
+    }
+    private fun handleNetworkError(){
+        recyclerView.visibility = View.GONE
+        noSongsView.visibility = View.GONE
+        networkView.visibility = View.VISIBLE
+
+        if (isNightMode()) {
+            imageScreenNetworkError.setImageResource(R.drawable.no_network_dark_mode)
+        } else {
+            imageScreenNetworkError.setImageResource(R.drawable.no_network_light_mode)
+        }
+    }
+    private fun handleError(t: Throwable){
+        Log.d("FindActivity", "Ошибка : ${t.message}")
 
     }
+    private fun handleError(code: Int) {
+        Log.d("FindActivity", "Сетевая ошибка с кодом: $code")
+    }
+
 }
