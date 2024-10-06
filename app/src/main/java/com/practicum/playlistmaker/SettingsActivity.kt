@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.CompoundButton
 import android.widget.Switch
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,9 +18,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var themeSwitch: Switch
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarSettings)
@@ -34,10 +38,26 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(displayIntent)
         }
 
-        val switch_to_theme: Switch = findViewById<Switch>(R.id.switchTheme)
-        switch_to_theme.isChecked = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
-        switch_to_theme.setOnCheckedChangeListener{ _, isChecked ->
-            if (isChecked) {
+        val listener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    println("state is True")
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    println("state is False")
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+        }
+
+        themeSwitch = findViewById<Switch>(R.id.switchTheme)
+
+        if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            themeSwitch.setChecked(true)
+        } else {
+            themeSwitch.setChecked(false)
+        }
+
+        themeSwitch.setOnClickListener() {
+            if (themeSwitch.isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -75,6 +95,5 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(openUrlAgreement)
         }
-
     }
 }

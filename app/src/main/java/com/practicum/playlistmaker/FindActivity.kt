@@ -47,7 +47,6 @@ class FindActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_find)
 
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarFind)
@@ -110,7 +109,7 @@ class FindActivity : AppCompatActivity() {
             networkView.visibility = View.GONE
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 Log.d("FindActivity","Текст поиска: $textSearch")
-                findSongs(textSearch)
+                /*findSongs(textSearch)*/
                 true
             } else {
                 false
