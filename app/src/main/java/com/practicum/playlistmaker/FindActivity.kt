@@ -108,6 +108,11 @@ class FindActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 saveText = s.toString()
+                if (saveText.isEmpty()) {
+                    songsList.clear()
+                    trackAdapter = TrackAdapter(songsList)
+                    recyclerView.adapter = trackAdapter
+                }
             }
         }
         editText.addTextChangedListener(simpleTextWatcher)
