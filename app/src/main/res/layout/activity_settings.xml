@@ -35,8 +35,8 @@
             android:layout_gravity="bottom|end"
             android:layout_marginTop="@dimen/primary_indent_size_21"
             android:text="@string/settings_screen_theme"
-            android:trackTint="?attr/colorSecondary"
-            android:thumbTint="?attr/colorOnSecondary"/>
+            android:trackTint="?attr/colorOnSecondary"
+            android:thumbTint="?attr/colorSecondary"/>
 
         <Button
             android:id="@+id/share"
