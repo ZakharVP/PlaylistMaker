@@ -1,17 +1,27 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        var isDarkMode = getThemePreference()
+        if (isDarkMode) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            AppCompatDelegate.MODE_NIGHT_NO
+        }
+
         setContentView(R.layout.activity_main)
 
         val button_search = findViewById<Button>(R.id.bSearch)
@@ -38,5 +48,10 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+    }
+
+    private fun getThemePreference(): Boolean {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("appPreferences", MODE_PRIVATE)
+        return sharedPreferences.getBoolean("isDarkMode", false)
     }
 }

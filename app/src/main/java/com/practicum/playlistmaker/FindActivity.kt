@@ -1,102 +1,147 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
-import android.text.Layout
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 class FindActivity : AppCompatActivity() {
 
     private lateinit var editText: EditText
+    private lateinit var noSongsView: LinearLayout
+    private lateinit var networkView: LinearLayout
+    private lateinit var imageScreenNetworkError: ImageView
+    private lateinit var imageScreenNoFindSongs: ImageView
+    private lateinit var recyclerView: RecyclerView
+
     private var saveText: String = ""
+    private var textSearch: String = ""
+
+    val itunesBaseUrl = "https://itunes.apple.com/"
+    val retrofit = Retrofit.Builder()
+        .baseUrl(itunesBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val itunesService = retrofit.create(ItunesApplicationApi::class.java)
+
+    val songsList: ArrayList<Track> = ArrayList()
+    var trackAdapter: TrackAdapter = TrackAdapter(songsList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_find)
 
-        val button_back = findViewById<Button>(R.id.backToMain)
-        button_back.setOnClickListener{
+        val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarFind)
+        val colorIcon = if (isNightMode()) {
+            R.color.yp_white
+        } else {
+            R.color.yp_black
+        }
+        tool_bar_button_back.navigationIcon?.setTint(ContextCompat.getColor(this,colorIcon))
+        tool_bar_button_back.setNavigationOnClickListener {
             val displayIntent = Intent(this, MainActivity::class.java)
             startActivity(displayIntent)
         }
+
         editText = findViewById(R.id.findEditText)
-        val clearButton = findViewById<ImageView>(R.id.clearIcon)
+
+        val clearButton = findViewById<ImageButton>(R.id.clearIcon)
+        clearButton.visibility = View.GONE
+        val colorClearButtonIcon = if (isNightMode()) {
+            R.color.yp_black
+        } else {
+            R.color.yp_gray
+        }
+        clearButton.setColorFilter(ContextCompat.getColor(this, colorClearButtonIcon))
 
         saveText = savedInstanceState?.getString("text", "") ?: ""
         editText.setText(saveText)
 
         clearButton.setOnClickListener{
             editText.setText("")
+            if (recyclerView.visibility == View.VISIBLE) {
+                trackAdapter = TrackAdapter(songsList)
+                recyclerView.adapter = trackAdapter
+            }
+            if (networkView.visibility == View.VISIBLE){
+                networkView.visibility = View.GONE
+            }
+            if (noSongsView.visibility == View.VISIBLE){
+                noSongsView.visibility = View.GONE
+            }
+        }
+
+        noSongsView = findViewById<LinearLayout>(R.id.no_songs)
+        networkView = findViewById<LinearLayout>(R.id.network_error)
+        imageScreenNoFindSongs = findViewById<ImageView>(R.id.no_songs_screen)
+        imageScreenNetworkError = findViewById<ImageView>(R.id.network_error_screen)
+        recyclerView = findViewById(R.id.recyclerView)
+
+        networkView.visibility = View.GONE
+        noSongsView.visibility = View.GONE
+
+        val buttonUpdate = findViewById<Button>(R.id.button_update)
+        buttonUpdate.setOnClickListener{
+            findSongs(editText.text.toString())
         }
 
         val simpleTextWatcher = object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
-
+                textSearch = s.toString()
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //TODO("Not yet implemented")
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 saveText = s.toString()
+                if (saveText.isEmpty()) {
+                    if (recyclerView.visibility == View.VISIBLE) {
+                        trackAdapter = TrackAdapter(songsList)
+                        recyclerView.adapter = trackAdapter
+                    }
+                    if (networkView.visibility == View.VISIBLE){
+                        networkView.visibility = View.GONE
+                    }
+                    if (noSongsView.visibility == View.VISIBLE){
+                        noSongsView.visibility = View.GONE
+                    }
+                }
             }
         }
-
         editText.addTextChangedListener(simpleTextWatcher)
 
-        val track1 = Track(
-            trackName = "Smells Like Teen Spirit",
-            artistName = "Nirvana",
-            trackTime = "5:01",
-            artWorkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"
-        )
-
-        val track2 = Track(
-            trackName = "Billie Jean",
-            artistName = "Michael Jackson",
-            trackTime = "4:35",
-            artWorkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"
-        )
-
-        val track3 = Track(
-            trackName = "Stayin' Alive",
-            artistName = "Bee Gees",
-            trackTime = "4:10",
-            artWorkUrl100 = "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
-        )
-
-        val track4 = Track(
-            trackName = "Whole Lotta Love",
-            artistName = "Led Zeppelin",
-            trackTime = "5:33",
-            artWorkUrl100 = "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        )
-
-        val track5 = Track(
-            trackName = "Sweet Child O'Mine",
-            artistName = "Guns N' Roses",
-            trackTime = "5:03",
-            artWorkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg)"
-        )
-
-        val trackList = listOf(track1, track2, track3, track4, track5)
-
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        val trackAdapter = TrackAdapter(trackList)
-        recyclerView.adapter = trackAdapter
-
+        editText.setOnEditorActionListener{ _, actionId, _ ->
+            noSongsView.visibility = View.GONE
+            networkView.visibility = View.GONE
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                Log.d("FindActivity","Текст поиска: $textSearch")
+                findSongs(textSearch)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -117,4 +162,87 @@ class FindActivity : AppCompatActivity() {
         saveText = savedInstanceState.getString("text_key","")
         editText.setText(saveText)
     }
+
+    private fun isNightMode(): Boolean {
+        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun findSongs(textSearch: String) {
+        val call = itunesService.search(textSearch)
+
+        call.enqueue(object : Callback<SongResponse> {
+            override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
+                Log.d("FindActivity", "Ответ получен после отправки: $textSearch")
+                Log.d("FindActivity", "Код ответа сервера: ${response.code()}")
+                if (response.isSuccessful) {
+                    Log.d("FindActivity", "Результат: ${response.body()?.results.toString()}")
+                    Log.d("FindActivity", "Найдено треков: ${response.body()?.resultCount}")
+                    val songsList = response.body()?.results ?: emptyList()
+
+                    if (songsList.isNotEmpty()) {
+                        if (networkView.visibility == View.VISIBLE) {
+                            networkView.visibility = View.GONE
+                        }
+                        if (noSongsView.visibility == View.VISIBLE) {
+                            noSongsView.visibility = View.GONE
+                        }
+                        if (recyclerView.visibility == View.GONE) {
+                            recyclerView.visibility = View.VISIBLE
+                        }
+                        val trackAdapter = TrackAdapter(songsList)
+                        recyclerView.adapter = trackAdapter
+                    } else {
+                        if (recyclerView.visibility == View.VISIBLE) {
+                            trackAdapter = TrackAdapter(songsList)
+                            recyclerView.adapter = trackAdapter
+                            recyclerView.visibility = View.GONE
+                        }
+                        if (networkView.visibility == View.VISIBLE) {
+                            networkView.visibility = View.GONE
+                        }
+                        if (noSongsView.visibility == View.GONE){
+                            noSongsView.visibility = View.VISIBLE
+                        }
+
+                        if (isNightMode()) {
+                            imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_dark_mode)
+                        } else {
+                            imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_light_mode)
+                        }
+                    }
+
+                } else {
+                    handleError(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<SongResponse>, t: Throwable) {
+                if (t is IOException) {
+                    handleNetworkError()
+                } else {
+                    handleError(t)
+                }
+
+            }
+        })
+    }
+    private fun handleNetworkError(){
+        recyclerView.visibility = View.GONE
+        noSongsView.visibility = View.GONE
+        networkView.visibility = View.VISIBLE
+
+        if (isNightMode()) {
+            imageScreenNetworkError.setImageResource(R.drawable.no_network_dark_mode)
+        } else {
+            imageScreenNetworkError.setImageResource(R.drawable.no_network_light_mode)
+        }
+    }
+    private fun handleError(t: Throwable){
+        Log.d("FindActivity", "Ошибка : ${t.message}")
+
+    }
+    private fun handleError(code: Int) {
+        Log.d("FindActivity", "Сетевая ошибка с кодом: $code")
+    }
+
 }

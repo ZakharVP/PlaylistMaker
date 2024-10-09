@@ -22,7 +22,7 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
     fun bind(model: Track) {
 
-        val imageUrl = model.artWorkUrl100
+        val imageUrl = model.artworkUrl100
         Glide.with(itemView)
             .load(imageUrl)
             .placeholder(sourcePlaceholder)
@@ -31,7 +31,7 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
         sourceNameTrack.text = model.trackName
         sourceNameSinger.text = model.artistName
-        sourceDuration.text = model.trackTime
+        sourceDuration.text = model.trackTimeMillis.toString()
 
     }
 

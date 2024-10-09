@@ -7,6 +7,18 @@
     android:id="@+id/main"
     tools:context=".SettingsActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBarSettings"
+        android:theme="@style/AppToolbar"
+        android:layout_width="@dimen/primary_indent_size_0"
+        android:layout_height="@dimen/primary_indent_size_61"
+        android:background="?attr/colorPrimaryFixed"
+        app:title="@string/main_screen_settings"
+        app:navigationIcon="@drawable/ic_s_top_arrow_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,22 +26,8 @@
         tools:layout_editor_absoluteX="@dimen/primary_indent_size"
         tools:layout_editor_absoluteY="@dimen/primary_indent_size_0"
         android:padding="@dimen/primary_indent_size_2"
-        android:layout_marginTop="@dimen/primary_indent_size_14">
-
-        <Button
-            android:id="@+id/backToMain"
-            android:layout_width="wrap_content"
-            android:layout_height="61dp"
-            app:icon="@drawable/ic_s_top_arrow_back"
-            app:iconTint="?attr/colorOnPrimary"
-            android:text="@string/main_screen_settings"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/main_screen_primary_text_size"
-            android:textStyle="bold"
-            android:padding="@dimen/primary_indent_size_12"
-            android:fontFamily="@font/ys_display_medium"
-            android:textAllCaps="false"
-            style="?android:attr/borderlessButtonStyle"/>
+        android:layout_marginTop="60dp"
+        android:background="?attr/colorPrimaryFixed">
 
         <Switch
             android:id="@+id/switchTheme"
@@ -37,8 +35,8 @@
             android:layout_gravity="bottom|end"
             android:layout_marginTop="@dimen/primary_indent_size_21"
             android:text="@string/settings_screen_theme"
-            android:trackTint="?attr/colorSecondary"
-            android:thumbTint="?attr/colorOnSecondary"/>
+            android:trackTint="?attr/colorOnSecondary"
+            android:thumbTint="?attr/colorSecondary"/>
 
         <Button
             android:id="@+id/share"
