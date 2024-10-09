@@ -81,9 +81,16 @@ class FindActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener{
             editText.setText("")
-            songsList.clear()
-            trackAdapter = TrackAdapter(songsList)
-            recyclerView.adapter = trackAdapter
+            if (recyclerView.visibility == View.VISIBLE) {
+                trackAdapter = TrackAdapter(songsList)
+                recyclerView.adapter = trackAdapter
+            }
+            if (networkView.visibility == View.VISIBLE){
+                networkView.visibility = View.GONE
+            }
+            if (noSongsView.visibility == View.VISIBLE){
+                noSongsView.visibility = View.GONE
+            }
         }
 
         noSongsView = findViewById<LinearLayout>(R.id.no_songs)
@@ -109,9 +116,16 @@ class FindActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 saveText = s.toString()
                 if (saveText.isEmpty()) {
-                    songsList.clear()
-                    trackAdapter = TrackAdapter(songsList)
-                    recyclerView.adapter = trackAdapter
+                    if (recyclerView.visibility == View.VISIBLE) {
+                        trackAdapter = TrackAdapter(songsList)
+                        recyclerView.adapter = trackAdapter
+                    }
+                    if (networkView.visibility == View.VISIBLE){
+                        networkView.visibility = View.GONE
+                    }
+                    if (noSongsView.visibility == View.VISIBLE){
+                        noSongsView.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -166,16 +180,30 @@ class FindActivity : AppCompatActivity() {
                     val songsList = response.body()?.results ?: emptyList()
 
                     if (songsList.isNotEmpty()) {
-                        recyclerView.visibility = View.VISIBLE
-                        networkView.visibility = View.GONE
-                        noSongsView.visibility = View.GONE
-                        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                        if (networkView.visibility == View.VISIBLE) {
+                            networkView.visibility = View.GONE
+                        }
+                        if (noSongsView.visibility == View.VISIBLE) {
+                            noSongsView.visibility = View.GONE
+                        }
+                        if (recyclerView.visibility == View.GONE) {
+                            recyclerView.visibility = View.VISIBLE
+                        }
                         val trackAdapter = TrackAdapter(songsList)
                         recyclerView.adapter = trackAdapter
                     } else {
-                        recyclerView.visibility = View.GONE
-                        networkView.visibility = View.GONE
-                        noSongsView.visibility = View.VISIBLE
+                        if (recyclerView.visibility == View.VISIBLE) {
+                            trackAdapter = TrackAdapter(songsList)
+                            recyclerView.adapter = trackAdapter
+                            recyclerView.visibility = View.GONE
+                        }
+                        if (networkView.visibility == View.VISIBLE) {
+                            networkView.visibility = View.GONE
+                        }
+                        if (noSongsView.visibility == View.GONE){
+                            noSongsView.visibility = View.VISIBLE
+                        }
+
                         if (isNightMode()) {
                             imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_dark_mode)
                         } else {
