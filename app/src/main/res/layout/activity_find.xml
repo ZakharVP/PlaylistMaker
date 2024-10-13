@@ -5,13 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FindActivity">
+    tools:context=".Activity.FindActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBarFind"
         android:layout_width="@dimen/primary_indent_size_0"
-        android:layout_height="@dimen/primary_indent_size_61"
-        android:background="?attr/colorPrimaryFixed"
+        android:layout_height="@dimen/primary_indent_size_62"
+        android:background="?attr/colorPrimaryInverse"
         app:title="@string/main_screen_find"
         app:navigationIcon="@drawable/ic_s_top_arrow_back"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,9 +24,9 @@
         android:orientation="vertical"
         tools:layout_editor_absoluteX="@dimen/primary_indent_size"
         tools:layout_editor_absoluteY="@dimen/primary_indent_size_0"
-        android:padding="@dimen/primary_indent_size_2"
+        android:padding="@dimen/primary_indent_size_4"
         android:layout_marginTop="60dp"
-        android:background="?attr/colorPrimaryFixed">
+        android:background="?attr/colorPrimaryInverse">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -49,7 +49,7 @@
                 android:textColor="@color/yp_black"
                 android:textColorHint="?attr/colorPrimaryContainer"
                 android:textCursorDrawable="@drawable/cursor_color"
-                android:drawablePadding="@dimen/primary_indent_size_11"
+                android:drawablePadding="@dimen/primary_indent_size_12"
                 android:paddingHorizontal="@dimen/primary_indent_size_12"
                 android:background="@drawable/rounded_edittext_background"
                 android:imeOptions="actionDone"
@@ -61,17 +61,56 @@
                 android:layout_height="@dimen/primary_indent_size_36"
                 android:src="@drawable/ic_clear"
                 android:background="@android:color/transparent"
-                android:layout_gravity="end|center_vertical"/>
+                android:layout_gravity="end|center_vertical"
+                android:visibility="gone"/>
 
 
         </FrameLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <TextView
+            android:id="@+id/searchHint"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/primary_indent_size_52"
+            android:text="@string/history"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/main_screen_primary_text_size_19"
+            android:background="?attr/colorPrimaryInverse"
+            android:visibility="gone"/>
+
+        <ScrollView
+            android:id="@+id/scrollViewOne"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            />
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/clearHistory"
+                android:layout_width="@dimen/primary_indent_size_148"
+                android:layout_height="@dimen/primary_indent_size_36"
+                android:text="@string/clear_history"
+                android:textSize="@dimen/main_screen_primary_text_size_14"
+                android:textColor="?attr/colorPrimary"
+                android:backgroundTint="?attr/colorOnPrimary"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+                android:layout_gravity="center"
+                android:padding="@dimen/primary_indent_size_0"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+            </LinearLayout>
+        </ScrollView>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -83,11 +122,12 @@
             >
 
             <LinearLayout
+                android:id="@+id/no_songs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:id="@+id/no_songs">
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/no_songs_screen"
@@ -105,11 +145,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/network_error"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:id="@+id/network_error">
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/network_error_screen"
@@ -146,10 +187,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
     </LinearLayout>
 
