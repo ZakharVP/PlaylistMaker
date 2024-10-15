@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.Activity
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,10 +18,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.util.TypedValueCompat.dpToPx
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.resource.gif.GifOptions
 import com.google.gson.Gson
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
