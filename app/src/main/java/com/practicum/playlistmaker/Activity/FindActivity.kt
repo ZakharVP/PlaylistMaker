@@ -19,8 +19,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.util.TypedValueCompat.dpToPx
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Visibility
+import com.bumptech.glide.load.resource.gif.GifOptions
 import com.google.gson.Gson
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
@@ -59,6 +61,7 @@ class FindActivity : AppCompatActivity() {
     val songsListReverse: ArrayList<Track> = ArrayList()
     var trackAdapter: TrackAdapter = TrackAdapter(this, songsList)
     val gson = Gson()
+    private var historyIsHide : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,19 +75,19 @@ class FindActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
-        // *** Блок инициализации Вьюх. Начало *** //
+        // *** Блок инициализации View. Начало *** //
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarFind)
-        searchHint = findViewById(R.id.searchHint)
-        buttonClearHistory = findViewById(R.id.clearHistory)
         editText = findViewById(R.id.findEditText)
         clearButton = findViewById<ImageButton>(R.id.clearIcon)
-        noSongsView = findViewById<LinearLayout>(R.id.no_songs)
-        networkView = findViewById<LinearLayout>(R.id.network_error)
-        imageScreenNoFindSongs = findViewById<ImageView>(R.id.no_songs_screen)
-        imageScreenNetworkError = findViewById<ImageView>(R.id.network_error_screen)
-        recyclerView = findViewById(R.id.recyclerView)
         scrollView = findViewById<ScrollView>(R.id.scrollViewOne)
-        // *** Блок инициализации Вьюх. Окончание *** //
+        searchHint = findViewById(R.id.searchHint)
+        recyclerView = findViewById(R.id.recyclerView)
+        buttonClearHistory = findViewById(R.id.clearHistory)
+        noSongsView = findViewById<LinearLayout>(R.id.no_songs)
+        imageScreenNoFindSongs = findViewById<ImageView>(R.id.no_songs_screen)
+        networkView = findViewById<LinearLayout>(R.id.network_error)
+        imageScreenNetworkError = findViewById<ImageView>(R.id.network_error_screen)
+        // *** Блок инициализации View. Окончание *** //
 
         val colorIcon = if (isNightMode) { R.color.yp_white } else { R.color.yp_black }
         tool_bar_button_back.navigationIcon?.setTint(ContextCompat.getColor(this,colorIcon))
@@ -98,56 +101,36 @@ class FindActivity : AppCompatActivity() {
         saveText = savedInstanceState?.getString("text", "") ?: ""
         editText.setText(saveText)
 
+        // **** Первый показ экрана.
+        hideHistory()
+        hideNoSongs()
+        hideNoNetwork()
+
+        // **** Установили актиной строку.
+        // Если есть история - отображаем, если нет то обычный пустой экран.
+        editText.setOnFocusChangeListener{_, hasFocus ->
+            if (hasFocus) {
+                val songsListString = TrackManager.getHistoryTrack(this)
+                if (songsListString.size == 0){
+                    hideHistory()
+                } else{
+                  // Нужно отобразить историю просмотра
+                    showHistory()
+                }
+            }
+        }
+
         buttonClearHistory.setOnClickListener{
             TrackManager.clearTrackFromPreferences(this)
-            songsList.clear()
-            trackAdapter = TrackAdapter(this, songsList)
-            recyclerView.adapter = trackAdapter
-            searchHint.visibility = View.GONE
-            buttonClearHistory.visibility = View.GONE
+            hideHistory()
         }
 
         clearButton.setOnClickListener{
             editText.setText("")
-            if (recyclerView.visibility == View.VISIBLE) {
-                trackAdapter = TrackAdapter(this, songsListReverse)
-                recyclerView.adapter = trackAdapter
-            }
-            if (networkView.visibility == View.VISIBLE){
-                networkView.visibility = View.GONE
-            }
-            if (noSongsView.visibility == View.VISIBLE){
-                noSongsView.visibility = View.GONE
-            }
-            if (songsList.isNotEmpty()) {
-                searchHint.visibility = View.VISIBLE
-                recyclerView.visibility = View.VISIBLE
-                buttonClearHistory.visibility = View.VISIBLE
-            }
-        }
-
-        editText.setOnFocusChangeListener{_, hasFocus ->
-            if (hasFocus) {
-                val songsListString = TrackManager.getHistoryTrack(this)
-                songsList.clear()
-                songsListReverse.clear()
-                for (trackString in songsListString) {
-                    if (trackString.isNotEmpty()) {
-                        val track = gson.fromJson(trackString, Track::class.java)
-                        songsList.add(track)
-                    }
-                }
-                if (songsList.isNotEmpty()) {
-                    buttonClearHistory.visibility = View.VISIBLE
-                    searchHint.visibility = View.VISIBLE
-                    for( track in songsList.reversed()){
-                       songsListReverse.add(track)
-                    }
-                    trackAdapter = TrackAdapter(this, songsListReverse)
-                    recyclerView.adapter = trackAdapter
-                    scrollView.visibility = View.VISIBLE
-                }
-            }
+            if (networkView.isVisible){ networkView.visibility = View.GONE }
+            if (noSongsView.isVisible) { noSongsView.visibility = View.GONE }
+            // Строка остается в фокусе. Если есть история - нужно показать
+            showHistory()
         }
 
         val buttonUpdate = findViewById<Button>(R.id.button_update)
@@ -157,53 +140,25 @@ class FindActivity : AppCompatActivity() {
 
         val simpleTextWatcher = object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                // Если строка ввода пустая, то нужно показать историю
-                if (s.isNullOrEmpty()){
-                    songsList.clear()
-                    songsListReverse.clear()
-                    val songsListString = TrackManager.getHistoryTrack(this@FindActivity)
-                    for (trackString in songsListString){
-                        if(trackString.isNotEmpty()){
-                            val track = gson.fromJson(trackString, Track::class.java)
-                            songsList.add(track)
-                        }
-                    }
-                    for( track in songsList.reversed()){
-                        songsListReverse.add(track)
-                    }
-                    trackAdapter = TrackAdapter(this@FindActivity, songsListReverse)
-                    recyclerView.adapter = trackAdapter
-                }else {
-                    clearButton.visibility = clearButtonVisibility(s)
-                    searchHint.visibility = clearHistoryVisibility(s)
-                    recyclerView.visibility = clearHistoryVisibility(s)
-                    buttonClearHistory.visibility = clearHistoryVisibility(s)
-                    textSearch = s.toString()
-                }
+                 clearButton.visibility = clearButtonVisibility(s)
+                 textSearch = s.toString()
+                if (!historyIsHide) { hideHistory() }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                saveText = s.toString()
-                if (saveText.isEmpty()) {
-                    if (recyclerView.visibility == View.VISIBLE) {
-                        trackAdapter = TrackAdapter(this@FindActivity, songsList)
-                        recyclerView.adapter = trackAdapter
-                    }
-                    if (networkView.visibility == View.VISIBLE){
-                        networkView.visibility = View.GONE
-                    }
-                    if (noSongsView.visibility == View.VISIBLE){
-                        noSongsView.visibility = View.GONE
-                    }
-        }
-    }
+                if (s.isNullOrEmpty()) {
+                    if (networkView.isVisible) { networkView.visibility = View.GONE }
+                    if (noSongsView.isVisible) { noSongsView.visibility = View.GONE }
+                    // Строка остается в фокусе. Если есть история - нужно показать
+                    showHistory()
+                }
+            }
         }
         editText.addTextChangedListener(simpleTextWatcher)
 
         editText.setOnEditorActionListener{ _, actionId, _ ->
-            noSongsView.visibility = View.GONE
-            networkView.visibility = View.GONE
+            if(noSongsView.isVisible) { noSongsView.visibility = View.GONE }
+            if(networkView.isVisible) { networkView.visibility = View.GONE }
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 Log.d("FindActivity","Текст поиска: $textSearch")
                 findSongs(textSearch)
@@ -228,6 +183,51 @@ class FindActivity : AppCompatActivity() {
         } else {
             View.GONE
         }
+    }
+
+    private fun showHistory() {
+        songsList.clear()
+        songsListReverse.clear()
+        val songsListString = TrackManager.getHistoryTrack(this@FindActivity)
+        if (songsListString.size != 0) {
+            for (trackString in songsListString) {
+                if (trackString.isNotEmpty()) {
+                    val track = gson.fromJson(trackString, Track::class.java)
+                    songsList.add(track)
+                }
+            }
+            for (track in songsList.reversed()) {
+                songsListReverse.add(track)
+            }
+            trackAdapter = TrackAdapter(this, songsListReverse)
+            recyclerView.adapter = trackAdapter
+
+            searchHint.visibility = View.VISIBLE
+            buttonClearHistory.visibility = View.VISIBLE
+            scrollView.visibility = View.VISIBLE
+
+            scrollView.layoutParams.height =
+                resources.getDimension(R.dimen.primary_indent_size_320).toInt()
+            scrollView.requestLayout()
+            historyIsHide = false
+        } else {
+            hideHistory()
+        }
+
+    }
+    private fun hideHistory() {
+        searchHint.visibility = View.GONE
+        buttonClearHistory.visibility = View.GONE
+        scrollView.visibility = View.GONE
+        historyIsHide = true
+    }
+
+    private fun hideNoNetwork(){
+        networkView.visibility = View.GONE
+    }
+
+    private fun hideNoSongs() {
+        noSongsView.visibility = View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -256,37 +256,27 @@ class FindActivity : AppCompatActivity() {
                     val songsList = response.body()?.results ?: emptyList()
 
                     if (songsList.isNotEmpty()) {
-                        if (networkView.visibility == View.VISIBLE) {
-                            networkView.visibility = View.GONE
-                        }
-                        if (noSongsView.visibility == View.VISIBLE) {
-                            noSongsView.visibility = View.GONE
-                        }
-                        if (recyclerView.visibility == View.GONE) {
-                            recyclerView.visibility = View.VISIBLE
-                        }
+                        hideHistory()
+                        if (!scrollView.isVisible)  { scrollView.visibility = View.VISIBLE }
+                        scrollView.layoutParams.height = resources.getDimension(R.dimen.primary_indent_size_400).toInt()
+                        scrollView.requestLayout()
+
+                        if (networkView.isVisible) { networkView.visibility = View.GONE }
+                        if (noSongsView.isVisible) { noSongsView.visibility = View.GONE }
+
                         val trackAdapter = TrackAdapter(this@FindActivity,songsList)
                         recyclerView.adapter = trackAdapter
                     } else {
-                        if (recyclerView.visibility == View.VISIBLE) {
-                            trackAdapter = TrackAdapter(this@FindActivity, songsList)
-                            recyclerView.adapter = trackAdapter
-                            recyclerView.visibility = View.GONE
-                        }
-                        if (networkView.visibility == View.VISIBLE) {
-                            networkView.visibility = View.GONE
-                        }
-                        if (noSongsView.visibility == View.GONE){
-                            noSongsView.visibility = View.VISIBLE
-                        }
-
+                        hideHistory()
+                        if (scrollView.isVisible)  { scrollView.visibility = View.GONE }
+                        if (networkView.isVisible) { networkView.visibility = View.GONE }
+                        if (!noSongsView.isVisible) { noSongsView.visibility = View.VISIBLE }
                         if (isNightMode) {
                             imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_dark_mode)
                         } else {
                             imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_light_mode)
                         }
                     }
-
                 } else {
                     handleError(response.code())
                 }
@@ -307,8 +297,8 @@ class FindActivity : AppCompatActivity() {
     }
     private fun handleNetworkError(){
         Log.d("FindActivity", "Попали в событие handleNetworkError")
-        recyclerView.visibility = View.GONE
-        noSongsView.visibility = View.GONE
+        hideHistory()
+        if(noSongsView.isVisible) { noSongsView.visibility = View.GONE }
         networkView.visibility = View.VISIBLE
 
         if (isNightMode) {

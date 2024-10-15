@@ -19,7 +19,8 @@
     <dimen name="primary_indent_size_148">148dp</dimen>
     <dimen name="primary_indent_size_120">120dp</dimen>
     <dimen name="primary_indent_size_210">210dp</dimen>
-    <dimen name="primary_indent_size_328">328dp</dimen>
+    <dimen name="primary_indent_size_320">320dp</dimen>
+    <dimen name="primary_indent_size_400">400dp</dimen>
     <dimen name="main_screen_primary_text_size">22sp</dimen>
     <dimen name="main_screen_primary_text_size_11">11sp</dimen>
     <dimen name="main_screen_primary_text_size_14">14sp</dimen>
