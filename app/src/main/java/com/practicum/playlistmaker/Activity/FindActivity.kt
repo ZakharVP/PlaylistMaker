@@ -27,6 +27,7 @@ import com.practicum.playlistmaker.ItunesApplicationApi
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.RetrofitFactory
 import com.practicum.playlistmaker.SongResponse
+import com.practicum.playlistmaker.ThemeManager
 import com.practicum.playlistmaker.Track
 import com.practicum.playlistmaker.TrackAdapter
 import com.practicum.playlistmaker.TrackManager
@@ -64,8 +65,7 @@ class FindActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_find)
 
-        val sharedPreferences = getSharedPreferences(PLAYLIST_SETTINGS, MODE_PRIVATE)
-        isNightMode = sharedPreferences.getBoolean(PLAYLIST_SETTINGS_THEME_NIGHT_VALUE, false)
+        val isNightMode = ThemeManager.getThemeFromPreferences(this)
         if (isNightMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {

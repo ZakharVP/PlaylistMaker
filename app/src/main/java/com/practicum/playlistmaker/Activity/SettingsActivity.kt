@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.ThemeManager
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -24,8 +25,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         themeSwitch = findViewById<Switch>(R.id.switchTheme)
-        val sharedPreferences = getSharedPreferences(PLAYLIST_SETTINGS, MODE_PRIVATE)
-        val isNightMode = sharedPreferences.getBoolean(PLAYLIST_SETTINGS_THEME_NIGHT_VALUE, false)
+        val isNightMode = ThemeManager.getThemeFromPreferences(this)
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarSettings)
         val colorIcon = if (isNightMode) {
             themeSwitch.setChecked(true)
@@ -46,9 +46,7 @@ class SettingsActivity : AppCompatActivity() {
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
-            sharedPreferences.edit()
-                .putBoolean(PLAYLIST_SETTINGS_THEME_NIGHT_VALUE, themeSwitch.isChecked)
-                .apply()
+            ThemeManager.saveThemeToPreferences(this, themeSwitch.isChecked)
         }
 
         val button_share = findViewById<Button>(R.id.share)
