@@ -204,9 +204,8 @@ class FindActivity : AppCompatActivity() {
             buttonClearHistory.visibility = View.VISIBLE
             scrollView.visibility = View.VISIBLE
 
-            scrollView.layoutParams.height =
-                resources.getDimension(R.dimen.primary_indent_size_320).toInt()
-            scrollView.requestLayout()
+            //scrollView.layoutParams.height = resources.getDimension(R.dimen.primary_indent_size_320).toInt()
+            //scrollView.requestLayout()
             historyIsHide = false
         } else {
             hideHistory()
@@ -256,9 +255,6 @@ class FindActivity : AppCompatActivity() {
                     if (songsList.isNotEmpty()) {
                         hideHistory()
                         if (!scrollView.isVisible)  { scrollView.visibility = View.VISIBLE }
-                        scrollView.layoutParams.height = resources.getDimension(R.dimen.primary_indent_size_400).toInt()
-                        scrollView.requestLayout()
-
                         if (networkView.isVisible) { networkView.visibility = View.GONE }
                         if (noSongsView.isVisible) { noSongsView.visibility = View.GONE }
 
