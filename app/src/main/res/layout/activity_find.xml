@@ -12,7 +12,6 @@
         android:id="@+id/toolBarFind"
         android:layout_width="@dimen/primary_indent_size_0"
         android:layout_height="@dimen/primary_indent_size_62"
-        android:background="?attr/colorPrimaryInverse"
         app:title="@string/main_screen_find"
         app:navigationIcon="@drawable/ic_s_top_arrow_back"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,8 +25,7 @@
         tools:layout_editor_absoluteX="@dimen/primary_indent_size"
         tools:layout_editor_absoluteY="@dimen/primary_indent_size_0"
         android:padding="@dimen/primary_indent_size_4"
-        android:layout_marginTop="60dp"
-        android:background="?attr/colorPrimaryInverse">
+        android:layout_marginTop="60dp">
 
         <FrameLayout
             android:layout_width="match_parent"
