@@ -95,6 +95,7 @@ class FindActivity : AppCompatActivity() {
 
         val colorClearButtonIcon = if (isNightMode) { R.color.yp_black } else { R.color.yp_gray }
         clearButton.setColorFilter(ContextCompat.getColor(this, colorClearButtonIcon))
+        clearButton.visibility = View.GONE
         saveText = savedInstanceState?.getString("text", "") ?: ""
         editText.setText(saveText)
 
