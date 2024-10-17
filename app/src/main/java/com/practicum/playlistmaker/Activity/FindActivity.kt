@@ -1,10 +1,12 @@
 package com.practicum.playlistmaker.Activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -103,6 +105,9 @@ class FindActivity : AppCompatActivity() {
         hideHistory()
         hideNoSongs()
         hideNoNetwork()
+
+        //val height36px = pxToDp(36)
+        //buttonClearHistory.layoutParams.height = height36px
 
         // **** Установили актиной строку.
         // Если есть история - отображаем, если нет то обычный пустой экран.
@@ -307,6 +312,10 @@ class FindActivity : AppCompatActivity() {
     }
     private fun handleError(code: Int) {
         Log.d("FindActivity", "Сетевая ошибка с кодом: $code")
+    }
+
+    fun pxToDp(sizePx: Int): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizePx.toFloat() / resources.displayMetrics.density, resources.displayMetrics).toInt()
     }
 
 }

@@ -93,7 +93,7 @@
                 <Button
                     android:id="@+id/clearHistory"
                     android:layout_width="@dimen/primary_indent_size_148"
-                    android:layout_height="@dimen/primary_indent_size_36"
+                    android:layout_height="@dimen/primary_indent_size_48"
                     android:text="@string/clear_history"
                     android:textSize="@dimen/main_screen_primary_text_size_14"
                     android:textColor="?attr/colorPrimary"

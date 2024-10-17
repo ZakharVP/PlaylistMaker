@@ -13,6 +13,7 @@
     <dimen name="primary_indent_size_36">36dp</dimen>
     <dimen name="primary_indent_size_40">40dp</dimen>
     <dimen name="primary_indent_size_44">44dp</dimen>
+    <dimen name="primary_indent_size_48">48dp</dimen>
     <dimen name="primary_indent_size_52">52dp</dimen>
     <dimen name="primary_indent_size_62">62dp</dimen>
     <dimen name="primary_indent_size_72">72dp</dimen>
