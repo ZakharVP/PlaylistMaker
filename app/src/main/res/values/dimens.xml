@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="primary_indent_size_0">0dp</dimen>
-    <dimen name="primary_indent_size_2">2dp</dimen>
     <dimen name="primary_indent_size_4">4dp</dimen>
-    <dimen name="primary_indent_size_5">5dp</dimen>
     <dimen name="primary_indent_size_8">8dp</dimen>
-    <dimen name="primary_indent_size_11">11dp</dimen>
     <dimen name="primary_indent_size_12">12dp</dimen>
-    <dimen name="primary_indent_size_13">13dp</dimen>
-    <dimen name="primary_indent_size_14">14dp</dimen>
-    <dimen name="primary_indent_size">16dp</dimen>
-    <dimen name="primary_indent_size_19">19dp</dimen>
-    <dimen name="primary_indent_size_21">21dp</dimen>
+    <dimen name="primary_indent_size_16">16dp</dimen>
+    <dimen name="primary_indent_size_20">20dp</dimen>
     <dimen name="primary_indent_size_24">24dp</dimen>
     <dimen name="primary_indent_size_28">28dp</dimen>
+    <dimen name="primary_indent_size_32">32dp</dimen>
+    <dimen name="primary_indent_size">16dp</dimen>
     <dimen name="primary_indent_size_36">36dp</dimen>
     <dimen name="primary_indent_size_40">40dp</dimen>
-    <dimen name="primary_indent_size_45">45dp</dimen>
+    <dimen name="primary_indent_size_44">44dp</dimen>
+    <dimen name="primary_indent_size_48">48dp</dimen>
     <dimen name="primary_indent_size_52">52dp</dimen>
-    <dimen name="primary_indent_size_61">61dp</dimen>
+    <dimen name="primary_indent_size_62">62dp</dimen>
+    <dimen name="primary_indent_size_72">72dp</dimen>
+    <dimen name="primary_indent_size_148">148dp</dimen>
     <dimen name="primary_indent_size_120">120dp</dimen>
     <dimen name="primary_indent_size_210">210dp</dimen>
-    <dimen name="primary_indent_size_328">328dp</dimen>
+    <dimen name="primary_indent_size_320">320dp</dimen>
+    <dimen name="primary_indent_size_400">400dp</dimen>
     <dimen name="main_screen_primary_text_size">22sp</dimen>
     <dimen name="main_screen_primary_text_size_11">11sp</dimen>
+    <dimen name="main_screen_primary_text_size_14">14sp</dimen>
+    <dimen name="main_screen_primary_text_size_19">19sp</dimen>
     <dimen name="settings_screen_primary_text_size">16sp</dimen>
     <dimen name="text_size_19">19sp</dimen>
 </resources>

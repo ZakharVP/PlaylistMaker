@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/primary_indent_size_61"
+    android:layout_height="@dimen/primary_indent_size_62"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    tools:context=".SettingsActivity">
+    tools:context=".Activity.SettingsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,10 +18,10 @@
 
             <ImageView
                 android:id="@+id/art_work_url"
-                android:layout_width="@dimen/primary_indent_size_45"
-                android:layout_height="@dimen/primary_indent_size_45"
+                android:layout_width="@dimen/primary_indent_size_44"
+                android:layout_height="@dimen/primary_indent_size_44"
                 android:layout_marginVertical="@dimen/primary_indent_size_8"
-                android:layout_marginLeft="@dimen/primary_indent_size_13"
+                android:layout_marginLeft="@dimen/primary_indent_size_12"
                 android:src="@drawable/poster"
                 android:scaleType="fitXY"/>
 
@@ -66,7 +66,7 @@
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:background="@drawable/rounded_corners"
-                        android:layout_margin="@dimen/primary_indent_size_5"
+                        android:layout_margin="@dimen/primary_indent_size_4"
                         />
                     <TextView
                         android:id="@+id/track_duration"

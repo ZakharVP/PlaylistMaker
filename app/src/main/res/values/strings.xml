@@ -11,7 +11,9 @@
     <string name="settings_screen_support">Написать в поддержку</string>
     <string name="settings_screen_agreement">Пользовательское соглашение</string>
 
-    <string name="clear_icon">очистить сообщение</string>
+    <string name="clear_icon">Очистить сообщение</string>
+    <string name="clear_history">Очистить историю</string>
+    <string name="history">Вы искали</string>
 
     <string name="mail_address" translatable="false">zakhar-panchenko@yandex.ru</string>
     <string name="mail_theme" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
