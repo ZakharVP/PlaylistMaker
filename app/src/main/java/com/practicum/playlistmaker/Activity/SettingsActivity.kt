@@ -3,7 +3,10 @@ package com.practicum.playlistmaker.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.WindowInsetsController
 import android.widget.Button
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
@@ -43,8 +46,10 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitch.setOnClickListener() {
             if (themeSwitch.isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                //window.statusBarColor = ContextCompat.getColor(this, R.color.yp_black)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                //window.statusBarColor = ContextCompat.getColor(this, R.color.yp_light_blue)
             }
             ThemeManager.saveThemeToPreferences(this, themeSwitch.isChecked)
         }
