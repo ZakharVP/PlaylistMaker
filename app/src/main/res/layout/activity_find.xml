@@ -72,8 +72,7 @@
             android:text="@string/history"
             android:gravity="center"
             android:textStyle="bold"
-            android:textSize="@dimen/main_screen_primary_text_size_19"
-            android:background="?attr/colorPrimaryInverse"/>
+            android:textSize="@dimen/main_screen_primary_text_size_19"/>
 
         <ScrollView
             android:id="@+id/scrollViewOne"
