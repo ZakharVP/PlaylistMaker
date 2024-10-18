@@ -1,25 +1,29 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.Activity
 
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
+import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
+import com.practicum.playlistmaker.R
+
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var isDarkMode = getThemePreference()
+        var sharedPreferences = getSharedPreferences(PLAYLIST_SETTINGS, MODE_PRIVATE)
+        val isDarkMode:Boolean = sharedPreferences.getBoolean(PLAYLIST_SETTINGS_THEME_NIGHT_VALUE, false)
         if (isDarkMode) {
-            AppCompatDelegate.MODE_NIGHT_YES
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            AppCompatDelegate.MODE_NIGHT_NO
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
         setContentView(R.layout.activity_main)
@@ -48,10 +52,5 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-    }
-
-    private fun getThemePreference(): Boolean {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("appPreferences", MODE_PRIVATE)
-        return sharedPreferences.getBoolean("isDarkMode", false)
     }
 }

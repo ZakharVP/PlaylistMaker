@@ -12,6 +12,8 @@
     <string name="settings_screen_support">To support</string>
     <string name="settings_screen_agreement">Write agriments</string>
 
-    <string name="clear_icon">clear string</string>
+    <string name="clear_icon">Clear string</string>
+    <string name="clear_history">Clear history</string>
+    <string name="history">You were looking for</string>
 
 </resources>
