@@ -4,6 +4,7 @@ data class Track (
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,
+    val trackId: String,
     val artworkUrl100: String
 ) {
     fun getDuration(): String {

@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main"
-    tools:context=".SettingsActivity">
+    tools:context=".Activity.SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBarSettings"
-        android:theme="@style/AppToolbar"
-        android:layout_width="@dimen/primary_indent_size_0"
-        android:layout_height="@dimen/primary_indent_size_61"
-        android:background="?attr/colorPrimaryFixed"
-        app:title="@string/main_screen_settings"
-        app:navigationIcon="@drawable/ic_s_top_arrow_back"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/primary_indent_size_62"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_s_top_arrow_back"
+        app:title="@string/main_screen_settings" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="@dimen/primary_indent_size"
-        tools:layout_editor_absoluteY="@dimen/primary_indent_size_0"
-        android:padding="@dimen/primary_indent_size_2"
-        android:layout_marginTop="60dp"
-        android:background="?attr/colorPrimaryFixed">
+    <Switch
+        android:id="@+id/switchTheme"
+        style="@style/ButtonSettingsStyle"
+        android:layout_gravity="bottom|end"
+        android:layout_marginTop="@dimen/primary_indent_size_20"
+        android:text="@string/settings_screen_theme"
+        android:thumbTint="?attr/colorSecondary"
+        android:trackTint="?attr/colorOnSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolBarSettings" />
 
-        <Switch
-            android:id="@+id/switchTheme"
-            style="@style/ButtonSettingsStyle"
-            android:layout_gravity="bottom|end"
-            android:layout_marginTop="@dimen/primary_indent_size_21"
-            android:text="@string/settings_screen_theme"
-            android:trackTint="?attr/colorOnSecondary"
-            android:thumbTint="?attr/colorSecondary"/>
+    <Button
+        android:id="@+id/share"
+        style="@style/ButtonSettingsStyle"
+        android:text="@string/settings_screen_share"
+        app:icon="@drawable/ic_s_share"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchTheme" />
 
-        <Button
-            android:id="@+id/share"
-            app:icon="@drawable/ic_s_share"
-            android:text="@string/settings_screen_share"
-            style="@style/ButtonSettingsStyle"/>
-        <Button
-            android:id="@+id/sendToSupport"
-            app:icon="@drawable/ic_s_support"
-            android:text="@string/settings_screen_support"
-            style="@style/ButtonSettingsStyle"/>
-        <Button
-            android:id="@+id/agreement"
-            app:icon="@drawable/ic_s_arrow_forward"
-            android:text="@string/settings_screen_agreement"
-            style="@style/ButtonSettingsStyle"/>
-    </LinearLayout>
+    <Button
+        android:id="@+id/sendToSupport"
+        style="@style/ButtonSettingsStyle"
+        android:text="@string/settings_screen_support"
+        app:icon="@drawable/ic_s_support"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/share" />
+
+    <Button
+        android:id="@+id/agreement"
+        style="@style/ButtonSettingsStyle"
+        android:text="@string/settings_screen_agreement"
+        app:icon="@drawable/ic_s_arrow_forward"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendToSupport" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

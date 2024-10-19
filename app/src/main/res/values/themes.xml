@@ -1,14 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
         <!-- Фон -->
         <item name="colorPrimary">@color/yp_white</item>
         <item name="colorPrimaryVariant">@color/yp_blue</item>
-        <item name="colorPrimaryFixed">@color/yp_white</item>
+        <item name="colorPrimaryInverse">@color/yp_white</item>
         <!-- Переключатель track и knob-->
         <item name="colorSecondary">@color/yp_gray</item>
         <item name="colorOnSecondary">@color/yp_light_gray</item>
@@ -18,6 +17,7 @@
         <item name="colorPrimaryContainer">@color/yp_gray</item>
         <item name="colorOnPrimarySurface">@color/yp_gray</item>
 
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="AppToolbar" parent="Theme.AppCompat.Light">

@@ -1,21 +1,22 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.Activity
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.WindowInsetsController
 import android.widget.Button
-import android.widget.CompoundButton
 import android.widget.Switch
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
+import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.ThemeManager
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -26,10 +27,14 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+        themeSwitch = findViewById<Switch>(R.id.switchTheme)
+        val isNightMode = ThemeManager.getThemeFromPreferences(this)
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarSettings)
-        val colorIcon = if (isNightMode()) {
+        val colorIcon = if (isNightMode) {
+            themeSwitch.setChecked(true)
             R.color.yp_white
         } else {
+            themeSwitch.setChecked(false)
             R.color.yp_black
         }
         tool_bar_button_back.navigationIcon?.setTint(ContextCompat.getColor(this,colorIcon))
@@ -38,20 +43,15 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(displayIntent)
         }
 
-        themeSwitch = findViewById<Switch>(R.id.switchTheme)
-
-        if (isNightMode()) {
-            themeSwitch.setChecked(true)
-        } else {
-            themeSwitch.setChecked(false)
-        }
-
         themeSwitch.setOnClickListener() {
             if (themeSwitch.isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                //window.statusBarColor = ContextCompat.getColor(this, R.color.yp_black)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                //window.statusBarColor = ContextCompat.getColor(this, R.color.yp_light_blue)
             }
+            ThemeManager.saveThemeToPreferences(this, themeSwitch.isChecked)
         }
 
         val button_share = findViewById<Button>(R.id.share)
@@ -85,11 +85,5 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(openUrlAgreement)
         }
-
-
-    }
-
-    private fun isNightMode(): Boolean {
-        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 }
