@@ -31,7 +31,7 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
         sourceNameTrack.text = model.trackName
         sourceNameSinger.text = model.artistName
-        sourceDuration.text = model.trackTimeMillis.toString()
+        sourceDuration.text = model.getDuration()
 
     }
 

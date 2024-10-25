@@ -87,6 +87,7 @@
                 android:layout_weight="1"
                 android:gravity="center">
                 <Button
+                    android:id="@+id/buttonPlayer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:drawableLeft="@drawable/light_mode_arrow_forward"

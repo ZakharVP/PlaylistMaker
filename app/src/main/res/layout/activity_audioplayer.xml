@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBarAudioPlayer"
+        android:layout_width="@dimen/primary_indent_size_0"
+        android:layout_height="@dimen/primary_indent_size_62"
+        app:navigationIcon="@drawable/ic_s_top_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:id="@+id/imageSingle"
+        android:layout_width="@dimen/primary_indent_size_0"
+        android:layout_height="@dimen/primary_indent_size_0"
+        app:layout_constraintTop_toBottomOf="@id/toolBarAudioPlayer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleType="centerCrop"
+        android:layout_margin="@dimen/primary_indent_size_24"
+        app:layout_constraintDimensionRatio="h,0.9"/>
+
+    <TextView
+        android:id="@+id/nameSingle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/imageSingle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_24"
+        android:layout_marginTop="@dimen/primary_indent_size_24"
+        android:textSize="@dimen/main_screen_primary_text_size_22"
+        android:textStyle="bold"
+
+        android:text="Yesterday (Remastered 2009)"/>
+
+    <TextView
+        android:id="@+id/authorSingle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="The Beatles"
+        app:layout_constraintTop_toBottomOf="@id/nameSingle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_24"/>
+
+    <ImageButton
+        android:id="@+id/buttonAddSingle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/add_single_light"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        android:layout_marginLeft="@dimen/primary_indent_size_24"
+        android:background="@null"
+        />
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/play_button_light"
+        android:text="play button"
+        app:layout_constraintTop_toBottomOf="@+id/authorSingle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/primary_indent_size_24"
+        android:background="@null"/>
+
+    <ImageButton
+        android:id="@+id/buttonLikeSingle"
+        android:layout_width="@dimen/primary_indent_size_52"
+        android:layout_height="@dimen/primary_indent_size_52"
+        android:src="@drawable/like_button_light"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/primary_indent_size_24"
+        android:background="@null"/>
+
+    <TextView
+        android:id="@+id/timeTrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0:30"
+        app:layout_constraintTop_toBottomOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/primary_indent_size_8"/>
+
+    <TextView
+        android:id="@+id/durationName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Длительность"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAddSingle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_48"
+        android:textColor="@color/yp_gray"/>
+
+    <TextView
+        android:id="@+id/durationData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5:35"
+        app:layout_constraintTop_toBottomOf="@+id/buttonLikeSingle"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_48"/>
+
+    <TextView
+        android:id="@+id/albomName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Альбом"
+        app:layout_constraintTop_toBottomOf="@+id/durationName"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"
+        android:textColor="@color/yp_gray"/>
+
+    <TextView
+        android:id="@+id/albomData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Yesterday (Remasterede 2009)"
+        app:layout_constraintTop_toBottomOf="@+id/durationData"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"/>
+
+    <TextView
+        android:id="@+id/yearName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Год"
+        app:layout_constraintTop_toBottomOf="@+id/albomName"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"
+        android:textColor="@color/yp_gray"/>
+
+    <TextView
+        android:id="@+id/yearData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1965"
+        app:layout_constraintTop_toBottomOf="@+id/albomData"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"/>
+
+    <TextView
+        android:id="@+id/genreName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Жанр"
+        app:layout_constraintTop_toBottomOf="@+id/yearName"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"
+        android:textColor="@color/yp_gray"/>
+
+    <TextView
+        android:id="@+id/genreData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rock"
+        app:layout_constraintTop_toBottomOf="@+id/yearData"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"/>
+
+    <TextView
+        android:id="@+id/countryName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Страна"
+        app:layout_constraintTop_toBottomOf="@+id/genreName"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"
+        android:textColor="@color/yp_gray"/>
+
+    <TextView
+        android:id="@+id/countryData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Великобритания"
+        app:layout_constraintTop_toBottomOf="@+id/genreData"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/primary_indent_size_16"
+        android:layout_marginTop="@dimen/primary_indent_size_16"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
