@@ -22,11 +22,6 @@ class AudioPlayer: AppCompatActivity() {
         setContentView(R.layout.activity_audioplayer)
 
         val isNightMode = ThemeManager.getThemeFromPreferences(this)
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
 
         // *** Блок инициализации View. Начало *** //
         val buttonAddSingle = findViewById<ImageButton>(R.id.buttonAddSingle)

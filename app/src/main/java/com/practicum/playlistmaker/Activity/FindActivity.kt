@@ -67,13 +67,6 @@ class FindActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_find)
 
-        val isNightMode = ThemeManager.getThemeFromPreferences(this)
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
-
         // *** Блок инициализации View. Начало *** //
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarFind)
         editText = findViewById(R.id.findEditText)
