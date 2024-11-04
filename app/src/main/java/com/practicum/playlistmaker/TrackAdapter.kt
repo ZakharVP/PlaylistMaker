@@ -29,8 +29,6 @@ class TrackAdapter (
         holder.itemView.setOnClickListener{
             val track = dataTrack[position]
             TrackManager.saveTrackToPreferences(context, track)
-            val message = "Трек добавлен в историю: ${track.trackName}"
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 
             listener.onTrackClick(track)
         }
