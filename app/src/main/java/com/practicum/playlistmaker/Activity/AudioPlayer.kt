@@ -102,8 +102,7 @@ class AudioPlayer: AppCompatActivity() {
         val artBigArtUrl = track.artworkUrl100?.let { getBigArtUrl(track.artworkUrl100) }
 
         tool_bar_button_back.setNavigationOnClickListener {
-            val displayIntent = Intent(this, FindActivity::class.java)
-            startActivity(displayIntent)
+            finish()
         }
 
         Glide.with(this)
