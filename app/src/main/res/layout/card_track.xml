@@ -44,6 +44,8 @@
                     android:layout_height="wrap_content"
                     tools:text="Yesterday (Remastered 2009)"
                     android:fontFamily="@font/ys_display_regular"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:textSize="@dimen/settings_screen_primary_text_size"
                     android:textColor="?attr/colorOnPrimary"/>
 
@@ -58,6 +60,9 @@
                         tools:text="The Beatles"
                         android:textColor="?attr/colorOnPrimarySurface"
                         android:textSize="@dimen/main_screen_primary_text_size_11"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_weight="1"
                         />
                     <ImageView
                         android:layout_width="wrap_content"
