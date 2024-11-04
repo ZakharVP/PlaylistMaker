@@ -177,6 +177,7 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         intent.putExtra("artworkUrl100",track.artworkUrl100)
         intent.putExtra("collectionName",track.collectionName)
         intent.putExtra("primaryGenreName",track.primaryGenreName)
+        intent.putExtra("year",track.releaseDate.take(4))
         intent.putExtra("country",track.country)
 
         startActivity(intent)

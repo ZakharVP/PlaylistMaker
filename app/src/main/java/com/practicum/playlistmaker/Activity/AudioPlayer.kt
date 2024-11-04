@@ -41,6 +41,7 @@ class AudioPlayer: AppCompatActivity() {
         val albomDataView = findViewById<TextView>(R.id.albomData)
         val albomNameView = findViewById<TextView>(R.id.albomName)
         val yearDataView = findViewById<TextView>(R.id.yearData)
+        val yearNameView = findViewById<TextView>(R.id.yearName)
         val genreDataView = findViewById<TextView>(R.id.genreData)
         val genreNameView = findViewById<TextView>(R.id.genreName)
         val countryDataView = findViewById<TextView>(R.id.countryData)
@@ -55,7 +56,7 @@ class AudioPlayer: AppCompatActivity() {
             trackId = intent.getStringExtra("trackId") ?: "",
             artworkUrl100 = intent.getStringExtra("artworkUrl100") ?: "",
             collectionName = intent.getStringExtra("collectionName") ?: "",
-            releaseDate = "2000",
+            releaseDate = intent.getStringExtra("year") ?: "",
             primaryGenreName = intent.getStringExtra("primaryGenreName") ?: "",
             country = intent.getStringExtra("country") ?: ""
         )
@@ -84,6 +85,13 @@ class AudioPlayer: AppCompatActivity() {
         } else {
             genreNameView.visibility = View.GONE
             genreDataView.visibility = View.GONE
+        }
+
+        if (track.releaseDate.isNotEmpty()){
+            yearDataView.text = track.releaseDate
+        } else {
+            yearDataView.visibility = View.GONE
+            yearNameView.visibility = View.GONE
         }
 
         if (track.country.isNotEmpty()){
