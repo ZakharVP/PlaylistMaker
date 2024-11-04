@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.Activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -13,6 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.ThemeManager
+import com.practicum.playlistmaker.Track
 
 
 class AudioPlayer: AppCompatActivity() {
@@ -40,29 +42,48 @@ class AudioPlayer: AppCompatActivity() {
         val countryDataView = findViewById<TextView>(R.id.countryData)
         // *** Блок инициализации View. Окончание *** //
 
-        // *** Блок обработки внешних данных track. Начало *** //
-        val trackId = intent.getStringExtra("trackId")
-        val trackName = intent.getStringExtra("trackName")
-        val trackTimeMillisLong = intent.getLongExtra("trackTimeMillis",0)
-        val trackTimeMillis = getDuration(trackTimeMillisLong)
-
-        val artistName = intent.getStringExtra("artistName")
-        val artworkUrl100 = intent.getStringExtra("artworkUrl100")
-
-        val collectionName = intent.getStringExtra("collectionName")
-        //val trackYear = intent.getStringExtra("")
-        val primaryGenreName = intent.getStringExtra("primaryGenreName")
-        val country = intent.getStringExtra("country")
-        // *** Блок обработки внешних данных track. Окончание *** //
+        val track = Track(
+            trackName = intent.getStringExtra("trackName") ?: "",
+            artistName = intent.getStringExtra("artistName") ?: "",
+            trackTimeMillis = intent.getLongExtra("trackTimeMillis",0) ?: 0,
+            trackTimeMillisString = getDuration(intent.getLongExtra("trackTimeMillis",0)) ?: "",
+            trackId = intent.getStringExtra("trackId") ?: "",
+            artworkUrl100 = intent.getStringExtra("artworkUrl100") ?: "",
+            collectionName = intent.getStringExtra("collectionName") ?: "",
+            releaseDate = "2000",
+            primaryGenreName = intent.getStringExtra("primaryGenreName") ?: "",
+            country = intent.getStringExtra("country") ?: ""
+        )
 
         // *** Блок установки внешних данных. Начало *** //
-        nameSingle.text = trackName
-        authorSingle.text = artistName
-        durationDataView.text = trackTimeMillis
-        albomDataView.text = collectionName
+        if (track.trackName.isNotEmpty()) {
+        nameSingle.text = track.trackName
+        } else {
+            nameSingle.visibility = View.GONE
+        }
+        if (track.artistName.isNotEmpty()) {
+            authorSingle.text = track.artistName
+        } else {
+            authorSingle.visibility = View.GONE
+        }
+        if (track.trackTimeMillisString.isNotEmpty()) {
+            durationDataView.text = track.trackTimeMillisString
+        } else {
+            durationDataView.visibility = View.GONE
+        }
+        if (track.collectionName.isNotEmpty()) {
+            albomDataView.text = track.collectionName
+        } else {
+            albomDataView.visibility = View.GONE
+        }
         yearDataView.text = "2000"
-        genreDataView.text = primaryGenreName
-        countryDataView.text = country
+        if (track.country.isNotEmpty()){
+            countryDataView.text = track.country
+        } else {
+            countryDataView.visibility = View.GONE
+        }
+
+
         // *** Блок установки внешних данных. Окончание *** //
 
         // *** Блок установки картинок для тем (светлой и темной). Начало *** //
@@ -78,8 +99,7 @@ class AudioPlayer: AppCompatActivity() {
         // *** Блок установки картинок для тем (светлой и темной). Окончание *** //
 
 
-        val artBigArtUrl = artworkUrl100?.let { getBigArtUrl(artworkUrl100) }
-        //val artBigArtUrl = artworkUrl100
+        val artBigArtUrl = track.artworkUrl100?.let { getBigArtUrl(track.artworkUrl100) }
 
         tool_bar_button_back.setNavigationOnClickListener {
             val displayIntent = Intent(this, FindActivity::class.java)
