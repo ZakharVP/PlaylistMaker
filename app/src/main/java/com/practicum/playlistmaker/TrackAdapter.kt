@@ -13,7 +13,8 @@ import com.practicum.playlistmaker.Activity.MainActivity
 
 class TrackAdapter (
     private val context: Context,
-    private val dataTrack: List<Track>
+    private val dataTrack: List<Track>,
+    private val listener: OnTrackClickListener
 ) : RecyclerView.Adapter<TrackViewHolder> () {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -30,24 +31,9 @@ class TrackAdapter (
             TrackManager.saveTrackToPreferences(context, track)
             val message = "Трек добавлен в историю: ${track.trackName}"
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
-        holder.itemView.findViewById<Button>(R.id.buttonPlayer).setOnClickListener{
-            val track = dataTrack[position]
-            val displayIntent = Intent(context, AudioPlayer::class.java).apply {
-                putExtra("trackId",track.trackId)
-                putExtra("trackName",track.trackName)
-                putExtra("trackTimeMillis",track.trackTimeMillis)
-                putExtra("artistName",track.artistName)
-                putExtra("artworkUrl100",track.artworkUrl100)
 
-                putExtra("collectionName",track.collectionName)
-                //putExtra("trackYear",track.trackYear)
-                putExtra("primaryGenreName",track.primaryGenreName)
-                putExtra("country",track.country)
-            }
-            context.startActivity(displayIntent)
+            listener.onTrackClick(track)
         }
-
     }
 
     override fun getItemCount(): Int {

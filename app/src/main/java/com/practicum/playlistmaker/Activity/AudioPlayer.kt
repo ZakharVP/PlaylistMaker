@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
@@ -36,10 +37,14 @@ class AudioPlayer: AppCompatActivity() {
         val nameSingle = findViewById<TextView>(R.id.nameSingle)
         val authorSingle = findViewById<TextView>(R.id.authorSingle)
         val durationDataView = findViewById<TextView>(R.id.durationData)
+        val durationNameView = findViewById<TextView>(R.id.durationName)
         val albomDataView = findViewById<TextView>(R.id.albomData)
+        val albomNameView = findViewById<TextView>(R.id.albomName)
         val yearDataView = findViewById<TextView>(R.id.yearData)
         val genreDataView = findViewById<TextView>(R.id.genreData)
+        val genreNameView = findViewById<TextView>(R.id.genreName)
         val countryDataView = findViewById<TextView>(R.id.countryData)
+        val countryNameView = findViewById<TextView>(R.id.countryName)
         // *** Блок инициализации View. Окончание *** //
 
         val track = Track(
@@ -56,31 +61,36 @@ class AudioPlayer: AppCompatActivity() {
         )
 
         // *** Блок установки внешних данных. Начало *** //
-        if (track.trackName.isNotEmpty()) {
         nameSingle.text = track.trackName
-        } else {
-            nameSingle.visibility = View.GONE
-        }
-        if (track.artistName.isNotEmpty()) {
-            authorSingle.text = track.artistName
-        } else {
-            authorSingle.visibility = View.GONE
-        }
+        authorSingle.text = track.artistName
+
         if (track.trackTimeMillisString.isNotEmpty()) {
             durationDataView.text = track.trackTimeMillisString
         } else {
             durationDataView.visibility = View.GONE
+            durationNameView.visibility = View.GONE
         }
+
         if (track.collectionName.isNotEmpty()) {
             albomDataView.text = track.collectionName
         } else {
             albomDataView.visibility = View.GONE
+            albomNameView.visibility = View.GONE
         }
         yearDataView.text = "2000"
+
+        if (track.primaryGenreName.isNotEmpty()) {
+            genreDataView.text = track.primaryGenreName
+        } else {
+            genreNameView.visibility = View.GONE
+            genreDataView.visibility = View.GONE
+        }
+
         if (track.country.isNotEmpty()){
             countryDataView.text = track.country
         } else {
             countryDataView.visibility = View.GONE
+            countryNameView.visibility = View.GONE
         }
 
 
