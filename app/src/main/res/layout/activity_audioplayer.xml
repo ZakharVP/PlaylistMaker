@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/nameSingle"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/primary_indent_size_0"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/imageSingle"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,17 +35,22 @@
         android:layout_marginTop="@dimen/primary_indent_size_24"
         android:textSize="@dimen/main_screen_primary_text_size_22"
         android:textStyle="bold"
-
-        android:text="Yesterday (Remastered 2009)"/>
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="Yesterday (Remastered 2009)" />
 
     <TextView
         android:id="@+id/authorSingle"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/primary_indent_size_0"
         android:layout_height="wrap_content"
         android:text="The Beatles"
         app:layout_constraintTop_toBottomOf="@id/nameSingle"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="@dimen/primary_indent_size_24"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/primary_indent_size_24"
+        android:layout_marginEnd="@dimen/primary_indent_size_24"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
     <ImageButton
         android:id="@+id/buttonAddSingle"
@@ -115,24 +120,28 @@
 
     <TextView
         android:id="@+id/albomName"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/primary_indent_size_0"
         android:layout_height="wrap_content"
         android:text="Альбом"
         app:layout_constraintTop_toBottomOf="@+id/durationName"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/albomData"
         android:layout_marginStart="@dimen/primary_indent_size_16"
         android:layout_marginTop="@dimen/primary_indent_size_16"
         android:textColor="@color/yp_gray"/>
 
     <TextView
         android:id="@+id/albomData"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/primary_indent_size_0"
         android:layout_height="wrap_content"
         android:text="Yesterday (Remasterede 2009)"
         app:layout_constraintTop_toBottomOf="@+id/durationData"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/albomName"
         android:layout_marginEnd="@dimen/primary_indent_size_16"
-        android:layout_marginTop="@dimen/primary_indent_size_16"/>
+        android:layout_marginTop="@dimen/primary_indent_size_16"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
     <TextView
         android:id="@+id/yearName"
