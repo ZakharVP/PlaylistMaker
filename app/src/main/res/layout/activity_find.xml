@@ -60,7 +60,8 @@
                 android:layout_height="@dimen/primary_indent_size_36"
                 android:src="@drawable/ic_clear"
                 android:background="@android:color/transparent"
-                android:layout_gravity="end|center_vertical"/>
+                android:layout_gravity="end|center_vertical"
+                android:contentDescription="@string/clear_history"/>
 
 
         </FrameLayout>

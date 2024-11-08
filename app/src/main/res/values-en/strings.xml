@@ -4,6 +4,7 @@
     <string name="title_hello">Hello, Practicum</string>
     <string name="title">Playlist maker</string>
     <string name="main_screen_find">Find</string>
+    <string name="screen_audio_player">Audio pleer</string>
     <string name="main_screen_media">Mediateka</string>
     <string name="main_screen_settings">Settings</string>
 

@@ -26,6 +26,7 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
 import com.practicum.playlistmaker.ItunesApplicationApi
+import com.practicum.playlistmaker.OnTrackClickListener
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.RetrofitFactory
 import com.practicum.playlistmaker.SongResponse
@@ -38,7 +39,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 
-class FindActivity : AppCompatActivity() {
+class FindActivity : AppCompatActivity(), OnTrackClickListener {
 
     private lateinit var editText: EditText
     private lateinit var noSongsView: LinearLayout
@@ -59,20 +60,13 @@ class FindActivity : AppCompatActivity() {
     var isNightMode : Boolean = false
     val songsList: ArrayList<Track> = ArrayList()
     val songsListReverse: ArrayList<Track> = ArrayList()
-    var trackAdapter: TrackAdapter = TrackAdapter(this, songsList)
+    var trackAdapter: TrackAdapter = TrackAdapter(this, songsList, this)
     val gson = Gson()
     private var historyIsHide : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_find)
-
-        val isNightMode = ThemeManager.getThemeFromPreferences(this)
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
 
         // *** Блок инициализации View. Начало *** //
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarFind)
@@ -109,7 +103,7 @@ class FindActivity : AppCompatActivity() {
         //val height36px = pxToDp(36)
         //buttonClearHistory.layoutParams.height = height36px
 
-        // **** Установили актиной строку.
+        // **** Установили активной строку.
         // Если есть история - отображаем, если нет то обычный пустой экран.
         editText.setOnFocusChangeListener{_, hasFocus ->
             if (hasFocus) {
@@ -172,6 +166,23 @@ class FindActivity : AppCompatActivity() {
         }
     }
 
+    override fun onTrackClick(track: Track) {
+        val intent = Intent(this, AudioPlayer::class.java)
+
+        intent.putExtra("trackId",track.trackId)
+        intent.putExtra("trackId",track.trackId)
+        intent.putExtra("trackName",track.trackName)
+        intent.putExtra("trackTimeMillis",track.trackTimeMillis)
+        intent.putExtra("artistName",track.artistName)
+        intent.putExtra("artworkUrl100",track.artworkUrl100)
+        intent.putExtra("collectionName",track.collectionName)
+        intent.putExtra("primaryGenreName",track.primaryGenreName)
+        intent.putExtra("year",track.releaseDate.take(4))
+        intent.putExtra("country",track.country)
+
+        startActivity(intent)
+    }
+
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
@@ -202,7 +213,7 @@ class FindActivity : AppCompatActivity() {
             for (track in songsList.reversed()) {
                 songsListReverse.add(track)
             }
-            trackAdapter = TrackAdapter(this, songsListReverse)
+            trackAdapter = TrackAdapter(this, songsListReverse, this)
             recyclerView.adapter = trackAdapter
 
             searchHint.visibility = View.VISIBLE
@@ -263,7 +274,7 @@ class FindActivity : AppCompatActivity() {
                         if (networkView.isVisible) { networkView.visibility = View.GONE }
                         if (noSongsView.isVisible) { noSongsView.visibility = View.GONE }
 
-                        val trackAdapter = TrackAdapter(this@FindActivity,songsList)
+                        val trackAdapter = TrackAdapter(this@FindActivity,songsList, this@FindActivity)
                         recyclerView.adapter = trackAdapter
                     } else {
                         hideHistory()

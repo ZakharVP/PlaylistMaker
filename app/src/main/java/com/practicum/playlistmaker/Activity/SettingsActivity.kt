@@ -46,10 +46,8 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitch.setOnClickListener() {
             if (themeSwitch.isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                //window.statusBarColor = ContextCompat.getColor(this, R.color.yp_black)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                //window.statusBarColor = ContextCompat.getColor(this, R.color.yp_light_blue)
             }
             ThemeManager.saveThemeToPreferences(this, themeSwitch.isChecked)
         }

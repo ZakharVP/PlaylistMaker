@@ -18,14 +18,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var sharedPreferences = getSharedPreferences(PLAYLIST_SETTINGS, MODE_PRIVATE)
-        val isDarkMode:Boolean = sharedPreferences.getBoolean(PLAYLIST_SETTINGS_THEME_NIGHT_VALUE, false)
-        if (isDarkMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
-
         setContentView(R.layout.activity_main)
 
         val button_search = findViewById<Button>(R.id.bSearch)
