@@ -106,6 +106,15 @@
             </LinearLayout>
         </ScrollView>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/primary_indent_size_44"
+            android:layout_height="@dimen/primary_indent_size_44"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/yp_blue"
+            android:visibility="gone">
+        </ProgressBar>
+
 
         <LinearLayout
             android:layout_width="match_parent"

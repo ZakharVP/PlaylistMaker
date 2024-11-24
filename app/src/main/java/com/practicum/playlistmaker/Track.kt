@@ -1,5 +1,8 @@
 package com.practicum.playlistmaker
 
+import kotlinx.coroutines.FlowPreview
+import retrofit2.http.Url
+
 data class Track (
 
     val trackName: String,
@@ -11,7 +14,8 @@ data class Track (
     val collectionName: String,
     val releaseDate: String,
     val primaryGenreName: String,
-    val country: String
+    val country: String,
+    val previewUrl: String
 
 ) {
     fun getDuration(): String {

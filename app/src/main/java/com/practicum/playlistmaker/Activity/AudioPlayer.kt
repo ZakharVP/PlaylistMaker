@@ -1,11 +1,18 @@
 package com.practicum.playlistmaker.Activity
 
+import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -16,23 +23,47 @@ import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.ThemeManager
 import com.practicum.playlistmaker.Track
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class AudioPlayer: AppCompatActivity() {
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+
+        private const val CHANGE_TIME_DELAY = 300L
+    }
+
+    private lateinit var playButton: ImageButton
+    private var isNightMode = false
+
+    private var playerState = STATE_DEFAULT
+    private var mediaPlayer = MediaPlayer()
+    var url = "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/ac/c7/d1/acc7d13f-6634-495f-caf6-491eccb505e8/mzaf_4002676889906514534.plus.aac.p.m4a"
+
+    lateinit var timeTrackView: TextView
+    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var changeTextRunnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audioplayer)
 
-        val isNightMode = ThemeManager.getThemeFromPreferences(this)
+        isNightMode = ThemeManager.getThemeFromPreferences(this)
 
         // *** Блок инициализации View. Начало *** //
         val buttonAddSingle = findViewById<ImageButton>(R.id.buttonAddSingle)
-        val playButton = findViewById<ImageButton>(R.id.playButton)
+        playButton = findViewById<ImageButton>(R.id.playButton)
         val buttonLikeSingle = findViewById<ImageButton>(R.id.buttonLikeSingle)
 
         val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarAudioPlayer)
         val imageSingleView = findViewById<ImageView>(R.id.imageSingle)
+
+        timeTrackView = findViewById<TextView>(R.id.timeTrack)
 
         val nameSingle = findViewById<TextView>(R.id.nameSingle)
         val authorSingle = findViewById<TextView>(R.id.authorSingle)
@@ -58,12 +89,15 @@ class AudioPlayer: AppCompatActivity() {
             collectionName = intent.getStringExtra("collectionName") ?: "",
             releaseDate = intent.getStringExtra("year") ?: "",
             primaryGenreName = intent.getStringExtra("primaryGenreName") ?: "",
-            country = intent.getStringExtra("country") ?: ""
+            country = intent.getStringExtra("country") ?: "",
+            previewUrl = intent.getStringExtra("previewUrl") ?: ""
         )
 
         // *** Блок установки внешних данных. Начало *** //
         nameSingle.text = track.trackName
         authorSingle.text = track.artistName
+
+        url = track.previewUrl
 
         if (track.trackTimeMillisString.isNotEmpty()) {
             durationDataView.text = track.trackTimeMillisString
@@ -101,6 +135,19 @@ class AudioPlayer: AppCompatActivity() {
             countryNameView.visibility = View.GONE
         }
 
+        changeTextRunnable = Runnable {
+            if (mediaPlayer.isPlaying) {
+                val currentTime = mediaPlayer.currentPosition
+                Log.d("CurrentTime",currentTime.toString())
+                val currentTextTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTime)
+                timeTrackView.setText(currentTextTime)
+                handler.postDelayed(changeTextRunnable, CHANGE_TIME_DELAY)
+            } else {
+                timeTrackView.setText("00:00")
+            }
+
+        }
+
 
         // *** Блок установки внешних данных. Окончание *** //
 
@@ -129,6 +176,76 @@ class AudioPlayer: AppCompatActivity() {
                 .error(R.drawable.no_image_placeholder)
             .placeholder(R.drawable.no_image_placeholder)
             .into(imageSingleView)
+
+        preparePlayer()
+
+        playButton.setOnClickListener {
+            playbackControl()
+        }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopUpdateProgress()
+        mediaPlayer.release()
+    }
+
+    private fun preparePlayer() {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playerState = STATE_PREPARED
+        }
+    }
+
+    private fun startUpdateProgress() {
+        handler.post(changeTextRunnable)
+    }
+
+    private fun stopUpdateProgress() {
+        handler.removeCallbacks(changeTextRunnable)
+    }
+
+    private fun startPlayer() {
+
+        mediaPlayer.start()
+
+        if (isNightMode) {
+            playButton.setImageResource(R.drawable.pause_dark)
+        } else {
+            playButton.setImageResource(R.drawable.pause_light)
+        }
+        playerState = STATE_PLAYING
+
+        startUpdateProgress()
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playerState = STATE_PAUSED
+        if (isNightMode) {
+            playButton.setImageResource(R.drawable.play_button_dark)
+        } else {
+            playButton.setImageResource(R.drawable.play_button_light)
+        }
+        stopUpdateProgress()
+    }
+
+    private fun playbackControl () {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
     }
 
     fun getBigArtUrl(originalUrl: String): String{

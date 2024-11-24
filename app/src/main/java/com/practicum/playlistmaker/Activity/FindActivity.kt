@@ -3,6 +3,8 @@ package com.practicum.playlistmaker.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,6 +16,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -51,6 +54,7 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
     private lateinit var buttonClearHistory: Button
     private lateinit var clearButton: ImageButton
     private lateinit var scrollView: ScrollView
+    private lateinit var progressBar: ProgressBar
 
     private var saveText: String = ""
     private var textSearch: String = ""
@@ -62,7 +66,16 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
     val songsListReverse: ArrayList<Track> = ArrayList()
     var trackAdapter: TrackAdapter = TrackAdapter(this, songsList, this)
     val gson = Gson()
+
+    private val searchRunnable = Runnable { findSongs(textSearch) }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
     private var historyIsHide : Boolean = false
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +86,7 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         editText = findViewById(R.id.findEditText)
         clearButton = findViewById<ImageButton>(R.id.clearIcon)
         scrollView = findViewById<ScrollView>(R.id.scrollViewOne)
+        progressBar = findViewById<ProgressBar>(R.id.progressBar)
         searchHint = findViewById(R.id.searchHint)
         recyclerView = findViewById(R.id.recyclerView)
         buttonClearHistory = findViewById(R.id.clearHistory)
@@ -137,9 +151,10 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
 
         val simpleTextWatcher = object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                 clearButton.visibility = clearButtonVisibility(s)
-                 textSearch = s.toString()
+                clearButton.visibility = clearButtonVisibility(s)
+                textSearch = s.toString()
                 if (!historyIsHide) { hideHistory() }
+                searchDebounce(s.toString())
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {
@@ -167,20 +182,38 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
     }
 
     override fun onTrackClick(track: Track) {
-        val intent = Intent(this, AudioPlayer::class.java)
 
-        intent.putExtra("trackId",track.trackId)
-        intent.putExtra("trackId",track.trackId)
-        intent.putExtra("trackName",track.trackName)
-        intent.putExtra("trackTimeMillis",track.trackTimeMillis)
-        intent.putExtra("artistName",track.artistName)
-        intent.putExtra("artworkUrl100",track.artworkUrl100)
-        intent.putExtra("collectionName",track.collectionName)
-        intent.putExtra("primaryGenreName",track.primaryGenreName)
-        intent.putExtra("year",track.releaseDate.take(4))
-        intent.putExtra("country",track.country)
+        if (clickDebounce()) {
+            val intent = Intent(this, AudioPlayer::class.java)
 
-        startActivity(intent)
+            intent.putExtra("trackId",track.trackId)
+            intent.putExtra("trackId",track.trackId)
+            intent.putExtra("trackName",track.trackName)
+            intent.putExtra("trackTimeMillis",track.trackTimeMillis)
+            intent.putExtra("artistName",track.artistName)
+            intent.putExtra("artworkUrl100",track.artworkUrl100)
+            intent.putExtra("collectionName",track.collectionName)
+            intent.putExtra("primaryGenreName",track.primaryGenreName)
+            intent.putExtra("year",track.releaseDate.take(4))
+            intent.putExtra("country",track.country)
+            intent.putExtra("previewUrl",track.previewUrl)
+
+            startActivity(intent)
+        }
+    }
+
+    private fun searchDebounce(someChar : String) {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -220,8 +253,6 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
             buttonClearHistory.visibility = View.VISIBLE
             scrollView.visibility = View.VISIBLE
 
-            //scrollView.layoutParams.height = resources.getDimension(R.dimen.primary_indent_size_320).toInt()
-            //scrollView.requestLayout()
             historyIsHide = false
         } else {
             hideHistory()
@@ -255,12 +286,16 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
     }
 
     private fun findSongs(textSearch: String) {
+        scrollView.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+
         Log.d("FindActivity", "Перед вызовом сервиса iTunes")
         val call = itunesService.search(textSearch)
         Log.d("FindActivity", "После вызова сервиса iTunes")
 
         call.enqueue(object : Callback<SongResponse> {
             override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
+                progressBar.visibility = View.GONE
                 Log.d("FindActivity", "Ответ получен после отправки: $textSearch")
                 Log.d("FindActivity", "Код ответа сервера: ${response.code()}")
                 if (response.isSuccessful) {
@@ -293,6 +328,7 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
             }
 
             override fun onFailure(call: Call<SongResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 Log.d("FindActivity", "Попали в событие onFailure")
                 if (t is IOException) {
                     Log.d("FindActivity", t.toString())
