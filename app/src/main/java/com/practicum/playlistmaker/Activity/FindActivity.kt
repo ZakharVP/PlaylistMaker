@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
+import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -96,7 +97,8 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         imageScreenNetworkError = findViewById<ImageView>(R.id.network_error_screen)
         // *** Блок инициализации View. Окончание *** //
 
-        val colorIcon = if (isNightMode) { R.color.yp_white } else { R.color.yp_black }
+        val isNightMode = ThemeManager.getThemeFromPreferences(this)
+        val colorIcon = if (isNightMode) { R.color.yp_white } else { R.color.yp_black}
         tool_bar_button_back.navigationIcon?.setTint(ContextCompat.getColor(this,colorIcon))
         tool_bar_button_back.setNavigationOnClickListener {
             val displayIntent = Intent(this, MainActivity::class.java)
