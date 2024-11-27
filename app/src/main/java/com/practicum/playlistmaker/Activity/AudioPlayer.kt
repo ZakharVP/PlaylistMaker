@@ -144,6 +144,11 @@ class AudioPlayer: AppCompatActivity() {
                 handler.postDelayed(changeTextRunnable, CHANGE_TIME_DELAY)
             } else {
                 timeTrackView.setText("00:00")
+                if (isNightMode) {
+                    playButton.setImageResource(R.drawable.play_button_dark)
+                } else {
+                    playButton.setImageResource(R.drawable.play_button_light)
+                }
             }
 
         }
