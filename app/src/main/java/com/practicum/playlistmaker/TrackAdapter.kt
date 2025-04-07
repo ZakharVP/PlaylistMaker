@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.domain.Track
+import com.practicum.playlistmaker.data.Track
 
 class TrackAdapter (
     private val context: Context,

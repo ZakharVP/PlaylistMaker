@@ -16,7 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.ThemeManager
-import com.practicum.playlistmaker.domain.Track
+import com.practicum.playlistmaker.data.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

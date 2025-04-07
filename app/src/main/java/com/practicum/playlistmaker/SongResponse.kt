@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker
 
-import com.practicum.playlistmaker.domain.Track
+import com.practicum.playlistmaker.data.Track
 
 data class SongResponse(
         val resultCount: Int,
