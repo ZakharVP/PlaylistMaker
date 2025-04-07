@@ -30,7 +30,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.RetrofitFactory
 import com.practicum.playlistmaker.SongResponse
 import com.practicum.playlistmaker.ThemeManager
-import com.practicum.playlistmaker.data.Track
+import com.practicum.playlistmaker.domain.Track
 import com.practicum.playlistmaker.TrackAdapter
 import com.practicum.playlistmaker.TrackManager
 import retrofit2.Call

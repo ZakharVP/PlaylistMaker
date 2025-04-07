@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SONGS
-import com.practicum.playlistmaker.data.Track
+import com.practicum.playlistmaker.domain.Track
 
 object TrackManager {
 
