@@ -116,9 +116,6 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         hideNoSongs()
         hideNoNetwork()
 
-        //val height36px = pxToDp(36)
-        //buttonClearHistory.layoutParams.height = height36px
-
         // **** Установили активной строку.
         // Если есть история - отображаем, если нет то обычный пустой экран.
         editText.setOnFocusChangeListener{_, hasFocus ->
