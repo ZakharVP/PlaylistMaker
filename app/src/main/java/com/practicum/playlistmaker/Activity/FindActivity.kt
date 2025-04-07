@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.Activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -18,24 +17,20 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
-import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
 import com.practicum.playlistmaker.ItunesApplicationApi
 import com.practicum.playlistmaker.OnTrackClickListener
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.RetrofitFactory
 import com.practicum.playlistmaker.SongResponse
 import com.practicum.playlistmaker.ThemeManager
-import com.practicum.playlistmaker.Track
+import com.practicum.playlistmaker.data.Track
 import com.practicum.playlistmaker.TrackAdapter
 import com.practicum.playlistmaker.TrackManager
 import retrofit2.Call
@@ -116,11 +111,7 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         hideNoSongs()
         hideNoNetwork()
 
-        //val height36px = pxToDp(36)
-        //buttonClearHistory.layoutParams.height = height36px
-
         // **** Установили активной строку.
-        // Если есть история - отображаем, если нет то обычный пустой экран.
         editText.setOnFocusChangeListener{_, hasFocus ->
             if (hasFocus) {
                 val songsListString = TrackManager.getHistoryTrack(this)

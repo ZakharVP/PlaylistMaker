@@ -1,7 +1,4 @@
-package com.practicum.playlistmaker
-
-import kotlinx.coroutines.FlowPreview
-import retrofit2.http.Url
+package com.practicum.playlistmaker.data
 
 data class Track (
 
