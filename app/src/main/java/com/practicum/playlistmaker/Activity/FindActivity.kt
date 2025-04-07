@@ -117,7 +117,6 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         hideNoNetwork()
 
         // **** Установили активной строку.
-        // Если есть история - отображаем, если нет то обычный пустой экран.
         editText.setOnFocusChangeListener{_, hasFocus ->
             if (hasFocus) {
                 val songsListString = TrackManager.getHistoryTrack(this)
