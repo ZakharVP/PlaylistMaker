@@ -1,28 +1,22 @@
-package com.practicum.playlistmaker.Activity
+package com.practicum.playlistmaker.presentation.activity
 
-import android.content.Context
-import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.ThemeManager
-import com.practicum.playlistmaker.Track
+import com.practicum.playlistmaker.data.sharedPreferences.ThemeManager
+import com.practicum.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -82,13 +76,13 @@ class AudioPlayer: AppCompatActivity() {
         val track = Track(
             trackName = intent.getStringExtra("trackName") ?: "",
             artistName = intent.getStringExtra("artistName") ?: "",
-            trackTimeMillis = intent.getLongExtra("trackTimeMillis",0) ?: 0,
+            //trackTimeMillisString = intent.getLongExtra("trackTimeMillis",0) ?: 0,
             trackTimeMillisString = getDuration(intent.getLongExtra("trackTimeMillis",0)) ?: "",
             trackId = intent.getStringExtra("trackId") ?: "",
-            artworkUrl100 = intent.getStringExtra("artworkUrl100") ?: "",
+            artworkUrl = intent.getStringExtra("artworkUrl100") ?: "",
             collectionName = intent.getStringExtra("collectionName") ?: "",
-            releaseDate = intent.getStringExtra("year") ?: "",
-            primaryGenreName = intent.getStringExtra("primaryGenreName") ?: "",
+            releaseYear = intent.getStringExtra("year") ?: "",
+            genre = intent.getStringExtra("primaryGenreName") ?: "",
             country = intent.getStringExtra("country") ?: "",
             previewUrl = intent.getStringExtra("previewUrl") ?: ""
         )
@@ -106,7 +100,7 @@ class AudioPlayer: AppCompatActivity() {
             durationNameView.visibility = View.GONE
         }
 
-        if (track.collectionName.isNotEmpty()) {
+        if (!track.collectionName.isNullOrEmpty()) {
             albomDataView.text = track.collectionName
         } else {
             albomDataView.visibility = View.GONE
@@ -114,15 +108,15 @@ class AudioPlayer: AppCompatActivity() {
         }
         yearDataView.text = "2000"
 
-        if (track.primaryGenreName.isNotEmpty()) {
-            genreDataView.text = track.primaryGenreName
+        if (track.genre.isNotEmpty()) {
+            genreDataView.text = track.genre
         } else {
             genreNameView.visibility = View.GONE
             genreDataView.visibility = View.GONE
         }
 
-        if (track.releaseDate.isNotEmpty()){
-            yearDataView.text = track.releaseDate
+        if (track.releaseYear.isNotEmpty()){
+            yearDataView.text = track.releaseYear
         } else {
             yearDataView.visibility = View.GONE
             yearNameView.visibility = View.GONE
@@ -169,7 +163,7 @@ class AudioPlayer: AppCompatActivity() {
         // *** Блок установки картинок для тем (светлой и темной). Окончание *** //
 
 
-        val artBigArtUrl = track.artworkUrl100?.let { getBigArtUrl(track.artworkUrl100) }
+        val artBigArtUrl = track.artworkUrl?.let { getBigArtUrl(track.artworkUrl) }
 
         tool_bar_button_back.setNavigationOnClickListener {
             finish()

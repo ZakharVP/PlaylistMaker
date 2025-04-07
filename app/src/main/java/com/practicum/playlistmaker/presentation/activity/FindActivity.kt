@@ -1,6 +1,5 @@
-package com.practicum.playlistmaker.Activity
+package com.practicum.playlistmaker.presentation.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -18,30 +17,25 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
-import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
-import com.practicum.playlistmaker.ItunesApplicationApi
-import com.practicum.playlistmaker.OnTrackClickListener
+import com.practicum.playlistmaker.ConstantsApp.Config
+import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.RetrofitFactory
-import com.practicum.playlistmaker.SongResponse
-import com.practicum.playlistmaker.ThemeManager
-import com.practicum.playlistmaker.Track
-import com.practicum.playlistmaker.TrackAdapter
-import com.practicum.playlistmaker.TrackManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.IOException
+import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
+import com.practicum.playlistmaker.data.sharedPreferences.ThemeManager
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.adapters.TrackAdapter
+import com.practicum.playlistmaker.data.sharedPreferences.TrackManager
+import com.practicum.playlistmaker.domain.OnTrackClickListener
+import com.practicum.playlistmaker.domain.impl.HistoryRepositoryImpl
+import com.practicum.playlistmaker.domain.impl.TrackRepositoryImpl
+import com.practicum.playlistmaker.domain.interactors.HistoryUseCase
+import com.practicum.playlistmaker.domain.interactors.SearchTracksUseCase
 
 class FindActivity : AppCompatActivity(), OnTrackClickListener {
 
@@ -57,29 +51,32 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
     private lateinit var scrollView: ScrollView
     private lateinit var progressBar: ProgressBar
 
+    private lateinit var searchUseCase: SearchTracksUseCase
+    private lateinit var historyUseCase: HistoryUseCase
+
+    private val networkClient = RetrofitNetworkClient()
+
     private var saveText: String = ""
     private var textSearch: String = ""
 
-    val retrofit = RetrofitFactory.create()
-    val itunesService = retrofit.create(ItunesApplicationApi::class.java)
     var isNightMode : Boolean = false
     val songsList: ArrayList<Track> = ArrayList()
     val songsListReverse: ArrayList<Track> = ArrayList()
     var trackAdapter: TrackAdapter = TrackAdapter(this, songsList, this)
-    val gson = Gson()
 
     private val searchRunnable = Runnable { findSongs(textSearch) }
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var historyIsHide : Boolean = false
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        searchUseCase = Creator.provideSearchTracksUseCase()
+        historyUseCase = Creator.provideHistoryUseCase(this)
+
+
+
         setContentView(R.layout.activity_find)
 
         // *** Блок инициализации View. Начало *** //
@@ -115,9 +112,6 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         hideHistory()
         hideNoSongs()
         hideNoNetwork()
-
-        //val height36px = pxToDp(36)
-        //buttonClearHistory.layoutParams.height = height36px
 
         // **** Установили активной строку.
         // Если есть история - отображаем, если нет то обычный пустой экран.
@@ -191,12 +185,12 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
             intent.putExtra("trackId",track.trackId)
             intent.putExtra("trackId",track.trackId)
             intent.putExtra("trackName",track.trackName)
-            intent.putExtra("trackTimeMillis",track.trackTimeMillis)
+            intent.putExtra("trackTimeMillis",track.trackTimeMillisString)
             intent.putExtra("artistName",track.artistName)
-            intent.putExtra("artworkUrl100",track.artworkUrl100)
+            intent.putExtra("artworkUrl100",track.artworkUrl)
             intent.putExtra("collectionName",track.collectionName)
-            intent.putExtra("primaryGenreName",track.primaryGenreName)
-            intent.putExtra("year",track.releaseDate.take(4))
+            intent.putExtra("primaryGenreName",track.genre)
+            intent.putExtra("year",track.releaseYear.take(4))
             intent.putExtra("country",track.country)
             intent.putExtra("previewUrl",track.previewUrl)
 
@@ -206,14 +200,14 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
 
     private fun searchDebounce(someChar : String) {
         handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        handler.postDelayed(searchRunnable, Config.SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({ isClickAllowed = true}, Config.CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
@@ -234,33 +228,6 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         }
     }
 
-    private fun showHistory() {
-        songsList.clear()
-        songsListReverse.clear()
-        val songsListString = TrackManager.getHistoryTrack(this@FindActivity)
-        if (songsListString.size != 0) {
-            for (trackString in songsListString) {
-                if (trackString.isNotEmpty()) {
-                    val track = gson.fromJson(trackString, Track::class.java)
-                    songsList.add(track)
-                }
-            }
-            for (track in songsList.reversed()) {
-                songsListReverse.add(track)
-            }
-            trackAdapter = TrackAdapter(this, songsListReverse, this)
-            recyclerView.adapter = trackAdapter
-
-            searchHint.visibility = View.VISIBLE
-            buttonClearHistory.visibility = View.VISIBLE
-            scrollView.visibility = View.VISIBLE
-
-            historyIsHide = false
-        } else {
-            hideHistory()
-        }
-
-    }
     private fun hideHistory() {
         searchHint.visibility = View.GONE
         buttonClearHistory.visibility = View.GONE
@@ -290,59 +257,94 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
     private fun findSongs(textSearch: String) {
         scrollView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
+        Log.d("findSongs","Begin getting ...")
+        Thread {
+            try {
+                val tracks = searchUseCase.execute(textSearch)
+                Log.d("findSongs","count of songs - ${tracks.count()}")
 
-        Log.d("FindActivity", "Перед вызовом сервиса iTunes")
-        val call = itunesService.search(textSearch)
-        Log.d("FindActivity", "После вызова сервиса iTunes")
+                runOnUiThread {
+                    progressBar.visibility = View.GONE
 
-        call.enqueue(object : Callback<SongResponse> {
-            override fun onResponse(call: Call<SongResponse>, response: Response<SongResponse>) {
-                progressBar.visibility = View.GONE
-                Log.d("FindActivity", "Ответ получен после отправки: $textSearch")
-                Log.d("FindActivity", "Код ответа сервера: ${response.code()}")
-                if (response.isSuccessful) {
-                    Log.d("FindActivity", "Результат: ${response.body()?.results.toString()}")
-                    Log.d("FindActivity", "Найдено треков: ${response.body()?.resultCount}")
-                    val songsList = response.body()?.results ?: emptyList()
-
-                    if (songsList.isNotEmpty()) {
-                        hideHistory()
-                        if (!scrollView.isVisible)  { scrollView.visibility = View.VISIBLE }
-                        if (networkView.isVisible) { networkView.visibility = View.GONE }
-                        if (noSongsView.isVisible) { noSongsView.visibility = View.GONE }
-
-                        val trackAdapter = TrackAdapter(this@FindActivity,songsList, this@FindActivity)
-                        recyclerView.adapter = trackAdapter
+                    if (tracks.isNotEmpty()) {
+                        showTracks(tracks)
                     } else {
-                        hideHistory()
-                        if (scrollView.isVisible)  { scrollView.visibility = View.GONE }
-                        if (networkView.isVisible) { networkView.visibility = View.GONE }
-                        if (!noSongsView.isVisible) { noSongsView.visibility = View.VISIBLE }
-                        if (isNightMode) {
-                            imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_dark_mode)
-                        } else {
-                            imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_light_mode)
-                        }
+                        showEmptyState()
                     }
-                } else {
-                    handleError(response.code())
+                }
+            } catch (e: Exception) {
+                Log.d("findSongs","error ${e}")
+                runOnUiThread {
+                    progressBar.visibility = View.GONE
+                    showError()
                 }
             }
+        }.start()
 
-            override fun onFailure(call: Call<SongResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
-                Log.d("FindActivity", "Попали в событие onFailure")
-                if (t is IOException) {
-                    Log.d("FindActivity", t.toString())
-                    handleNetworkError()
-                } else {
-                    Log.d("FindActivity", t.toString())
-                    handleError(t)
-                }
-
-            }
-        })
     }
+
+    private fun showTracks(tracks: List<Track>) {
+        hideHistory()
+        scrollView.visibility = View.VISIBLE
+        networkView.visibility = View.GONE
+        noSongsView.visibility = View.GONE
+
+        trackAdapter = TrackAdapter(this, tracks, this)
+        recyclerView.adapter = trackAdapter
+    }
+
+    private fun showHistory() {
+        val historyTracks = historyUseCase.getHistory()
+        if (historyTracks.isNotEmpty()) {
+            trackAdapter = TrackAdapter(this, historyTracks, this)
+            recyclerView.adapter = trackAdapter
+            // Показать UI истории
+        } else {
+            hideHistory()
+        }
+    }
+
+    private fun showError() {
+        // Скрываем другие состояния
+        hideHistory()
+        scrollView.visibility = View.GONE
+        noSongsView.visibility = View.GONE
+
+        // Показываем ошибку сети
+        networkView.visibility = View.VISIBLE
+
+        // Устанавливаем соответствующую иконку в зависимости от темы
+        if (isNightMode) {
+            imageScreenNetworkError.setImageResource(R.drawable.no_network_dark_mode)
+        } else {
+            imageScreenNetworkError.setImageResource(R.drawable.no_network_light_mode)
+        }
+
+        // Настраиваем кнопку "Обновить"
+        val buttonUpdate = findViewById<Button>(R.id.button_update)
+        buttonUpdate.setOnClickListener {
+            // Повторяем поиск при нажатии
+            findSongs(editText.text.toString())
+        }
+    }
+
+    private fun showEmptyState() {
+        // Скрываем другие состояния
+        hideHistory()
+        scrollView.visibility = View.GONE
+        networkView.visibility = View.GONE
+
+        // Показываем состояние "ничего не найдено"
+        noSongsView.visibility = View.VISIBLE
+
+        // Устанавливаем соответствующую иконку в зависимости от темы
+        if (isNightMode) {
+            imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_dark_mode)
+        } else {
+            imageScreenNoFindSongs.setImageResource(R.drawable.no_songs_light_mode)
+        }
+    }
+
     private fun handleNetworkError(){
         Log.d("FindActivity", "Попали в событие handleNetworkError")
         hideHistory()

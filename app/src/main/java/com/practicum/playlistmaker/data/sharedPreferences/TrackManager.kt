@@ -1,9 +1,10 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data.sharedPreferences
 
 import android.content.Context
 import com.google.gson.Gson
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SONGS
+import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SETTINGS
+import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SONGS
+import com.practicum.playlistmaker.domain.models.Track
 
 object TrackManager {
 
