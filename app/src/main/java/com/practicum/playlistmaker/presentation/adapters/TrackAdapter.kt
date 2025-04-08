@@ -1,10 +1,13 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.domain.Track
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.data.sharedPreferences.TrackManager
+import com.practicum.playlistmaker.domain.OnTrackClickListener
 
 class TrackAdapter (
     private val context: Context,
