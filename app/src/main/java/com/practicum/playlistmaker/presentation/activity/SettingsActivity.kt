@@ -1,22 +1,16 @@
-package com.practicum.playlistmaker.Activity
+package com.practicum.playlistmaker.presentation.activity
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.WindowInsetsController
 import android.widget.Button
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.ThemeManager
+import com.practicum.playlistmaker.data.sharedPreferences.ThemeManager
 
 class SettingsActivity : AppCompatActivity() {
 

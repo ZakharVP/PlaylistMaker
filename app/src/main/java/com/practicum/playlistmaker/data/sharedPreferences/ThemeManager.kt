@@ -1,10 +1,10 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data.sharedPreferences
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
+import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SETTINGS
+import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
 
 
 object ThemeManager {
