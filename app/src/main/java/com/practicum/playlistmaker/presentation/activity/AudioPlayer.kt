@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
@@ -17,29 +18,25 @@ import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.sharedPreferences.ThemeManager
 import com.practicum.playlistmaker.domain.models.Track
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class AudioPlayer: AppCompatActivity() {
-
+class AudioPlayer : AppCompatActivity() {
     companion object {
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
-
         private const val CHANGE_TIME_DELAY = 300L
     }
 
     private lateinit var playButton: ImageButton
     private var isNightMode = false
-
     private var playerState = STATE_DEFAULT
-    private var mediaPlayer = MediaPlayer()
-    var url = "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/ac/c7/d1/acc7d13f-6634-495f-caf6-491eccb505e8/mzaf_4002676889906514534.plus.aac.p.m4a"
-
-    lateinit var timeTrackView: TextView
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var timeTrackView: TextView
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var changeTextRunnable: Runnable
 
@@ -48,159 +45,132 @@ class AudioPlayer: AppCompatActivity() {
         setContentView(R.layout.activity_audioplayer)
 
         isNightMode = ThemeManager.getThemeFromPreferences(this)
-
-        // *** Блок инициализации View. Начало *** //
-        val buttonAddSingle = findViewById<ImageButton>(R.id.buttonAddSingle)
-        playButton = findViewById<ImageButton>(R.id.playButton)
-        val buttonLikeSingle = findViewById<ImageButton>(R.id.buttonLikeSingle)
-
-        val tool_bar_button_back = findViewById<Toolbar>(R.id.toolBarAudioPlayer)
-        val imageSingleView = findViewById<ImageView>(R.id.imageSingle)
-
-        timeTrackView = findViewById<TextView>(R.id.timeTrack)
-
-        val nameSingle = findViewById<TextView>(R.id.nameSingle)
-        val authorSingle = findViewById<TextView>(R.id.authorSingle)
-        val durationDataView = findViewById<TextView>(R.id.durationData)
-        val durationNameView = findViewById<TextView>(R.id.durationName)
-        val albomDataView = findViewById<TextView>(R.id.albomData)
-        val albomNameView = findViewById<TextView>(R.id.albomName)
-        val yearDataView = findViewById<TextView>(R.id.yearData)
-        val yearNameView = findViewById<TextView>(R.id.yearName)
-        val genreDataView = findViewById<TextView>(R.id.genreData)
-        val genreNameView = findViewById<TextView>(R.id.genreName)
-        val countryDataView = findViewById<TextView>(R.id.countryData)
-        val countryNameView = findViewById<TextView>(R.id.countryName)
-        // *** Блок инициализации View. Окончание *** //
-
-        val track = Track(
-            trackName = intent.getStringExtra("trackName") ?: "",
-            artistName = intent.getStringExtra("artistName") ?: "",
-            //trackTimeMillisString = intent.getLongExtra("trackTimeMillis",0) ?: 0,
-            trackTimeMillisString = getDuration(intent.getLongExtra("trackTimeMillis",0)) ?: "",
-            trackId = intent.getStringExtra("trackId") ?: "",
-            artworkUrl = intent.getStringExtra("artworkUrl100") ?: "",
-            collectionName = intent.getStringExtra("collectionName") ?: "",
-            releaseYear = intent.getStringExtra("year") ?: "",
-            genre = intent.getStringExtra("primaryGenreName") ?: "",
-            country = intent.getStringExtra("country") ?: "",
-            previewUrl = intent.getStringExtra("previewUrl") ?: ""
-        )
-
-        // *** Блок установки внешних данных. Начало *** //
-        nameSingle.text = track.trackName
-        authorSingle.text = track.artistName
-
-        url = track.previewUrl
-
-        if (track.trackTimeMillisString.isNotEmpty()) {
-            durationDataView.text = track.trackTimeMillisString
-        } else {
-            durationDataView.visibility = View.GONE
-            durationNameView.visibility = View.GONE
+        mediaPlayer = MediaPlayer().apply {
+            setOnPreparedListener { onPlayerPrepared() }
+            setOnErrorListener { _, what, extra -> onPlayerError(what, extra) }
         }
 
-        if (!track.collectionName.isNullOrEmpty()) {
-            albomDataView.text = track.collectionName
-        } else {
-            albomDataView.visibility = View.GONE
-            albomNameView.visibility = View.GONE
-        }
-        yearDataView.text = "2000"
+        initViews()
+        setupTrackData()
+        setupPlayerControls()
+    }
 
-        if (track.genre.isNotEmpty()) {
-            genreDataView.text = track.genre
-        } else {
-            genreNameView.visibility = View.GONE
-            genreDataView.visibility = View.GONE
+    private fun initViews() {
+        playButton = findViewById(R.id.playButton)
+        timeTrackView = findViewById(R.id.timeTrack)
+
+        // Инициализация остальных View
+        findViewById<Toolbar>(R.id.toolBarAudioPlayer).setNavigationOnClickListener { finish() }
+    }
+
+    private fun setupTrackData() {
+        val track = intent.extras?.let {
+            Track(
+                trackName = it.getString("trackName") ?: "",
+                artistName = it.getString("artistName") ?: "",
+                trackTimeMillisString = getDuration(it.getLong("trackTimeMillis", 0)),
+                trackId = it.getString("trackId") ?: "",
+                artworkUrl = it.getString("artworkUrl100") ?: "",
+                collectionName = it.getString("collectionName") ?: "",
+                releaseYear = it.getString("year") ?: "",
+                genre = it.getString("primaryGenreName") ?: "",
+                country = it.getString("country") ?: "",
+                previewUrl = it.getString("previewUrl") ?: ""
+            )
+        } ?: run {
+            finish()
+            return
         }
 
-        if (track.releaseYear.isNotEmpty()){
-            yearDataView.text = track.releaseYear
-        } else {
-            yearDataView.visibility = View.GONE
-            yearNameView.visibility = View.GONE
-        }
+        // Установка данных трека в UI
+        findViewById<TextView>(R.id.nameSingle).text = track.trackName
+        findViewById<TextView>(R.id.authorSingle).text = track.artistName
 
-        if (track.country.isNotEmpty()){
-            countryDataView.text = track.country
-        } else {
-            countryDataView.visibility = View.GONE
-            countryNameView.visibility = View.GONE
-        }
+        // Загрузка обложки
+        Glide.with(this)
+            .load(track.artworkUrl?.replace("100x100bb.jpg", "512x512bb.jpg"))
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
+            .error(R.drawable.no_image_placeholder)
+            .into(findViewById(R.id.imageSingle))
 
-        changeTextRunnable = Runnable {
-            if (mediaPlayer.isPlaying) {
-                val currentTime = mediaPlayer.currentPosition
-                Log.d("CurrentTime",currentTime.toString())
-                val currentTextTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTime)
-                timeTrackView.setText(currentTextTime)
-                handler.postDelayed(changeTextRunnable, CHANGE_TIME_DELAY)
-            } else {
-                timeTrackView.setText("00:00")
-                if (isNightMode) {
-                    playButton.setImageResource(R.drawable.play_button_dark)
-                } else {
-                    playButton.setImageResource(R.drawable.play_button_light)
-                }
+        // Инициализация плеера
+        if (track.previewUrl.isNotEmpty()) {
+            try {
+                mediaPlayer.setDataSource(track.previewUrl)
+                mediaPlayer.prepareAsync()
+            } catch (e: IOException) {
+                Log.d("AudioPlayer","Error loading audio")
+                Toast.makeText(this, "Error loading audio", Toast.LENGTH_SHORT).show()
+                finish()
             }
-
-        }
-
-
-        // *** Блок установки внешних данных. Окончание *** //
-
-        // *** Блок установки картинок для тем (светлой и темной). Начало *** //
-        if (isNightMode) {
-            buttonAddSingle.setImageResource(R.drawable.add_single_dark)
-            playButton.setImageResource(R.drawable.play_button_dark)
-            buttonLikeSingle.setImageResource(R.drawable.like_button_dark)
         } else {
-            buttonAddSingle.setImageResource(R.drawable.add_single_light)
-            playButton.setImageResource(R.drawable.play_button_light)
-            buttonLikeSingle.setImageResource(R.drawable.like_button_light)
-        }
-        // *** Блок установки картинок для тем (светлой и темной). Окончание *** //
-
-
-        val artBigArtUrl = track.artworkUrl?.let { getBigArtUrl(track.artworkUrl) }
-
-        tool_bar_button_back.setNavigationOnClickListener {
+            Log.d("AudioPlayer","Audio not available")
+            Toast.makeText(this, "Audio not available", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
 
-        Glide.with(this)
-            .load(artBigArtUrl)
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(100)))
-                .error(R.drawable.no_image_placeholder)
-            .placeholder(R.drawable.no_image_placeholder)
-            .into(imageSingleView)
-
-        preparePlayer()
+    private fun setupPlayerControls() {
+        changeTextRunnable = Runnable {
+            if (mediaPlayer.isPlaying) {
+                timeTrackView.text = SimpleDateFormat("mm:ss", Locale.getDefault())
+                    .format(mediaPlayer.currentPosition)
+                handler.postDelayed(changeTextRunnable, CHANGE_TIME_DELAY)
+            }
+        }
 
         playButton.setOnClickListener {
-            playbackControl()
+            when (playerState) {
+                STATE_PLAYING -> pausePlayer()
+                STATE_PREPARED, STATE_PAUSED -> startPlayer()
+            }
         }
-
     }
 
-    override fun onPause() {
-        super.onPause()
-        pausePlayer()
+    private fun onPlayerPrepared() {
+        playerState = STATE_PREPARED
+        playButton.isEnabled = true
+        if (isNightMode) {
+            playButton.setImageResource(R.drawable.play_button_dark)
+        } else {
+            playButton.setImageResource(R.drawable.play_button_light)
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun onPlayerError(what: Int, extra: Int): Boolean {
+        Log.d("AudioPlayer","Playback error")
+        Toast.makeText(this, "Playback error", Toast.LENGTH_SHORT).show()
+        finish()
+        return true
+    }
+
+    private fun startPlayer() {
+        try {
+            mediaPlayer.start()
+            playerState = STATE_PLAYING
+            updatePlayButton(true)
+            startUpdateProgress()
+        } catch (e: IllegalStateException) {
+            Log.d("AudioPlayer","Playback error")
+            Toast.makeText(this, "Playback error", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playerState = STATE_PAUSED
+        updatePlayButton(false)
         stopUpdateProgress()
-        mediaPlayer.release()
     }
 
-    private fun preparePlayer() {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playerState = STATE_PREPARED
+    private fun updatePlayButton(isPlaying: Boolean) {
+        val resId = when {
+            isPlaying && isNightMode -> R.drawable.pause_dark
+            isPlaying -> R.drawable.pause_light
+            isNightMode -> R.drawable.play_button_dark
+            else -> R.drawable.play_button_light
         }
+        playButton.setImageResource(resId)
     }
 
     private fun startUpdateProgress() {
@@ -211,50 +181,21 @@ class AudioPlayer: AppCompatActivity() {
         handler.removeCallbacks(changeTextRunnable)
     }
 
-    private fun startPlayer() {
-
-        mediaPlayer.start()
-
-        if (isNightMode) {
-            playButton.setImageResource(R.drawable.pause_dark)
-        } else {
-            playButton.setImageResource(R.drawable.pause_light)
-        }
-        playerState = STATE_PLAYING
-
-        startUpdateProgress()
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
-        if (isNightMode) {
-            playButton.setImageResource(R.drawable.play_button_dark)
-        } else {
-            playButton.setImageResource(R.drawable.play_button_light)
-        }
-        stopUpdateProgress()
-    }
-
-    private fun playbackControl () {
-        when(playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
+    override fun onPause() {
+        super.onPause()
+        if (playerState == STATE_PLAYING) {
+            pausePlayer()
         }
     }
 
-    fun getBigArtUrl(originalUrl: String): String{
-        return originalUrl.replace("100x100bb.jpg", "512x512bb.jpg")
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(changeTextRunnable)
+        mediaPlayer.release()
     }
 
-    fun getDuration(duration: Long): String {
+    private fun getDuration(duration: Long): String {
         val totalSeconds = duration / 1000
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        return String.format("%02d:%02d", minutes, seconds)
+        return String.format("%02d:%02d", totalSeconds / 60, totalSeconds % 60)
     }
 }

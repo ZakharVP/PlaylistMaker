@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.domain.repositary
 import com.practicum.playlistmaker.domain.models.Track
 
 interface HistoryRepository {
-    fun getHistory(): List<Track>
-    fun clearHistory()
+    fun getSearchHistory(): List<Track>
+    fun addToHistory(track: Track)
+    fun clearSearchHistory()
 }

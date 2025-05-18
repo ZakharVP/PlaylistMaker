@@ -6,15 +6,15 @@ import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SONGS
 import com.practicum.playlistmaker.domain.models.Track
 
-object TrackManager {
+class TrackManager(private val context: Context) {
 
-    fun saveTrackToPreferences(context: Context, track: Track) {
+    fun saveTrackToPreferences(track: Track) {
 
         val gson = Gson()
         val trackJson = gson.toJson(track)
         val trackId = track.trackId
 
-        val existTrack = getHistoryTrack(context).toMutableList()
+        val existTrack = getHistoryTrack().toMutableList()
 
         val trackToRemove =  existTrack.find{
             gson.fromJson(it, Track::class.java).trackId == trackId
@@ -38,7 +38,7 @@ object TrackManager {
 
     }
 
-    fun clearTrackFromPreferences(context: Context) {
+    fun clearTrackFromPreferences() {
         val trackHistoryString = ""
         val sharedPreferences = context.getSharedPreferences(PLAYLIST_SETTINGS, Context.MODE_PRIVATE)
         sharedPreferences.edit()
@@ -46,7 +46,7 @@ object TrackManager {
             .apply()
     }
 
-    fun getHistoryTrack(context: Context) : List<String> {
+    fun getHistoryTrack() : List<String> {
         val sharedPreferences = context.getSharedPreferences(PLAYLIST_SETTINGS, Context.MODE_PRIVATE)
         val trackHistoryString = sharedPreferences.getString(PLAYLIST_SONGS, "") ?: ""
         val songs = trackHistoryString.split("|")

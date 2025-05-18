@@ -7,15 +7,20 @@ import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.repositary.HistoryRepository
 
 class HistoryRepositoryImpl(private val context: Context) : HistoryRepository {
+    private val trackManager = TrackManager(context)
     private val gson = Gson()
 
-    override fun getHistory(): List<Track> {
-        return TrackManager.getHistoryTrack(context).mapNotNull {
+    override fun getSearchHistory(): List<Track> {
+        return trackManager.getHistoryTrack().mapNotNull {
             gson.fromJson(it, Track::class.java)
         }.reversed()
     }
 
-    override fun clearHistory() {
-        TrackManager.clearTrackFromPreferences(context)
+    override fun addToHistory(track: Track) {
+        trackManager.saveTrackToPreferences(track)
+    }
+
+    override fun clearSearchHistory() {
+        trackManager.clearTrackFromPreferences()
     }
 }
