@@ -62,12 +62,21 @@ class SettingsActivity : AppCompatActivity() {
             val subject = getString(R.string.mail_theme)
             val body = getString(R.string.mail_body)
 
-            val sendLetter = Intent(Intent.ACTION_SENDTO).apply {
+            val sendLetter = Intent(Intent.ACTION_SEND).apply {
+                type = "message/rfc822"
                 data = Uri.parse("mailto:$email")
                 putExtra(Intent.EXTRA_SUBJECT, subject)
                 putExtra(Intent.EXTRA_TEXT, body)
             }
-            startActivity(sendLetter)
+
+            if (sendLetter.resolveActivity(packageManager) != null) {
+                startActivity(sendLetter)
+            } else {
+                // Если нет почтового клиента, можно предложить альтернативу
+                val mailtoUri = Uri.parse("mailto:$email?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}")
+                val alternativeIntent = Intent(Intent.ACTION_VIEW, mailtoUri)
+                startActivity(alternativeIntent)
+            }
         }
         val button_agreement = findViewById<Button>(R.id.agreement)
         button_agreement.setOnClickListener{
