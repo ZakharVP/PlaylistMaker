@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.domain.repositary
+package com.practicum.playlistmaker.data.repositary
 
 import com.practicum.playlistmaker.domain.models.Track
 
