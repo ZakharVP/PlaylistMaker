@@ -27,10 +27,9 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.sharedPreferences.ThemeManager
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.presentation.adapters.TrackAdapter
-import com.practicum.playlistmaker.domain.OnTrackClickListener
+import com.practicum.playlistmaker.domain.repositories.OnTrackClickListener
 import com.practicum.playlistmaker.hide
 import com.practicum.playlistmaker.show
-import java.io.IOException
 import kotlin.concurrent.thread
 
 class FindActivity : AppCompatActivity(), OnTrackClickListener {
@@ -48,10 +47,8 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
     private lateinit var progressBar: ProgressBar
     private lateinit var trackAdapter: TrackAdapter
 
-    private var currentTracks: List<Track> = emptyList()
-
     private val searchUseCase = Creator.provideSearchTracksUseCase()
-    private val historyUseCase = Creator.provideHistoryUseCase(this)
+    private val historyUseCase = Creator.provideHistoryUseCase()
 
     private var saveText: String = ""
     private var textSearch: String = ""
@@ -73,7 +70,6 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
         setupRecyclerView()
         setupButtons()
 
-        //checkAndShowHistory()
     }
 
     private fun initViews() {
@@ -106,18 +102,6 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
 
         searchHint.hide()
         buttonClearHistory.hide()
-    }
-
-    private fun checkAndShowHistory() {
-        networkView.hide()
-        noSongsView.hide()
-
-        if (editText.text.isNullOrEmpty()) {
-            showHistoryIfAvailable()
-        } else {
-            // Если есть текст в поле поиска, скрываем историю
-            hideHistory()
-        }
     }
 
     private fun setupToolbar() {
@@ -288,6 +272,7 @@ class FindActivity : AppCompatActivity(), OnTrackClickListener {
             scrollView.show()
         } else {
             hideHistory()
+            hideErrorViews()
         }
     }
 

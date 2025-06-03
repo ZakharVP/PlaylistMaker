@@ -4,10 +4,10 @@ import android.util.Log
 import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.dto.SongRequest
 import com.practicum.playlistmaker.data.dto.SongResponse
-import com.practicum.playlistmaker.data.repositary.TrackRepository
+import com.practicum.playlistmaker.domain.repositories.TrackRepositoryInter
 import com.practicum.playlistmaker.domain.models.Track
 
-class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
+class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepositoryInter {
 
     override fun searchTracks(expression: String): List<Track> {
         val response = networkClient.doRequest(SongRequest(expression))

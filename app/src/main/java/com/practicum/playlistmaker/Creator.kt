@@ -3,34 +3,41 @@ package com.practicum.playlistmaker
 import android.content.Context
 import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
-import com.practicum.playlistmaker.domain.impl.HistoryRepositoryImpl
-import com.practicum.playlistmaker.domain.impl.TrackRepositoryImpl
-import com.practicum.playlistmaker.domain.interactors.HistoryUseCase
-import com.practicum.playlistmaker.domain.interactors.SearchTracksUseCase
-import com.practicum.playlistmaker.domain.repositary.HistoryRepository
-import com.practicum.playlistmaker.domain.repositary.TrackRepository
+import com.practicum.playlistmaker.data.repositary.impl.HistoryRepositoryImpl
+import com.practicum.playlistmaker.data.repositary.impl.TrackRepositoryImpl
+import com.practicum.playlistmaker.domain.interfaces.HistoryUseCase
+import com.practicum.playlistmaker.domain.usecase.SearchTracksUseCaseImpl
+import com.practicum.playlistmaker.domain.usecase.HistoryUseCaseImpl
+import com.practicum.playlistmaker.domain.repositories.TrackRepositoryInter
 
 object Creator {
+    private lateinit var appContext: Context
 
-    // Для TrackRepository
-    fun provideTrackRepository(networkClient: NetworkClient = provideNetworkClient()): TrackRepository {
-        return TrackRepositoryImpl( networkClient )
-    }
-
-    //Для HistoryRepository
-    fun provideHistoryRepository(context: Context): HistoryRepository {
-        return HistoryRepositoryImpl(context)
-    }
-
-    //UseCases они же итеракторы
-    fun provideSearchTracksUseCase(): SearchTracksUseCase {
-        return SearchTracksUseCase(provideTrackRepository())
-    }
-    fun provideHistoryUseCase(context: Context): HistoryUseCase {
-        return HistoryUseCase(provideHistoryRepository(context))
+    fun init(context: Context) {
+        appContext = context.applicationContext
     }
 
     //Общие зависимости
     fun provideNetworkClient(): NetworkClient = RetrofitNetworkClient()
+
+    // Для TrackRepository
+    fun provideTrackRepository(networkClient: NetworkClient = provideNetworkClient()): TrackRepositoryInter {
+        return TrackRepositoryImpl(networkClient)
+    }
+
+    //Для HistoryRepository
+    fun provideHistoryRepository(): HistoryRepositoryImpl {
+        return HistoryRepositoryImpl(appContext)
+    }
+
+    //UseCase
+    fun provideSearchTracksUseCase(trackRepository: TrackRepositoryInter = provideTrackRepository()): SearchTracksUseCaseImpl {
+        return SearchTracksUseCaseImpl(trackRepository)
+    }
+    fun provideHistoryUseCase(historyRepository: HistoryRepositoryImpl = provideHistoryRepository()): HistoryUseCase {
+        return HistoryUseCaseImpl(historyRepository)
+    }
+
+
 
 }

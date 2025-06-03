@@ -4,9 +4,9 @@ import android.content.Context
 import com.google.gson.Gson
 import com.practicum.playlistmaker.data.sharedPreferences.TrackManager
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.repositary.HistoryRepository
+import com.practicum.playlistmaker.domain.repositories.HistoryRepositoryInter
 
-class HistoryRepositoryImpl(private val context: Context) : HistoryRepository {
+class HistoryRepositoryImpl(private val context: Context) : HistoryRepositoryInter {
     private val trackManager = TrackManager(context)
     private val gson = Gson()
 
@@ -16,7 +16,7 @@ class HistoryRepositoryImpl(private val context: Context) : HistoryRepository {
         }.reversed()
     }
 
-    override fun addToHistory(track: Track) {
+    override fun addSearchToHistory(track: Track) {
         trackManager.saveTrackToPreferences(track)
     }
 

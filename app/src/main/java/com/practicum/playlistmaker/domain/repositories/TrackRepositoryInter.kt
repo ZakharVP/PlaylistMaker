@@ -1,7 +1,7 @@
-package com.practicum.playlistmaker.data.repositary
+package com.practicum.playlistmaker.domain.repositories
 
 import com.practicum.playlistmaker.domain.models.Track
 
-interface TrackRepository {
+interface TrackRepositoryInter {
     fun searchTracks(expression: String): List<Track>
 }
