@@ -1,16 +1,21 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.data.Track
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.repositories.OnTrackClickListener
 
 class TrackAdapter (
-    private val context: Context,
-    private val dataTrack: List<Track>,
+    private var tracks: List<Track>,
     private val listener: OnTrackClickListener
 ) : RecyclerView.Adapter<TrackViewHolder> () {
+
+    fun updateTracks(newTracks: List<Track>) {
+        tracks = newTracks
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.card_track, parent, false)
@@ -18,20 +23,15 @@ class TrackAdapter (
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(dataTrack[position])
+        val track = tracks[position]
+        holder.bind(track)
 
-        //Здесь реагирует вся карточка целиком
-        holder.itemView.setOnClickListener{
-            val track = dataTrack[position]
-            TrackManager.saveTrackToPreferences(context, track)
-
+        holder.itemView.setOnClickListener {
             listener.onTrackClick(track)
         }
     }
 
-    override fun getItemCount(): Int {
-        return dataTrack.size
-    }
+    override fun getItemCount(): Int = tracks.size
 
 }
 

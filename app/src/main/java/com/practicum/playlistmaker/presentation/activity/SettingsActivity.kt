@@ -1,22 +1,16 @@
-package com.practicum.playlistmaker.Activity
+package com.practicum.playlistmaker.presentation.activity
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.WindowInsetsController
 import android.widget.Button
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS
-import com.practicum.playlistmaker.ConstantsApp.PLAYLIST_SETTINGS_THEME_NIGHT_VALUE
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.ThemeManager
+import com.practicum.playlistmaker.data.sharedPreferences.ThemeManager
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -68,12 +62,21 @@ class SettingsActivity : AppCompatActivity() {
             val subject = getString(R.string.mail_theme)
             val body = getString(R.string.mail_body)
 
-            val sendLetter = Intent(Intent.ACTION_SENDTO).apply {
+            val sendLetter = Intent(Intent.ACTION_SEND).apply {
+                type = "message/rfc822"
                 data = Uri.parse("mailto:$email")
                 putExtra(Intent.EXTRA_SUBJECT, subject)
                 putExtra(Intent.EXTRA_TEXT, body)
             }
-            startActivity(sendLetter)
+
+            if (sendLetter.resolveActivity(packageManager) != null) {
+                startActivity(sendLetter)
+            } else {
+                // Если нет почтового клиента, можно предложить альтернативу
+                val mailtoUri = Uri.parse("mailto:$email?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}")
+                val alternativeIntent = Intent(Intent.ACTION_VIEW, mailtoUri)
+                startActivity(alternativeIntent)
+            }
         }
         val button_agreement = findViewById<Button>(R.id.agreement)
         button_agreement.setOnClickListener{
