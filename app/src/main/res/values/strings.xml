@@ -16,6 +16,7 @@
     <string name="clear_history">Очистить историю</string>
     <string name="history">Вы искали</string>
 
+    <string name="send_email" translatable="false">Отправить письмо</string>
     <string name="mail_address" translatable="false">zakhar-panchenko@yandex.ru</string>
     <string name="mail_theme" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="mail_body" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
