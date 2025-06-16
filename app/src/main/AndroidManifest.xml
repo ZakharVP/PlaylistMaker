@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".data.sharedPreferences.AppTheme"
@@ -16,19 +17,19 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.activity.AudioPlayer"
+            android:name=".playlist.player.ui.views.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.activity.FindActivity"
+            android:name=".playlist.search.ui.views.FindActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.activity.MediatekaActivity"
+            android:name=".playlist.mediateka.ui.views.MediatekaActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.activity.SettingsActivity"
+            android:name=".playlist.settings.ui.SettingsActivity"
             android:exported="true" />
         <activity
-            android:name=".presentation.activity.MainActivity"
+            android:name=".playlist.main.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data.sharedPreferences
+package com.practicum.playlistmaker.playlist.search.data.sharedprefs
 
 import android.content.Context
 import com.google.gson.Gson
@@ -6,7 +6,7 @@ import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SONGS
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 
-class TrackManager(private val context: Context) {
+class SearchHistoryStorage(private val context: Context) {
 
     fun saveTrackToPreferences(track: Track) {
 
@@ -53,5 +53,4 @@ class TrackManager(private val context: Context) {
             .filter { it.isNotEmpty()}
         return songs
     }
-
 }
