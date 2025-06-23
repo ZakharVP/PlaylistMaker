@@ -61,7 +61,8 @@
                 android:src="@drawable/ic_clear"
                 android:background="@android:color/transparent"
                 android:layout_gravity="end|center_vertical"
-                android:contentDescription="@string/clear_history"/>
+                android:contentDescription="@string/clear_history"
+                android:visibility="gone"/>
 
 
         </FrameLayout>
