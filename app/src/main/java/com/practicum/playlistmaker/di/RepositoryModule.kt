@@ -20,19 +20,19 @@ val repositoryModule = module {
 
     single { Gson() }
     factory { MediaPlayer() }
-    single {
+    factory {
         SearchHistoryStorage(
             context = androidContext(),
             gson = get()
         )
     }
-    single<HistoryRepository> {
+    factory<HistoryRepository> {
         HistoryRepositoryImpl(
             searchHistoryStorage = get(),
             gson = get()
         )
     }
-    single<TrackRepository> {
+    factory<TrackRepository> {
         TrackRepositoryImpl(
             networkClient = get()
         )
@@ -40,12 +40,12 @@ val repositoryModule = module {
     single<ThemeRepository> {
         ThemeRepositoryImpl( get() )
     }
-    single<PlayerRepository> {
+    factory<PlayerRepository> {
         PlayerRepositoryImpl(
             mediaPlayer = get()
         )
     }
-    single<SettingsRepository> {
+    factory<SettingsRepository> {
         SettingsRepositoryImpl(get())
     }
 }
