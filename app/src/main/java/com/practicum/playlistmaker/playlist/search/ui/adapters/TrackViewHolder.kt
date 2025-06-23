@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.playlist.search.ui.adapters
 
+import androidx.core.util.TimeUtils.formatDuration
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
@@ -17,6 +18,8 @@ class TrackViewHolder(
             // Используем правильные ID из card_track.xml
             nameTrack.text = track.trackName          // Было: trackName
             nameTrackSingers.text = track.artistName  // Было: artistName
+            trackDuration.text = track.trackTimeMillisString
+
 
             // Загрузка изображения
             Glide.with(itemView)
