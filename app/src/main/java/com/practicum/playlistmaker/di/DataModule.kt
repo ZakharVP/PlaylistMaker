@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Context
+import com.google.gson.Gson
 import com.practicum.playlistmaker.playlist.search.data.network.ItunesApplicationApi
 import com.practicum.playlistmaker.playlist.search.data.network.NetworkClient
 import com.practicum.playlistmaker.playlist.search.data.network.RetrofitNetworkClient
@@ -15,6 +16,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 val dataModule = module {
+
+    single { Gson() }
     single<NetworkClient> { RetrofitNetworkClient() }
     single {
         Retrofit.Builder()
@@ -23,7 +26,11 @@ val dataModule = module {
             .build()
     }
     single<ItunesApplicationApi> { get<Retrofit>().create(ItunesApplicationApi::class.java) }
-    single { SearchHistoryStorage(androidContext()) }
+    single {
+        SearchHistoryStorage(
+            context = androidContext(),
+            gson = get())
+    }
     single<NetworkChecker> { AndroidNetworkChecker(androidContext()) }
     single {
         ThemePreferencesDataSource(

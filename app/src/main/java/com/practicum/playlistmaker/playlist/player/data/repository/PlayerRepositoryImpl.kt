@@ -4,12 +4,13 @@ import android.media.MediaPlayer
 import com.practicum.playlistmaker.playlist.player.domain.repository.PlayerRepository
 import java.io.IOException
 
-class PlayerRepositoryImpl : PlayerRepository {
-    private var mediaPlayer: MediaPlayer? = null
+class PlayerRepositoryImpl(
+    private val mediaPlayer: MediaPlayer
+) : PlayerRepository {
 
     override fun preparePlayer(url: String, onPrepared: () -> Unit, onError: () -> Unit) {
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().apply {
+
+        mediaPlayer.apply {
             try {
                 setDataSource(url)
                 prepareAsync()
@@ -25,19 +26,18 @@ class PlayerRepositoryImpl : PlayerRepository {
     }
 
     override fun startPlayer() {
-        mediaPlayer?.start()
+        mediaPlayer.start()
     }
 
     override fun pausePlayer() {
-        mediaPlayer?.pause()
+        mediaPlayer.pause()
     }
 
-    override fun getCurrentPosition(): Int = mediaPlayer?.currentPosition ?: 0
+    override fun getCurrentPosition(): Int = mediaPlayer.currentPosition ?: 0
 
     override fun releasePlayer() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+        mediaPlayer.release()
     }
 
-    override fun isPlaying(): Boolean = mediaPlayer?.isPlaying ?: false
+    override fun isPlaying(): Boolean = mediaPlayer.isPlaying ?: false
 }
