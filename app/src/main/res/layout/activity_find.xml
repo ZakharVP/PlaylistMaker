@@ -134,7 +134,7 @@
                     android:id="@+id/no_songs_screen"
                     android:layout_width="@dimen/primary_indent_size_120"
                     android:layout_height="@dimen/primary_indent_size_120"
-                    android:src="@drawable/no_songs_light_mode"
+                    android:src="@drawable/no_songs"
                     ></ImageView>
                 <TextView
                     android:layout_width="wrap_content"
