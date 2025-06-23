@@ -12,10 +12,12 @@ import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 import com.practicum.playlistmaker.playlist.settings.data.SettingsRepositoryImpl
 import com.practicum.playlistmaker.playlist.settings.data.datasource.ThemePreferencesDataSource
 import com.practicum.playlistmaker.playlist.settings.domain.SettingsInteractor
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var viewModel: SettingsViewModel
+
     private lateinit var binding: ActivitySettingsBinding
+    private val viewModel: SettingsViewModel by viewModel()
     private var isSwitchProgrammaticUpdate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +28,6 @@ class SettingsActivity : AppCompatActivity() {
         val dataSource = ThemePreferencesDataSource(getSharedPreferences("theme_prefs", MODE_PRIVATE))
         val repository = SettingsRepositoryImpl(dataSource)
         val interactor = SettingsInteractor(repository)
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(interactor)).get(SettingsViewModel::class.java)
 
         setupToolbar()
         setupThemeSwitch()

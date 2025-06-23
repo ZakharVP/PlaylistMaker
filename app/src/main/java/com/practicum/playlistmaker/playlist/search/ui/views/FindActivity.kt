@@ -8,32 +8,19 @@ import android.util.Log
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.databinding.ActivityFindBinding
-import com.practicum.playlistmaker.playlist.creator.Creator
 import com.practicum.playlistmaker.playlist.player.ui.views.PlayerActivity
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 import com.practicum.playlistmaker.playlist.search.ui.adapters.TrackAdapter
 import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchState
 import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchViewModel
-import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FindActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFindBinding
-    private val viewModel: SearchViewModel by lazy {
-        ViewModelProvider(
-            this,
-            SearchViewModelFactory(
-                searchUseCase = Creator.provideSearchTracksUseCase(
-                    repository = Creator.provideTrackRepository(applicationContext),
-                    networkChecker = Creator.provideNetworkChecker(applicationContext)
-                ),
-                historyUseCase = Creator.provideHistoryUseCase(this),
-                networkChecker = Creator.provideNetworkChecker(applicationContext)
-            )
-        )[SearchViewModel::class.java]
-    }
+    private val viewModel: SearchViewModel by viewModel()
+
     private val adapter = TrackAdapter { onTrackClick(it) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
