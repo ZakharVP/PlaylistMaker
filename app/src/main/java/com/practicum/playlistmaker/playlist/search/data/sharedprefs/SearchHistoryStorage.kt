@@ -6,11 +6,13 @@ import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SETTINGS
 import com.practicum.playlistmaker.ConstantsApp.Config.PLAYLIST_SONGS
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 
-class SearchHistoryStorage(private val context: Context) {
+class SearchHistoryStorage(
+    private val context: Context,
+    private val gson: Gson
+) {
 
     fun saveTrackToPreferences(track: Track) {
 
-        val gson = Gson()
         val trackJson = gson.toJson(track)
         val trackId = track.trackId
 

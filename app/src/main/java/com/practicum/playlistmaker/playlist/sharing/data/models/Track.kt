@@ -14,7 +14,8 @@ data class Track(
     val releaseYear: String,
     val genre: String,
     val country: String,
-    val previewUrl: String
+    val previewUrl: String,
+    val trackTime: String
 ) : Parcelable {
 
     fun getBigArtUrl(): String = artworkUrl.replace("100x100bb.jpg", "512x512bb.jpg")
@@ -30,7 +31,8 @@ data class Track(
         releaseYear = parcel.readString() ?: "",
         genre = parcel.readString() ?: "",
         country = parcel.readString() ?: "",
-        previewUrl = parcel.readString() ?: ""
+        previewUrl = parcel.readString() ?: "",
+        trackTime = parcel.readString() ?: ""
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -44,6 +46,7 @@ data class Track(
         parcel.writeString(genre)
         parcel.writeString(country)
         parcel.writeString(previewUrl)
+        parcel.writeString(trackTime)
     }
 
     override fun describeContents(): Int {
@@ -87,7 +90,8 @@ data class Track(
                     releaseYear = dto.releaseDate?.take(4) ?: "",
                     genre = dto.primaryGenreName ?: "",
                     country = dto.country ?: "",
-                    previewUrl = dto.previewUrl
+                    previewUrl = dto.previewUrl,
+                    trackTime = dto.trackTime ?: ""
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "Error mapping track ${dto.trackName}", e)

@@ -4,16 +4,14 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioplayerBinding
-import com.practicum.playlistmaker.playlist.player.data.repository.PlayerRepositoryImpl
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
 import com.practicum.playlistmaker.playlist.player.ui.viewmodels.PlayerViewModel
-import com.practicum.playlistmaker.playlist.player.ui.viewmodels.PlayerViewModelFactory
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -24,7 +22,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityAudioplayerBinding
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel: PlayerViewModel by viewModel()
     private var isNightMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,13 +35,6 @@ class PlayerActivity : AppCompatActivity() {
             AppCompatDelegate.MODE_NIGHT_YES -> true
             else -> false
         }
-
-        // Инициализация ViewModel с фабрикой
-        val repository = PlayerRepositoryImpl()
-            viewModel = ViewModelProvider(
-                this,
-                PlayerViewModelFactory(repository)
-            )[PlayerViewModel::class.java]
 
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(TRACK_EXTRA, Track::class.java)

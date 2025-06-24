@@ -61,7 +61,8 @@
                 android:src="@drawable/ic_clear"
                 android:background="@android:color/transparent"
                 android:layout_gravity="end|center_vertical"
-                android:contentDescription="@string/clear_history"/>
+                android:contentDescription="@string/clear_history"
+                android:visibility="gone"/>
 
 
         </FrameLayout>
@@ -133,7 +134,7 @@
                     android:id="@+id/no_songs_screen"
                     android:layout_width="@dimen/primary_indent_size_120"
                     android:layout_height="@dimen/primary_indent_size_120"
-                    android:src="@drawable/no_songs_light_mode"
+                    android:src="@drawable/no_songs"
                     ></ImageView>
                 <TextView
                     android:layout_width="wrap_content"

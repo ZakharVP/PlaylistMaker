@@ -6,23 +6,23 @@ import com.practicum.playlistmaker.playlist.search.data.sharedprefs.SearchHistor
 import com.practicum.playlistmaker.playlist.search.domain.repository.HistoryRepository
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 
-class HistoryRepositoryImpl(private val context: Context) : HistoryRepository {
-
-    private val trackManager = SearchHistoryStorage(context)
-    private val gson = Gson()
+class HistoryRepositoryImpl(
+    private val searchHistoryStorage: SearchHistoryStorage,
+    private val gson: Gson
+) : HistoryRepository {
 
     override fun getSearchHistory(): List<Track> {
-        return trackManager.getHistoryTrack().mapNotNull {
+        return searchHistoryStorage.getHistoryTrack().mapNotNull {
             gson.fromJson(it, Track::class.java)
         }.reversed()
     }
 
     override fun addToHistory(track: Track) {
-        trackManager.saveTrackToPreferences(track)
+        searchHistoryStorage.saveTrackToPreferences(track)
     }
 
     override fun clearSearchHistory() {
-        trackManager.clearTrackFromPreferences()
+        searchHistoryStorage.clearTrackFromPreferences()
     }
 
 }
