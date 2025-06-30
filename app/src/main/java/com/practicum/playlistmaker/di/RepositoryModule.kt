@@ -4,6 +4,10 @@ import android.media.MediaPlayer
 import com.google.gson.Gson
 import com.practicum.playlistmaker.playlist.main.data.ThemeRepositoryImpl
 import com.practicum.playlistmaker.playlist.main.domain.ThemeRepository
+import com.practicum.playlistmaker.playlist.mediateka.domain.repository.FavoritesRepository
+import com.practicum.playlistmaker.playlist.mediateka.domain.repository.FavoritesRepositoryImpl
+import com.practicum.playlistmaker.playlist.mediateka.domain.repository.PlaylistsRepository
+import com.practicum.playlistmaker.playlist.mediateka.domain.repository.PlaylistsRepositoryImpl
 import com.practicum.playlistmaker.playlist.player.data.repository.PlayerRepositoryImpl
 import com.practicum.playlistmaker.playlist.player.domain.repository.PlayerRepository
 import com.practicum.playlistmaker.playlist.search.data.repository.HistoryRepositoryImpl
@@ -47,5 +51,19 @@ val repositoryModule = module {
     }
     factory<SettingsRepository> {
         SettingsRepositoryImpl(get())
+    }
+
+    single<FavoritesRepository> {
+        FavoritesRepositoryImpl(
+            context = androidContext(),
+            gson = get()
+        )
+    }
+
+    single<PlaylistsRepository> {
+        PlaylistsRepositoryImpl(
+            context = androidContext(),
+            gson = get()
+        )
     }
 }

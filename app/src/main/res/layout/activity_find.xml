@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".playlist.search.ui.views.FindActivity">
+    tools:context=".playlist.search.ui.views.FindActivity"
+    android:background="?attr/colorPrimary">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBarFind"
