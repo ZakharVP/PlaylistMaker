@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/playlist_new_button"
+        android:textColor="?attr/colorPrimary"
+        android:backgroundTint="?attr/colorOnPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/primary_indent_size_28"/>
+
+    <!-- Остальные элементы с центрированием -->
+    <ImageView
+        android:id="@+id/playlistsImage"
+        android:layout_width="@dimen/primary_indent_size_120"
+        android:layout_height="@dimen/primary_indent_size_120"
+        android:src="@drawable/no_songs"
+        app:layout_constraintTop_toBottomOf="@id/button_update"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/primary_indent_size_46"/>
+
+    <TextView
+        android:id="@+id/playlistsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/playlist_empty"
+        android:textSize="18sp"
+        android:maxLines="2"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/playlistsImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

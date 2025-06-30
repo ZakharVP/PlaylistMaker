@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="primary_indent_size_0">0dp</dimen>
+    <dimen name="primary_indent_size_2">2dp</dimen>
     <dimen name="primary_indent_size_4">4dp</dimen>
     <dimen name="primary_indent_size_8">8dp</dimen>
     <dimen name="primary_indent_size_12">12dp</dimen>
@@ -13,10 +14,12 @@
     <dimen name="primary_indent_size_36">36dp</dimen>
     <dimen name="primary_indent_size_40">40dp</dimen>
     <dimen name="primary_indent_size_44">44dp</dimen>
+    <dimen name="primary_indent_size_46">46dp</dimen>
     <dimen name="primary_indent_size_48">48dp</dimen>
     <dimen name="primary_indent_size_52">52dp</dimen>
     <dimen name="primary_indent_size_62">62dp</dimen>
     <dimen name="primary_indent_size_72">72dp</dimen>
+    <dimen name="primary_indent_size_106">106dp</dimen>
     <dimen name="primary_indent_size_148">148dp</dimen>
     <dimen name="primary_indent_size_120">120dp</dimen>
     <dimen name="primary_indent_size_210">210dp</dimen>
