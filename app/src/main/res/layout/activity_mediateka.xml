@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".playlist.mediateka.ui.views.MediatekaActivity">
+    tools:context=".playlist.mediateka.ui.views.MediatekaActivity"
+    android:background="?attr/colorPrimary">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBarMediateka"
@@ -29,7 +30,8 @@
         app:tabIndicatorColor="?attr/colorOnPrimary"
         app:tabPaddingStart="8dp"
         app:tabPaddingEnd="8dp"
-        app:tabInlineLabel="true"/>
+        app:tabInlineLabel="true"
+        android:background="?attr/colorPrimary"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
