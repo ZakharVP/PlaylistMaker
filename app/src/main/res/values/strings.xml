@@ -28,6 +28,14 @@
     <string name="network_error_top_message" translatable="false">Проблемы со связью</string>
     <string name="network_error_bottom_message" translatable="false">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="network_error_button" translatable="false">Обновить</string>
+
+    <string name="favorites_title">Избранные треки</string>
+    <string name="playlists_title">Плейлисты</string>
+    <string name="playlist_new_button" translatable="false">Новый плейлист</string>
+    <string name="playlist_empty" translatable="false">Вы не создали\nни одного плейлиста</string>
+    <string name="mediateka_empty" translatable="false">Ваша медиатека пуста</string>
+
+
     <string name="title_activity_settings2">SettingsActivity2</string>
 
     <!-- Preference Titles -->
