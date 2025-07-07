@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation_graph"
+    app:startDestination="@id/mediatekaFragment">
+
+    <fragment
+        android:id="@+id/mediatekaFragment"
+        android:name="com.practicum.playlistmaker.playlist.mediateka.ui.fragments.MediatekaFragment"
+        android:label="Mediateka"
+        tools:layout="@layout/fragment_mediateka" />
+
+    <fragment
+        android:id="@+id/findFragment"
+        android:name="com.practicum.playlistmaker.playlist.search.ui.fragments.FindFragment"
+        android:label="Find"
+        tools:layout="@layout/fragment_find">
+        <action
+            android:id="@+id/action_findFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.practicum.playlistmaker.playlist.settings.ui.fragments.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.practicum.playlistmaker.playlist.player.ui.fragments.PlayerFragment"
+        android:label="Player"
+        tools:layout="@layout/fragment_audioplayer">
+        <argument
+            android:name="track_extra"
+            app:argType="com.practicum.playlistmaker.playlist.sharing.data.models.Track" />
+    </fragment>
+</navigation>

@@ -37,4 +37,5 @@ val dataModule = module {
             androidContext().getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
         )
     }
+
 }

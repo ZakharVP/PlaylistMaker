@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".playlist.search.ui.views.FindActivity"
+    tools:context=".playlist.search.ui.fragments.FindFragment"
     android:background="?attr/colorPrimary">
 
     <androidx.appcompat.widget.Toolbar
@@ -14,7 +14,6 @@
         android:layout_width="@dimen/primary_indent_size_0"
         android:layout_height="@dimen/primary_indent_size_62"
         app:title="@string/main_screen_find"
-        app:navigationIcon="@drawable/ic_s_top_arrow_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
