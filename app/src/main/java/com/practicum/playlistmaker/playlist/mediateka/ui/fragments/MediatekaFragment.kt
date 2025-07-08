@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentMediatekaBinding
 import com.practicum.playlistmaker.playlist.mediateka.ui.adapters.ViewPagerAdapter
 import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.MediatekaViewModel
@@ -14,10 +13,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MediatekaFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = MediatekaFragment()
-    }
 
     private var _binding: FragmentMediatekaBinding? = null
     private val binding get() = _binding!!
@@ -55,10 +50,13 @@ class MediatekaFragment : Fragment() {
         }.attach()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance() = MediatekaFragment()
     }
 
 }
