@@ -64,7 +64,7 @@
     </style>
 
     <style name="BottomNavigation.PlaylistMaker" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="android:background">@color/bottom_nav_background</item>
+        <item name="android:background">@drawable/bottom_nav_with_border</item>
         <item name="itemIconTint">@color/nav_icon_tint</item>
         <item name="itemTextColor">@color/nav_icon_tint</item>
     </style>
