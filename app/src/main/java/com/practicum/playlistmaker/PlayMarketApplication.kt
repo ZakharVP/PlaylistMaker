@@ -3,6 +3,7 @@ package com.practicum.playlistmaker
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import com.practicum.playlistmaker.ConstantsApp.Config
 import org.koin.core.context.startKoin
 import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.repositoryModule
@@ -29,7 +30,10 @@ class PlayMarketApplication: Application() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         // Проверяем сохраненную тему (по умолчанию светлая)
-        val darkThemeEnabled = sharedPreferences.getBoolean("dark_theme_enabled", false)
+        val darkThemeEnabled = sharedPreferences.getBoolean(
+            Config.DARK_THEME_ENABLED,
+            false
+        )
 
         // Устанавливаем тему приложения
         AppCompatDelegate.setDefaultNightMode(
