@@ -1,0 +1,11 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <color android:color="@color/bottom_nav_background"/>
+    </item>
+    <item android:gravity="top">
+        <shape android:shape="rectangle">
+            <size android:height="0.5dp" />
+            <solid android:color="@color/yp_light_gray" />
+        </shape>
+    </item>
+</layer-list>

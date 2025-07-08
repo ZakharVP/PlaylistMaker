@@ -1,13 +1,16 @@
-package com.practicum.playlistmaker.playlist.player.ui.views
+package com.practicum.playlistmaker.playlist.player.ui.fragments
 
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivityAudioplayerBinding
+import com.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
 import com.practicum.playlistmaker.playlist.player.ui.viewmodels.PlayerViewModel
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
@@ -15,34 +18,50 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
 
     companion object {
         const val TRACK_EXTRA = "track_extra"
+
+        fun newInstance(track: Track): PlayerFragment {
+            return PlayerFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(TRACK_EXTRA, track)
+                }
+            }
+        }
     }
 
-    private lateinit var binding: ActivityAudioplayerBinding
+    private var _binding: FragmentAudioplayerBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: PlayerViewModel by viewModel()
     private var isNightMode: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAudioplayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Определяем текущую тему
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         isNightMode = when (AppCompatDelegate.getDefaultNightMode()) {
             AppCompatDelegate.MODE_NIGHT_YES -> true
             else -> false
         }
 
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(TRACK_EXTRA, Track::class.java)
+            arguments?.getParcelable(TRACK_EXTRA, Track::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra(TRACK_EXTRA) as? Track
+            arguments?.getParcelable(TRACK_EXTRA) as? Track
         } ?: run {
-            finish()
+            parentFragmentManager.popBackStack()
             return
         }
 
@@ -52,7 +71,9 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setupViews(track: Track) {
-        binding.toolBarAudioPlayer.setNavigationOnClickListener { finish() }
+        binding.toolBarAudioPlayer.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
         Glide.with(this)
             .load(track.getBigArtUrl())
@@ -70,11 +91,11 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.playerState.observe(this) { state ->
+        viewModel.playerState.observe(viewLifecycleOwner) { state ->
             updatePlayButton(state)
         }
 
-        viewModel.currentPosition.observe(this) { position ->
+        viewModel.currentPosition.observe(viewLifecycleOwner) { position ->
             binding.timeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault())
                 .format(position)
         }
@@ -97,6 +118,6 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // ViewModel очистится автоматически через onCleared()
+        _binding = null
     }
 }

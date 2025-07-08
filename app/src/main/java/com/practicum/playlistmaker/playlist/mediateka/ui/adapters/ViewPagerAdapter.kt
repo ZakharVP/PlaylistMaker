@@ -1,19 +1,34 @@
 package com.practicum.playlistmaker.playlist.mediateka.ui.adapters
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.playlist.mediateka.ui.fragments.FavoritesFragment
+import com.practicum.playlistmaker.playlist.mediateka.ui.fragments.PlaylistsFragment
 
-class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
-    private val fragments = mutableListOf<Fragment>()
-    private val titles = mutableListOf<String>()
+class ViewPagerAdapter(
+    fragment: Fragment
+) : FragmentStateAdapter(fragment) {
 
-    fun addFragment(fragment: Fragment, title: String) {
-        fragments.add(fragment)
-        titles.add(title)
-    }
+    private val fragments = listOf(
+        FavoritesFragment.newInstance(),
+        PlaylistsFragment.newInstance()
+    )
+
+    private val titles = listOf(
+        fragment.getString(R.string.favorites_title),
+        fragment.getString(R.string.playlists_title)
+    )
 
     fun getPageTitle(position: Int): String = titles[position]
+
     override fun getItemCount(): Int = fragments.size
-    override fun createFragment(position: Int): Fragment = fragments[position]
+
+    override fun createFragment(position: Int): Fragment {
+        return when (position) {
+            0 -> FavoritesFragment.newInstance()
+            1 -> PlaylistsFragment.newInstance()
+            else -> throw IllegalStateException("Неправильная позиция: $position")
+        }
+    }
 }

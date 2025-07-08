@@ -1,33 +1,42 @@
-package com.practicum.playlistmaker.playlist.search.ui.views
+package com.practicum.playlistmaker.playlist.search.ui.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import com.practicum.playlistmaker.databinding.ActivityFindBinding
-import com.practicum.playlistmaker.playlist.player.ui.views.PlayerActivity
-import com.practicum.playlistmaker.playlist.sharing.data.models.Track
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import com.practicum.playlistmaker.databinding.FragmentFindBinding
 import com.practicum.playlistmaker.playlist.search.ui.adapters.TrackAdapter
 import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchState
 import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchViewModel
+import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import com.practicum.playlistmaker.R
 
-class FindActivity : AppCompatActivity() {
+class FindFragment : Fragment() {
 
-    private lateinit var binding: ActivityFindBinding
+    private var _binding: FragmentFindBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel()
-
     private val adapter = TrackAdapter { onTrackClick(it) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityFindBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentFindBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupToolbar()
         setupRecyclerView()
         setupSearchView()
@@ -37,21 +46,14 @@ class FindActivity : AppCompatActivity() {
         viewModel.showHistory()
     }
 
-    private fun setupRecyclerView() {
-        binding.recyclerView.adapter = adapter
+    private fun setupToolbar() {
+        binding.toolBarFind.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolBarFind)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-        }
-
-        // Обработчик нажатия на кнопку "Назад"
-        binding.toolBarFind.setNavigationOnClickListener {
-            finish()
-        }
+    private fun setupRecyclerView() {
+        binding.recyclerView.adapter = adapter
     }
 
     private fun setupSearchView() {
@@ -78,11 +80,11 @@ class FindActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.tracks.observe(this) { tracks ->
+        viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
             adapter.submitList(tracks)
         }
 
-        viewModel.state.observe(this) { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             Log.d("SearchState", "New state: $state")
             binding.progressBar.isVisible = state is SearchState.Loading
             binding.scrollViewOne.isVisible = state is SearchState.Content || state is SearchState.History
@@ -95,29 +97,15 @@ class FindActivity : AppCompatActivity() {
 
             when (state) {
                 is SearchState.History -> {
-                    val tracks = state.tracks
-                    val hasHistory = tracks.isNotEmpty()
-                    // Показываем только при наличии истории
+                    val hasHistory = state.tracks.isNotEmpty()
                     binding.searchHint.isVisible = hasHistory
                     binding.clearHistory.isVisible = hasHistory
-                    adapter.submitList(tracks)
-                }
-                is SearchState.Content -> {
                     adapter.submitList(state.tracks)
-                    binding.searchHint.isVisible = false
                 }
-                is SearchState.Empty -> {
-                    adapter.submitList(emptyList())
-                }
-                is SearchState.NetworkError -> {
-                    adapter.submitList(emptyList())
-                }
-                is SearchState.Loading -> {
-                    // Обработка загрузки
-                }
-                SearchState.EmptyHistory -> {
-                    // Ничего не делаем, элементы уже скрыты
-                }
+                is SearchState.Content -> adapter.submitList(state.tracks)
+                is SearchState.Empty,
+                is SearchState.NetworkError -> adapter.submitList(emptyList())
+                else -> Unit
             }
         }
     }
@@ -138,10 +126,15 @@ class FindActivity : AppCompatActivity() {
     private fun onTrackClick(track: Track) {
         viewModel.addToHistory(track)
 
-        // Используем константу TRACK_EXTRA из PlayerActivity
-        val intent = Intent(this, PlayerActivity::class.java).apply {
-            putExtra(PlayerActivity.TRACK_EXTRA, track)
-        }
-        startActivity(intent)
+        findNavController().navigate(
+            R.id.action_findFragment_to_playerFragment,
+            bundleOf("track_extra" to track)
+        )
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

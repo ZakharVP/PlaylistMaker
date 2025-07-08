@@ -18,6 +18,7 @@
         <item name="colorOnPrimarySurface">@color/yp_gray</item>
 
         <item name="android:windowLightStatusBar">true</item>
+
     </style>
 
     <style name="AppToolbar" parent="Theme.AppCompat.Light">

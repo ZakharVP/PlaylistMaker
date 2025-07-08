@@ -17,20 +17,9 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".playlist.player.ui.views.PlayerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".playlist.search.ui.views.FindActivity"
-            android:exported="false" />
-        <activity
-            android:name=".playlist.mediateka.ui.views.MediatekaActivity"
-            android:exported="false" />
-        <activity
-            android:name=".playlist.settings.ui.SettingsActivity"
-            android:exported="true" />
-        <activity
-            android:name=".playlist.main.ui.MainActivity"
-            android:exported="true">
+            android:name=".playlist.root.ui.views.RootActivity"
+            android:exported="true"
+            android:windowSoftInputMode="stateVisible|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
