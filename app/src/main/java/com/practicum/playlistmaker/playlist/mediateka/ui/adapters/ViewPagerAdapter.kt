@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.playlist.mediateka.ui.adapters
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.mediateka.ui.fragments.FavoritesFragment
@@ -25,5 +24,11 @@ class ViewPagerAdapter(
 
     override fun getItemCount(): Int = fragments.size
 
-    override fun createFragment(position: Int): Fragment = fragments[position]
+    override fun createFragment(position: Int): Fragment {
+        return when (position) {
+            0 -> FavoritesFragment.newInstance()
+            1 -> PlaylistsFragment.newInstance()
+            else -> throw IllegalStateException("Неправильная позиция: $position")
+        }
+    }
 }
