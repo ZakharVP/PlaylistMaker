@@ -9,4 +9,9 @@
     <color name="yp_black">#1A1B22</color>
     <color name="yp_light_gray">#E6E8EB</color>
     <color name="yp_light2_gray">#818C99</color>
+
+    <color name="nav_icon_active">@color/yp_blue</color>
+    <color name="nav_icon_inactive">@color/yp_black</color>
+
+    <color name="bottom_nav_background">@color/yp_white</color>
 </resources>

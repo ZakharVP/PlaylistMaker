@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="nav_icon_inactive">@color/yp_white</color> <!-- Неактивные иконки белые -->
+    <color name="nav_icon_active">@color/yp_blue</color> <!-- Активные остаются синими -->
+    <color name="bottom_nav_background">@color/yp_black</color>
+</resources>

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".playlist.settings.ui.SettingsActivity"
+    tools:context=".playlist.settings.ui.fragments.SettingsFragment"
     android:background="?attr/colorPrimary">
 
     <androidx.appcompat.widget.Toolbar
@@ -15,7 +15,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_s_top_arrow_back"
         app:title="@string/main_screen_settings" />
 
     <Switch
@@ -32,7 +31,7 @@
 
     <Button
         android:id="@+id/share"
-        style="@style/ButtonSettingsStyle"
+        style="@style/ButtonSettingsStyleTwo"
         android:text="@string/settings_screen_share"
         app:icon="@drawable/ic_s_share"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +40,7 @@
 
     <Button
         android:id="@+id/sendToSupport"
-        style="@style/ButtonSettingsStyle"
+        style="@style/ButtonSettingsStyleTwo"
         android:text="@string/settings_screen_support"
         app:icon="@drawable/ic_s_support"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +49,7 @@
 
     <Button
         android:id="@+id/agreement"
-        style="@style/ButtonSettingsStyle"
+        style="@style/ButtonSettingsStyleTwo"
         android:text="@string/settings_screen_agreement"
         app:icon="@drawable/ic_s_arrow_forward"
         app:layout_constraintEnd_toEndOf="parent"
