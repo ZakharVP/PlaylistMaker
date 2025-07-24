@@ -17,8 +17,10 @@ import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchViewModel
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
+import kotlinx.coroutines.launch
 
 class FindFragment : Fragment() {
 
@@ -80,32 +82,35 @@ class FindFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
-            adapter.submitList(tracks)
+        lifecycleScope.launch {
+            viewModel.tracks.collect { tracks ->
+                adapter.submitList(tracks)
+            }
         }
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            Log.d("SearchState", "New state: $state")
-            binding.progressBar.isVisible = state is SearchState.Loading
-            binding.scrollViewOne.isVisible = state is SearchState.Content || state is SearchState.History
-            binding.noSongs.isVisible = state is SearchState.Empty
-            binding.networkError.isVisible = state is SearchState.NetworkError
+        lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                Log.d("SearchState", "New state: $state")
+                binding.progressBar.isVisible = state is SearchState.Loading
+                binding.scrollViewOne.isVisible = state is SearchState.Content || state is SearchState.History
+                binding.noSongs.isVisible = state is SearchState.Empty
+                binding.networkError.isVisible = state is SearchState.NetworkError
 
-            // Сначала скрываем все дополнительные элементы
-            binding.searchHint.isVisible = false
-            binding.clearHistory.isVisible = false
+                binding.searchHint.isVisible = false
+                binding.clearHistory.isVisible = false
 
-            when (state) {
-                is SearchState.History -> {
-                    val hasHistory = state.tracks.isNotEmpty()
-                    binding.searchHint.isVisible = hasHistory
-                    binding.clearHistory.isVisible = hasHistory
-                    adapter.submitList(state.tracks)
+                when (state) {
+                    is SearchState.History -> {
+                        val hasHistory = state.tracks.isNotEmpty()
+                        binding.searchHint.isVisible = hasHistory
+                        binding.clearHistory.isVisible = hasHistory
+                        adapter.submitList(state.tracks)
+                    }
+                    is SearchState.Content -> adapter.submitList(state.tracks)
+                    is SearchState.Empty,
+                    is SearchState.NetworkError -> adapter.submitList(emptyList())
+                    else -> Unit
                 }
-                is SearchState.Content -> adapter.submitList(state.tracks)
-                is SearchState.Empty,
-                is SearchState.NetworkError -> adapter.submitList(emptyList())
-                else -> Unit
             }
         }
     }

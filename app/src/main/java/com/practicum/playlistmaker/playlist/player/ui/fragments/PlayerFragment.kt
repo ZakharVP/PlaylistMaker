@@ -84,6 +84,12 @@ class PlayerFragment : Fragment() {
         binding.nameSingle.text = track.trackName
         binding.authorSingle.text = track.artistName
         binding.playButton.setOnClickListener { viewModel.playbackControl() }
+
+        binding.durationData.text = track.trackTimeMillisString
+        binding.albomData.text = track.collectionName
+        binding.yearData.text = track.releaseYear
+        binding.genreData.text = track.genre
+        binding.countryData.text = track.country
     }
 
     private fun setupPlayer(url: String) {

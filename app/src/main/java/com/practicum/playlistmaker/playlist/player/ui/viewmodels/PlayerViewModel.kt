@@ -3,10 +3,12 @@ package com.practicum.playlistmaker.playlist.player.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
 import com.practicum.playlistmaker.playlist.player.domain.repository.PlayerRepository
-import java.util.Timer
-import java.util.TimerTask
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val repository: PlayerRepository
@@ -18,7 +20,7 @@ class PlayerViewModel(
     private val _currentPosition = MutableLiveData<Int>(0)
     val currentPosition: LiveData<Int> = _currentPosition
 
-    private var updateTimer: Timer? = null
+    private var progressUpdateJob: Job? = null
 
     fun preparePlayer(url: String) {
         repository.preparePlayer(
@@ -50,18 +52,17 @@ class PlayerViewModel(
 
     private fun startProgressUpdates() {
         stopProgressUpdates() // Останавливаем предыдущий таймер перед созданием нового
-        updateTimer = Timer().apply {
-            scheduleAtFixedRate(object : TimerTask() {
-                override fun run() {
-                    _currentPosition.postValue(repository.getCurrentPosition())
-                }
-            }, 0, 300) // Обновление каждые 300 мс
+        progressUpdateJob = viewModelScope.launch {
+            while (true) {
+                _currentPosition.postValue(repository.getCurrentPosition())
+                delay(300)
+            }
         }
     }
 
     private fun stopProgressUpdates() {
-        updateTimer?.cancel()
-        updateTimer = null
+        progressUpdateJob?.cancel()
+        progressUpdateJob = null
     }
 
     override fun onCleared() {

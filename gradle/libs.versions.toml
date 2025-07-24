@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.1"
+agp = "8.11.1"
 compiler = "4.14.2"
 converterGson = "2.9.0"
 fragmentKtx = "1.6.2"
@@ -18,6 +18,8 @@ preference = "1.2.0"
 koin = "3.3.0"
 retrofit = "2.9.0"
 navigation = "2.9.1"
+coroutines = "1.6.4"
+lifecycle = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +41,10 @@ retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", v
 
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

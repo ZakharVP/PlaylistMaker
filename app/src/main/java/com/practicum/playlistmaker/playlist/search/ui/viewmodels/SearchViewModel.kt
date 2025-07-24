@@ -6,10 +6,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.di.repositoryModule
+import com.practicum.playlistmaker.di.viewModelModule
 import com.practicum.playlistmaker.playlist.search.domain.useCases.HistoryUseCase
 import com.practicum.playlistmaker.playlist.search.domain.useCases.SearchTracksUseCase
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 import com.practicum.playlistmaker.util.NetworkChecker
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.io.IOException
 import kotlin.concurrent.thread
 
@@ -23,14 +32,13 @@ class SearchViewModel(
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val _tracks = MutableLiveData<List<Track>>()
-    val tracks: LiveData<List<Track>> = _tracks
+    private val _tracks = MutableStateFlow<List<Track>>(emptyList())
+    val tracks: StateFlow<List<Track>> = _tracks.asStateFlow()
 
-    private val _state = MutableLiveData<SearchState>()
-    val state: LiveData<SearchState> = _state
+    private val _state = MutableStateFlow<SearchState>(SearchState.Empty)
+    val state: StateFlow<SearchState> = _state.asStateFlow()
 
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
+    private var searchJob: Job? = null
     private var lastSearchQuery: String = ""
 
     fun searchDebounced(query: String) {
@@ -41,101 +49,69 @@ class SearchViewModel(
         }
 
         lastSearchQuery = query
-        searchRunnable?.let { mainHandler.removeCallbacks(it) }
+        searchJob?.cancel()
 
-        searchRunnable = Runnable {
-            _state.postValue(SearchState.Loading)
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+
+            _state.value = SearchState.Loading
 
             if (!networkChecker.isNetworkAvailable()) {
-                mainHandler.postDelayed({
-                    if (!networkChecker.isNetworkAvailable()) {
-                        _state.postValue(SearchState.NetworkError("Нет интернет-соединения"))
-                    } else {
-                        performSearch(query)
-                    }
-                }, 500)
-                return@Runnable
+                _state.value = SearchState.NetworkError("Нет интернет соединения")
+                return@launch
             }
-
             performSearch(query)
         }
-
-        mainHandler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
     }
 
-    private fun performSearch(query: String) {
-        if (!networkChecker.isNetworkAvailable()) {
-            _state.postValue(SearchState.NetworkError("Нет интернет-соединения"))
-            return
-        }
-
-        searchUseCase.execute(query) { result ->
+    private suspend fun performSearch(query: String) {
+        try {
+            val result = searchUseCase.execute(query)
             result.onSuccess { tracks ->
-                _state.postValue(
-                    if (tracks.isEmpty()) SearchState.Empty
-                    else SearchState.Content(tracks)
-                )
+                _state.value = if (tracks.isEmpty()) SearchState.Empty
+                else SearchState.Content(tracks)
+                _tracks.value = tracks
             }.onFailure { e ->
-                _state.postValue(
-                    if (e is IOException) {
-                        SearchState.NetworkError("Ошибка сети: ${e.message}")
-                    } else {
-                        SearchState.NetworkError("Ошибка сервера: ${e.message}")
-                    }
-                )
+                _state.value = when (e) {
+                    is IOException -> SearchState.NetworkError("Ошибка сети: ${e.message}")
+                    else -> SearchState.NetworkError("Ошибка сервера: ${e.message}")
+                }
             }
-        }
-    }
-
-    fun isNetworkAvailable(): Boolean {
-        return try {
-            networkChecker.isNetworkAvailable()
         } catch (e: Exception) {
-            Log.e("NetworkCheck", "Error checking network", e)
-            true
+            _state.value = SearchState.NetworkError("Неизвестная ошибка: ${e.message}")
         }
     }
 
     fun showHistory() {
-        thread {
+        viewModelScope.launch {
             try {
-                historyUseCase.getHistory { history ->
-                    mainHandler.post {
-                        _tracks.value = history
-                        _state.value = if (history.isNotEmpty()) {
-                            SearchState.History(history)
-                        } else {
-                            SearchState.EmptyHistory
-                        }
-                    }
-                }
+                val history = historyUseCase.getHistory()
+                _tracks.value = history
+                _state.value = if (history.isNotEmpty()) SearchState.History(history)
+                else SearchState.EmptyHistory
             } catch (e: Exception) {
-                mainHandler.post {
-                    _state.value = SearchState.EmptyHistory
-                }
+                _state.value = SearchState.EmptyHistory
             }
         }
     }
 
     fun addToHistory(track: Track) {
-        thread {
+        viewModelScope.launch {
             try {
                 historyUseCase.addToHistory(track)
             } catch (e: Exception) {
-                // Логирование ошибки
+                Log.e("SearchViewModel", "Ошибка при добавлении трека: ${e.message}", e)
             }
         }
     }
 
     fun clearHistory() {
-        thread {
+        viewModelScope.launch {
             try {
                 historyUseCase.clearHistory()
                 showHistory()
             } catch (e: Exception) {
-                mainHandler.post {
-                    _state.value = SearchState.EmptyHistory
-                }
+                _state.value = SearchState.EmptyHistory
             }
         }
     }
@@ -150,6 +126,6 @@ class SearchViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        searchRunnable?.let { mainHandler.removeCallbacks(it) }
+        searchJob?.cancel()
     }
 }

@@ -10,21 +10,10 @@ class SearchTracksUseCase(
     private val repository: TrackRepository,
     private val networkChecker: NetworkChecker
 ) {
-    fun execute(query: String, callback: (Result<List<Track>>) -> Unit) {
+    suspend fun execute(query: String): Result<List<Track>> {
         if (!networkChecker.isNetworkAvailable()) {
-            callback(Result.failure(IOException("Нет интернет-соединения")))
-            return
+            return Result.failure(IOException("Нет интернет-соединения"))
         }
-
-        thread {
-            try {
-                val result = repository.searchTracks(query)
-                callback(Result.success(result))
-            } catch (e: IOException) {
-                callback(Result.failure(IOException("Ошибка сети: ${e.message}")))
-            } catch (e: Exception) {
-                callback(Result.failure(Exception("Ошибка сервера: ${e.message}")))
-            }
-        }
+        return repository.searchTracks(query)
     }
 }
