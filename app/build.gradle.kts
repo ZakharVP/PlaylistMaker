@@ -58,4 +58,8 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.koin.android)
     implementation(libs.androidx.fragment.ktx)
+
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 }
