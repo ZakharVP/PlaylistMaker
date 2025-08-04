@@ -5,6 +5,7 @@ import com.practicum.playlistmaker.db.data.entities.TrackEntity
 import com.practicum.playlistmaker.playlist.mediateka.domain.repository.FavoritesRepository
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl(
@@ -12,9 +13,11 @@ class FavoritesRepositoryImpl(
 ) : FavoritesRepository {
 
     override fun getAllFavorites(): Flow<List<Track>> {
-        return trackDao.getAllFavorites().map { entities ->
-            entities.map { it.toDomain() }
-        }
+        return trackDao.getAllFavorites()
+            .map { entities ->
+                entities.map { it.toDomain() }
+            }
+            .distinctUntilChanged()
     }
 
     override suspend fun isFavorite(trackId: String): Boolean {
