@@ -19,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.practicum.playlistmaker.ConstantsApp.BundleConstants.TRACK_EXTRA
 import com.practicum.playlistmaker.R
 import kotlinx.coroutines.launch
 
@@ -133,7 +134,7 @@ class FindFragment : Fragment() {
 
         findNavController().navigate(
             R.id.action_findFragment_to_playerFragment,
-            bundleOf("track_extra" to track)
+            bundleOf(TRACK_EXTRA to track)
         )
     }
 

@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.ConstantsApp.BundleConstants
+import com.practicum.playlistmaker.ConstantsApp.BundleConstants.TRACK_EXTRA
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
@@ -25,13 +28,9 @@ import java.util.Locale
 class PlayerFragment : Fragment() {
 
     companion object {
-        const val TRACK_EXTRA = "track_extra"
-
         fun newInstance(track: Track): PlayerFragment {
             return PlayerFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(TRACK_EXTRA, track)
-                }
+                arguments = bundleOf(TRACK_EXTRA to track)
             }
         }
     }

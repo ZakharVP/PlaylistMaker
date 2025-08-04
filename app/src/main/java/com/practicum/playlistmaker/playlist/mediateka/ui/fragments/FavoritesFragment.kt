@@ -9,6 +9,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.practicum.playlistmaker.ConstantsApp.BundleConstants
+import com.practicum.playlistmaker.ConstantsApp.BundleConstants.TRACK_EXTRA
 import com.practicum.playlistmaker.ConstantsApp.Config
 import com.practicum.playlistmaker.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -43,7 +45,7 @@ class FavoritesFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = FavoritesAdapter { track ->
-            val bundle = bundleOf("track_extra" to track)
+            val bundle = bundleOf(TRACK_EXTRA to track)
 
             parentFragment?.findNavController()?.navigate(
                 R.id.action_mediatekaFragment_to_playerFragment,

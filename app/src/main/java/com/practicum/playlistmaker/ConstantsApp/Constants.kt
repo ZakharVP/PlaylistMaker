@@ -8,3 +8,7 @@ object Config {
     const val BASE_TAG = "PlaylistMaker"
 
 }
+
+object BundleConstants {
+    const val TRACK_EXTRA = "track_extra"
+}
