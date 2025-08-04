@@ -1,7 +1,8 @@
-package com.practicum.playlistmaker.playlist.mediateka.domain.repository
+package com.practicum.playlistmaker.playlist.mediateka.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
+import com.practicum.playlistmaker.playlist.mediateka.domain.repository.PlaylistsRepository
 import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 
 class PlaylistsRepositoryImpl(

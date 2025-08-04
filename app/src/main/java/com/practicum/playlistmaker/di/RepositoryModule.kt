@@ -1,15 +1,18 @@
 package com.practicum.playlistmaker.di
 
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.google.gson.Gson
+import com.practicum.playlistmaker.db.data.AppDatabase
 import com.practicum.playlistmaker.playlist.main.data.ThemeRepositoryImpl
 import com.practicum.playlistmaker.playlist.main.domain.ThemeRepository
-import com.practicum.playlistmaker.playlist.mediateka.domain.repository.FavoritesRepository
-import com.practicum.playlistmaker.playlist.mediateka.domain.repository.FavoritesRepositoryImpl
+import com.practicum.playlistmaker.playlist.mediateka.data.repository.FavoritesRepositoryImpl
 import com.practicum.playlistmaker.playlist.mediateka.domain.repository.PlaylistsRepository
-import com.practicum.playlistmaker.playlist.mediateka.domain.repository.PlaylistsRepositoryImpl
+import com.practicum.playlistmaker.playlist.mediateka.data.repository.PlaylistsRepositoryImpl
+import com.practicum.playlistmaker.playlist.mediateka.domain.repository.FavoritesRepository
 import com.practicum.playlistmaker.playlist.player.data.repository.PlayerRepositoryImpl
 import com.practicum.playlistmaker.playlist.player.domain.repository.PlayerRepository
+import com.practicum.playlistmaker.playlist.player.domain.useCases.FavoritesUseCase
 import com.practicum.playlistmaker.playlist.search.data.repository.HistoryRepositoryImpl
 import com.practicum.playlistmaker.playlist.search.data.repository.TrackRepositoryImpl
 import com.practicum.playlistmaker.playlist.search.data.sharedprefs.SearchHistoryStorage
@@ -55,8 +58,7 @@ val repositoryModule = module {
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(
-            context = androidContext(),
-            gson = get()
+            trackDao = get()
         )
     }
 
@@ -66,4 +68,18 @@ val repositoryModule = module {
             gson = get()
         )
     }
+
+    single { FavoritesUseCase(get()) }
+}
+
+val databaseModule = module {
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            AppDatabase::class.java,
+            "app_database.db"
+        ).build()
+    }
+
+    single { get<AppDatabase>().trackDao() }
 }

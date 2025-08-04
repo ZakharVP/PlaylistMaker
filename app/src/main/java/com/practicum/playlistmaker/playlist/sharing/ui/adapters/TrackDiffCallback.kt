@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.playlist.search.ui.adapters
+package com.practicum.playlistmaker.playlist.sharing.ui.adapters
 
 import androidx.recyclerview.widget.DiffUtil
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track

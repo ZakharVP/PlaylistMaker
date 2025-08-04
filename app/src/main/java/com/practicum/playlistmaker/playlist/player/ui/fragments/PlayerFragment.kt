@@ -7,13 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
+import com.practicum.playlistmaker.playlist.player.domain.useCases.FavoritesUseCase
 import com.practicum.playlistmaker.playlist.player.ui.viewmodels.PlayerViewModel
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -36,6 +40,8 @@ class PlayerFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: PlayerViewModel by viewModel()
     private var isNightMode: Boolean = false
+
+    private val favoritesUseCase: FavoritesUseCase by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,6 +96,8 @@ class PlayerFragment : Fragment() {
         binding.yearData.text = track.releaseYear
         binding.genreData.text = track.genre
         binding.countryData.text = track.country
+
+        setupFavoriteButton(track)
     }
 
     private fun setupPlayer(url: String) {
@@ -125,5 +133,29 @@ class PlayerFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun setupFavoriteButton(track: Track) {
+        lifecycleScope.launch {
+            val isFavorite = favoritesUseCase.isFavorite(track.trackId)
+            updateFavoriteButtonIcon(isFavorite)
+        }
+
+        binding.buttonLikeSingle.setOnClickListener {
+            lifecycleScope.launch {
+                favoritesUseCase.toggleFavorite(track)
+                val isFavorite = favoritesUseCase.isFavorite(track.trackId)
+                updateFavoriteButtonIcon(isFavorite)
+            }
+        }
+    }
+
+    private fun updateFavoriteButtonIcon(isFavorite: Boolean) {
+        val iconRes = if (isFavorite) {
+            if (isNightMode) R.drawable.like_button_dark_filled else R.drawable.like_button_light_filled
+        } else {
+            if (isNightMode) R.drawable.like_button_dark else R.drawable.like_button_light
+        }
+        binding.buttonLikeSingle.setImageResource(iconRes)
     }
 }
