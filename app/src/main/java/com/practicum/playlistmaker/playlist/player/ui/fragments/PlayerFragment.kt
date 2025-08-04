@@ -151,9 +151,9 @@ class PlayerFragment : Fragment() {
 
     private fun updateFavoriteButtonIcon(isFavorite: Boolean) {
         val iconRes = if (isFavorite) {
-            if (isNightMode) R.drawable.like_button_dark_filled else R.drawable.like_button_light_filled
+            R.drawable.like_button_filled
         } else {
-            if (isNightMode) R.drawable.like_button_dark else R.drawable.like_button_light
+            R.drawable.like_button
         }
         binding.buttonLikeSingle.setImageResource(iconRes)
     }
