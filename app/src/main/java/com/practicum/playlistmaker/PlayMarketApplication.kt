@@ -1,15 +1,18 @@
 package com.practicum.playlistmaker
 
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.practicum.playlistmaker.ConstantsApp.Config
-import org.koin.core.context.startKoin
 import com.practicum.playlistmaker.di.dataModule
+import com.practicum.playlistmaker.di.databaseModule
 import com.practicum.playlistmaker.di.repositoryModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.viewModelModule
-import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.logger.Level
 
 class PlayMarketApplication: Application() {
 
@@ -19,8 +22,9 @@ class PlayMarketApplication: Application() {
         initTheme()
 
         startKoin {
+            androidLogger(Level.DEBUG)
             androidContext(this@PlayMarketApplication)
-            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule, databaseModule)
         }
 
     }

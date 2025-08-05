@@ -1,25 +1,26 @@
 [versions]
-agp = "8.11.1"
-compiler = "4.14.2"
+agp = "8.12.0"
+compiler = "4.16.0"
 converterGson = "2.9.0"
-fragmentKtx = "1.6.2"
+fragmentKtx = "1.8.8"
 glide = "4.16.0"
-gson = "2.10"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+gson = "2.13.1"
+kotlin = "2.2.0"
+coreKtx = "1.16.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-appcompat = "1.7.0"
+junitVersion = "1.3.0"
+espressoCore = "3.7.0"
+appcompat = "1.7.1"
 material = "1.12.0"
-activity = "1.9.1"
-constraintlayout = "2.1.4"
-preference = "1.2.0"
-koin = "3.3.0"
+activity = "1.10.1"
+constraintlayout = "2.2.1"
+preference = "1.2.1"
+koin = "4.1.0"
 retrofit = "2.9.0"
-navigation = "2.9.1"
-coroutines = "1.6.4"
-lifecycle = "2.6.1"
+navigation = "2.9.3"
+coroutines = "1.10.2"
+lifecycle = "2.9.2"
+room = "2.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,10 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
