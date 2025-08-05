@@ -46,7 +46,19 @@ class FindFragment : Fragment() {
         setupObservers()
         setupListeners()
 
-        viewModel.showHistory()
+        restorePreviousState()
+    }
+
+    private fun restorePreviousState() {
+        lifecycleScope.launch {
+            viewModel.currentQuery.collect { query ->
+                if (query.isNotEmpty()) {
+                    binding.findEditText.setText(query)
+                } else {
+                    viewModel.showHistory()
+                }
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -65,7 +77,12 @@ class FindFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.isVisible = !s.isNullOrEmpty()
-                s?.toString()?.let { viewModel.searchDebounced(it) }
+                s?.toString()?.let {
+                    viewModel.setCurrentQuery(it)
+                    if (binding.findEditText.hasFocus()) {
+                        viewModel.searchDebounced(it)
+                    }
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -141,6 +158,21 @@ class FindFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("current_query", viewModel.currentQuery.value)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.getString("current_query")?.let { query ->
+            if (query.isNotEmpty()) {
+                binding.findEditText.setText(query)
+                viewModel.setCurrentQuery(query)
+            }
+        }
     }
 
 }

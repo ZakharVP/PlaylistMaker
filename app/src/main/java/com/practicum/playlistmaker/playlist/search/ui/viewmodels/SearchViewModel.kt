@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Query
 import com.practicum.playlistmaker.di.repositoryModule
 import com.practicum.playlistmaker.di.viewModelModule
 import com.practicum.playlistmaker.playlist.search.domain.useCases.HistoryUseCase
@@ -41,18 +42,28 @@ class SearchViewModel(
     private var searchJob: Job? = null
     private var lastSearchQuery: String = ""
 
+    private var _currentQuery = MutableStateFlow("")
+    val currentQuery: StateFlow<String> = _currentQuery
+
+    fun setCurrentQuery(query: String) {
+        _currentQuery.value = query
+    }
+
     fun searchDebounced(query: String) {
-        // Если запрос пустой - показываем историю
+
+        setCurrentQuery(query)
+
         if (query.isEmpty()) {
             showHistory()
             return
         }
 
-        lastSearchQuery = query
         searchJob?.cancel()
 
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_DELAY)
+
+            if (_currentQuery.value != query) return@launch
 
             _state.value = SearchState.Loading
 
