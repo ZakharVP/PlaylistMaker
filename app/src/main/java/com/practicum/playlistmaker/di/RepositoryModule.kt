@@ -25,7 +25,6 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
 
-    single { Gson() }
     factory { MediaPlayer() }
     factory {
         SearchHistoryStorage(
@@ -70,16 +69,4 @@ val repositoryModule = module {
     }
 
     single { FavoritesUseCase(get()) }
-}
-
-val databaseModule = module {
-    single {
-        Room.databaseBuilder(
-            androidContext(),
-            AppDatabase::class.java,
-            "app_database.db"
-        ).build()
-    }
-
-    single { get<AppDatabase>().trackDao() }
 }
