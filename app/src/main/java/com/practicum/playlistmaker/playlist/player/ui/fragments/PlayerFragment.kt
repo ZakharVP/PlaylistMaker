@@ -6,36 +6,41 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.ConstantsApp.BundleConstants.TRACK_EXTRA
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
+import com.practicum.playlistmaker.playlist.player.ui.viewmodels.FavoriteViewModel
 import com.practicum.playlistmaker.playlist.player.ui.viewmodels.PlayerViewModel
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerFragment : Fragment() {
 
-    companion object {
-        const val TRACK_EXTRA = "track_extra"
+    private var _binding: FragmentAudioplayerBinding? = null
+    private val binding get() = _binding!!
+    private var isNightMode: Boolean = false
 
+    private val playerViewModel: PlayerViewModel by viewModel()
+    private val favoriteViewModel: FavoriteViewModel by viewModel()
+
+    companion object {
         fun newInstance(track: Track): PlayerFragment {
             return PlayerFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(TRACK_EXTRA, track)
-                }
+                arguments = bundleOf(TRACK_EXTRA to track)
             }
         }
     }
-
-    private var _binding: FragmentAudioplayerBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: PlayerViewModel by viewModel()
-    private var isNightMode: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +50,6 @@ class PlayerFragment : Fragment() {
         _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,6 +72,7 @@ class PlayerFragment : Fragment() {
         setupViews(track)
         setupPlayer(track.previewUrl)
         setupObservers()
+        setupFavoriteButton(track)
     }
 
     private fun setupViews(track: Track) {
@@ -83,25 +88,26 @@ class PlayerFragment : Fragment() {
 
         binding.nameSingle.text = track.trackName
         binding.authorSingle.text = track.artistName
-        binding.playButton.setOnClickListener { viewModel.playbackControl() }
+        binding.playButton.setOnClickListener { playerViewModel.playbackControl() }
 
         binding.durationData.text = track.trackTimeMillisString
         binding.albomData.text = track.collectionName
         binding.yearData.text = track.releaseYear
         binding.genreData.text = track.genre
         binding.countryData.text = track.country
+
     }
 
     private fun setupPlayer(url: String) {
-        viewModel.preparePlayer(url)
+        playerViewModel.preparePlayer(url)
     }
 
     private fun setupObservers() {
-        viewModel.playerState.observe(viewLifecycleOwner) { state ->
+        playerViewModel.playerState.observe(viewLifecycleOwner) { state ->
             updatePlayButton(state)
         }
 
-        viewModel.currentPosition.observe(viewLifecycleOwner) { position ->
+        playerViewModel.currentPosition.observe(viewLifecycleOwner) { position ->
             binding.timeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault())
                 .format(position)
         }
@@ -119,11 +125,36 @@ class PlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.pausePlayer()
+        playerViewModel.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun setupFavoriteButton(track: Track) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                favoriteViewModel.isFavorite.collect { isFavorite ->
+                    updateFavoriteButtonIcon(isFavorite)
+                }
+            }
+        }
+
+        favoriteViewModel.checkFavorite(track.trackId)
+
+        binding.buttonLikeSingle.setOnClickListener {
+            favoriteViewModel.toggleFavorite(track)
+        }
+    }
+
+    private fun updateFavoriteButtonIcon(isFavorite: Boolean) {
+        val iconRes = if (isFavorite) {
+            R.drawable.like_button_filled
+        } else {
+            R.drawable.like_button
+        }
+        binding.buttonLikeSingle.setImageResource(iconRes)
     }
 }
