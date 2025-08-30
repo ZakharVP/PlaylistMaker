@@ -4,14 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.playlist.mediateka.domain.interactor.PlaylistInteractor
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
 import com.practicum.playlistmaker.playlist.player.domain.repository.PlayerRepository
+import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    private val repository: PlayerRepository
+    private val repository: PlayerRepository,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val _playerState = MutableLiveData<PlayerState>(PlayerState.DEFAULT)
@@ -20,7 +23,18 @@ class PlayerViewModel(
     private val _currentPosition = MutableLiveData<Int>(0)
     val currentPosition: LiveData<Int> = _currentPosition
 
+    private val _playlists = MutableLiveData<List<Playlist>>()
+    val playlists: LiveData<List<Playlist>> = _playlists
+
     private var progressUpdateJob: Job? = null
+
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            playlistInteractor.getAllPlaylists().collect { playlists ->
+                _playlists.value = playlists
+            }
+        }
+    }
 
     fun preparePlayer(url: String) {
         repository.preparePlayer(

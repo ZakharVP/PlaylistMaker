@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Пунктирная рамка -->
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="1dp"
+                android:color="#AEAFB4"
+                android:dashWidth="10dp"
+                android:dashGap="10dp"/>
+            <corners android:radius="8dp"/>
+            <solid android:color="@android:color/transparent"/>
+        </shape>
+    </item>
+
+    <!-- Внутреннее содержимое - увеличиваем отступы и размер -->
+    <item
+        android:left="56dp"
+        android:right="56dp"
+        android:top="56dp"
+        android:bottom="56dp">
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="200dp"
+            android:height="200dp"
+            android:viewportWidth="100"
+            android:viewportHeight="100">
+            <path
+                android:pathData="M85.17,35.17V47.63C85.17,47.63 76.88,47.67 76.83,47.63V35.17H64.33C64.33,35.17 64.38,26.88 64.33,26.83H76.83V14.33H85.17V26.83H97.67V35.17H85.17ZM72.67,51.83V39.33H60.17V26.83H26.83C22.25,26.83 18.5,30.58 18.5,35.17V85.17C18.5,89.75 22.25,93.5 26.83,93.5H76.83C81.42,93.5 85.17,89.75 85.17,85.17V51.83H72.67ZM26.83,85.17L39.33,68.5L47.67,81L60.17,64.33L76.83,85.17H26.83Z"
+                android:fillColor="#AEAFB4"/>
+        </vector>
+    </item>
+</layer-list>

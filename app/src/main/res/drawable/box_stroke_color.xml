@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Синий цвет когда поле не пустое (будет определяться программно) -->
+    <item android:color="@color/yp_blue" android:state_selected="true"/>
+    <!-- Серый цвет по умолчанию -->
+    <item android:color="@color/yp_gray"/>
+</selector>

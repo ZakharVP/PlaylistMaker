@@ -1,16 +1,16 @@
-package com.practicum.playlistmaker.db.data
+package com.practicum.playlistmaker.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.practicum.playlistmaker.db.data.entities.TrackEntity
+import com.practicum.playlistmaker.db.entities.TrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insert(track: TrackEntity)
 
     @Delete

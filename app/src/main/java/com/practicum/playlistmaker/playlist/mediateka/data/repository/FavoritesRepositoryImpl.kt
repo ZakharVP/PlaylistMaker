@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.playlist.mediateka.data.repository
 
-import com.practicum.playlistmaker.db.data.TrackDao
-import com.practicum.playlistmaker.db.data.entities.TrackEntity
+import com.practicum.playlistmaker.db.dao.TrackDao
+import com.practicum.playlistmaker.db.entities.TrackEntity
 import com.practicum.playlistmaker.playlist.mediateka.domain.repository.FavoritesRepository
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 import kotlinx.coroutines.flow.Flow
