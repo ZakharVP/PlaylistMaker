@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.playlist.mediateka.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,7 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        Log.i("PlaylistsFragment", "onViewCreated called")
         playlistAdapter = PlaylistAdapter { playlist ->
             // Обработка клика на плейлист
         }
@@ -65,13 +67,18 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        Log.i("PlaylistsFragment", "observeViewModel subscribed")
         viewModel.playlists.observe(viewLifecycleOwner) { playlists ->
             if (playlists.isEmpty()) {
                 showPlaylistsPlaceholder()
             } else {
                 showPlaylistsList(playlists)
             }
-            playlistAdapter.submitList(playlists)
+            Log.i("PlaylistsFragment", "emit playlists size=${playlists.size} ids=${playlists.map { it.id }}")
+            Log.i("PlaylistsFragment", "adapter current size=${playlistAdapter.currentList.size} ids=${playlistAdapter.currentList.map { it.id }}")
+            playlistAdapter.submitList(playlists.toList()) {
+                Log.i("PlaylistsFragment", "submitList committed")
+            }
         }
     }
 

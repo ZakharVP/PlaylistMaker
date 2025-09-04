@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.playlist.mediateka.ui.fragments
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,8 +21,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputLayout
-import com.practicum.playlistmaker.NoFocusTextInputLayout
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.NewPlaylistViewModel
@@ -61,7 +58,6 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    // ДОБАВЛЕНО: обработчик кнопки "Назад"
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (hasUnsavedChanges && !isCreating) {
@@ -84,7 +80,8 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ДОБАВЛЕНО: регистрируем обработчик кнопки "Назад"
+        Log.i("PlaylistsFragment", "onViewCreated called")
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
 
         setupListeners()
@@ -92,14 +89,17 @@ class NewPlaylistFragment : Fragment() {
         observeViewModel()
         hideBottomNavigation()
         updateButtonState()
-        updateInputLayoutStyle()
+
+        val initialName = binding.nameEditText.text.toString().trim()
+        val initialDescription = binding.descriptionEditText.text.toString().trim()
+        android.util.Log.d("NewPlaylistFragment", "Initial: name='$initialName', description='$initialDescription'")
     }
 
     private fun setupListeners() {
         // Кнопка назад
         binding.backButton.setOnClickListener {
             if (hasUnsavedChanges && !isCreating) {
-                showExitConfirmationDialog() // ДОБАВЛЕНО: диалог подтверждения
+                showExitConfirmationDialog()
             } else {
                 findNavController().navigateUp()
             }
@@ -116,7 +116,7 @@ class NewPlaylistFragment : Fragment() {
             val description = binding.descriptionEditText.text.toString().trim()
 
             if (name.isNotEmpty()) {
-                isCreating = true // ДОБАВЛЕНО: отмечаем процесс создания
+                isCreating = true
                 viewModel.createPlaylist(name, description)
             } else {
                 binding.nameEditText.error = "Введите название плейлиста"
@@ -128,12 +128,10 @@ class NewPlaylistFragment : Fragment() {
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                hasUnsavedChanges = true // ДОБАВЛЕНО: отмечаем изменения
+                hasUnsavedChanges = true
             }
             override fun afterTextChanged(s: Editable?) {
                 updateButtonState()
-                updateInputLayoutStyle()
-                // Очищаем ошибку при вводе текста
                 if (s?.isNotEmpty() == true) {
                     binding.nameInputLayout.error = null
                 }
@@ -159,30 +157,6 @@ class NewPlaylistFragment : Fragment() {
             .show()
     }
 
-    private fun updateInputLayoutStyle() {
-        val nameText = binding.nameEditText.text.toString().trim()
-        val descriptionText = binding.descriptionEditText.text.toString().trim()
-
-        // Для поля названия
-        (binding.nameInputLayout as NoFocusTextInputLayout).setHasText(nameText.isNotEmpty())
-
-        // Для поля описания
-        (binding.descriptionInputLayout as NoFocusTextInputLayout).setHasText(descriptionText.isNotEmpty())
-    }
-
-    private fun updateInputLayoutColors(inputLayout: TextInputLayout, hasText: Boolean) {
-        val color = if (hasText) {
-            ContextCompat.getColor(requireContext(), R.color.yp_blue)
-        } else {
-            ContextCompat.getColor(requireContext(), R.color.yp_gray)
-        }
-        val colorStateList = ColorStateList.valueOf(color)
-
-        inputLayout.boxStrokeColor = color
-        inputLayout.hintTextColor = colorStateList
-        inputLayout.defaultHintTextColor = colorStateList
-    }
-
     private fun updateButtonState() {
         val text = binding.nameEditText.text.toString().trim()
         val isEmpty = text.isEmpty()
@@ -203,7 +177,7 @@ class NewPlaylistFragment : Fragment() {
                     }
                     is NewPlaylistViewModel.CreatePlaylistState.Success -> {
                         val name = binding.nameEditText.text.toString().trim()
-                        // ИСПРАВЛЕНО: сообщение с названием плейлиста
+
                         Toast.makeText(
                             requireContext(),
                             "Плейлист \"$name\" создан!",
@@ -212,7 +186,7 @@ class NewPlaylistFragment : Fragment() {
                         findNavController().navigateUp()
                     }
                     is NewPlaylistViewModel.CreatePlaylistState.Error -> {
-                        isCreating = false // ДОБАВЛЕНО: сбрасываем флаг создания
+                        isCreating = false
                         binding.saveButton.isEnabled = true
                         binding.saveButton.text = "Создать"
                         Toast.makeText(requireContext(), "Ошибка: ${state.message}", Toast.LENGTH_SHORT).show()

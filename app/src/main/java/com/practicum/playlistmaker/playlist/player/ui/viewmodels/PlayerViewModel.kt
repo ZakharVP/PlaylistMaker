@@ -31,7 +31,7 @@ class PlayerViewModel(
     fun loadPlaylists() {
         viewModelScope.launch {
             playlistInteractor.getAllPlaylists().collect { playlists ->
-                _playlists.value = playlists
+                _playlists.postValue(playlists.toList())
             }
         }
     }
@@ -54,7 +54,7 @@ class PlayerViewModel(
 
     private fun startPlayer() {
         repository.startPlayer()
-        _playerState.postValue(PlayerState.PLAYING) // Используем postValue для фонового потока
+        _playerState.postValue(PlayerState.PLAYING)
         startProgressUpdates()
     }
 
@@ -65,7 +65,7 @@ class PlayerViewModel(
     }
 
     private fun startProgressUpdates() {
-        stopProgressUpdates() // Останавливаем предыдущий таймер перед созданием нового
+        stopProgressUpdates()
         progressUpdateJob = viewModelScope.launch {
             while (true) {
                 _currentPosition.postValue(repository.getCurrentPosition())

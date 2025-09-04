@@ -112,7 +112,10 @@ class PlayerFragment : Fragment() {
 
         // Добавлено наблюдение за списком плейлистов
         playerViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
-            playlistsAdapter.submitList(playlists)
+            playlistsAdapter.updateList(playlists.toList())
+            if (playlists.isNotEmpty() && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                playlistsRecyclerView.scrollToPosition(0)
+            }
         }
 
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -125,7 +128,7 @@ class PlayerFragment : Fragment() {
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         binding.overlay.visibility = View.VISIBLE
                         binding.overlay.alpha = 1f
-                        playerViewModel.loadPlaylists() // Добавлено: загружаем при открытии
+                        playerViewModel.loadPlaylists()
                     }
                 }
             }
@@ -245,6 +248,7 @@ class PlayerFragment : Fragment() {
 
     private fun showBottomSheet() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        playerViewModel.loadPlaylists()
     }
 
     private fun hideBottomSheet() {

@@ -2,4 +2,11 @@
 <resources>
     <attr name="createPlaylistButtonBackground" format="reference|color" />
     <attr name="createPlaylistButtonText" format="reference|color" />
+
+    <declare-styleable name="NoFocusTextInputLayout">
+        <attr name="activeColor" format="color|reference"/>
+        <attr name="inactiveColor" format="color|reference"/>
+        <attr name="forceBlueStroke" format="boolean" />
+    </declare-styleable>
 </resources>
+

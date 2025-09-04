@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="createPlaylistButtonBackground">@color/create_playlist_button_bg_dark</item>
+        <item name="createPlaylistButtonText">@color/create_playlist_button_text_dark</item>
     </style>
+
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
         <!-- Фон -->
@@ -16,6 +19,23 @@
         <item name="colorSecondaryVariant">@color/yp_white</item>
         <item name="colorPrimaryContainer">@color/yp_black</item>
         <item name="colorOnPrimarySurface">@color/yp_white</item>
+    </style>
+
+    <style name="CustomTextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/selector_text_input_stroke_dark</item>
+        <item name="hintTextColor">@color/selector_text_input_hint_dark</item>
+        <item name="android:textColorHint">@color/selector_text_input_hint_dark</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+    </style>
+
+    <style name="CustomTextInputEditText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:textColor">@color/yp_white</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="AppToolbar" parent="Theme.AppCompat.Light">

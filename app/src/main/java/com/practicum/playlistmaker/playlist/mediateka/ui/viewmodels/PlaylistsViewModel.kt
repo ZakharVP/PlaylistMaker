@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels
 
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -32,7 +33,7 @@ class PlaylistsViewModel(
         viewModelScope.launch {
             try {
                 playlistsRepository.getAllPlaylists().collect { playlistsList ->
-                    _playlists.value = playlistsList
+                    _playlists.postValue(playlistsList.toList())
                     _isLoading.value = false
                 }
             } catch (e: Exception) {

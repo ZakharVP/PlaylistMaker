@@ -11,6 +11,10 @@ class PlaylistBottomSheetAdapter(
     private val onPlaylistClick: (Playlist) -> Unit
 ) : ListAdapter<Playlist, PlaylistBottomSheetViewHolder>(PlaylistDiffCallback()) {
 
+    fun updateList(newList: List<Playlist>) {
+        submitList(newList.toList()) // Создаем новый список
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistBottomSheetViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_playlist_bottom_sheet, parent, false)

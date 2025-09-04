@@ -38,6 +38,10 @@ class PlaylistInteractor(
         return repository.getAllPlaylists().first().size
     }
 
+    suspend fun refreshPlaylists() {
+        repository.refreshPlaylists()
+    }
+
     suspend fun addTrackToPlaylist(playlistId: Long, track: Track) {
         repository.addTrackToPlaylist(playlistId, track)
     }

@@ -8,8 +8,13 @@ import com.practicum.playlistmaker.db.entities.PlaylistTrackEntity
 import com.practicum.playlistmaker.playlist.mediateka.domain.repository.PlaylistRepository
 import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class PlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
@@ -17,8 +22,37 @@ class PlaylistRepositoryImpl(
     private val gson: Gson
 ) : PlaylistRepository {
 
+    private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            refreshTrigger.emit(Unit)
+        }
+
+    }
+
+    override fun getAllPlaylists(): Flow<List<Playlist>> {
+        return refreshTrigger.flatMapLatest {
+            playlistDao.getAllPlaylists().map { entities ->
+                entities.mapNotNull { entity ->
+                    try {
+                        entity.toDomain(gson)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            }
+        }
+    }
+
+    override suspend fun refreshPlaylists() {
+        refreshTrigger.emit(Unit)
+    }
+
     override suspend fun createPlaylist(playlist: Playlist): Long {
-        return playlistDao.insert(playlist.toEntity(gson))
+        val id = playlistDao.insert(playlist.toEntity(gson))
+        refreshPlaylists()
+        return id
     }
 
     private fun Playlist.toEntity(gson: Gson): PlaylistEntity {
@@ -52,18 +86,6 @@ class PlaylistRepositoryImpl(
         playlistDao.update(playlist.toEntity(gson))
     }
 
-    override fun getAllPlaylists(): Flow<List<Playlist>> {
-        return playlistDao.getAllPlaylists().map { entities ->
-            entities.mapNotNull { entity ->
-                try {
-                    entity.toDomain(gson)
-                } catch (e: Exception) {
-                    null // Пропускаем некорректные плейлисты
-                }
-            }
-        }
-    }
-
     override suspend fun getPlaylistById(id: Long): Playlist? {
         return try {
             playlistDao.getPlaylistById(id)?.toDomain(gson)
@@ -89,6 +111,7 @@ class PlaylistRepositoryImpl(
         )
 
         playlistDao.update(updatedEntity)
+        refreshPlaylists()
     }
 
     private fun Track.toPlaylistTrackEntity(): PlaylistTrackEntity {

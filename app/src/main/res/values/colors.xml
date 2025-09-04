@@ -12,8 +12,8 @@
 
     <color name="nav_icon_active">@color/yp_blue</color>
     <color name="nav_icon_inactive">@color/yp_black</color>
-
     <color name="bottom_nav_background">@color/yp_white</color>
+    <color name="bottom_sheet_background">@color/yp_white</color>
 
     <color name="gray">#FFCCCCCC</color>
     <color name="blue">#FF2196F3</color>
