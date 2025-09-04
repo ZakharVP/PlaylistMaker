@@ -7,4 +7,5 @@ interface PlayerRepository {
     fun getCurrentPosition(): Int
     fun releasePlayer()
     fun isPlaying(): Boolean
+    fun reset()
 }

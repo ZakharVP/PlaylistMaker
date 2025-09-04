@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.mediateka.domain.interactor.PlaylistInteractor
+import com.practicum.playlistmaker.playlist.player.data.repository.PlayerRepositoryImpl
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
 import com.practicum.playlistmaker.playlist.player.domain.repository.PlayerRepository
 import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
@@ -27,6 +28,7 @@ class PlayerViewModel(
     val playlists: LiveData<List<Playlist>> = _playlists
 
     private var progressUpdateJob: Job? = null
+    private var currentUrl: String? = null
 
     fun loadPlaylists() {
         viewModelScope.launch {
@@ -36,10 +38,21 @@ class PlayerViewModel(
         }
     }
 
+    init {
+        // Для PlayerRepositoryImpl с поддержкой completion listener
+        (repository as? PlayerRepositoryImpl)?.setOnCompletionListener {
+            onPlaybackCompleted()
+        }
+    }
+
     fun preparePlayer(url: String) {
+        currentUrl = url
         repository.preparePlayer(
             url = url,
-            onPrepared = { _playerState.postValue(PlayerState.PREPARED) },
+            onPrepared = {
+                _playerState.postValue(PlayerState.PREPARED)
+                _currentPosition.postValue(0)
+            },
             onError = { _playerState.postValue(PlayerState.ERROR) }
         )
     }
@@ -68,7 +81,14 @@ class PlayerViewModel(
         stopProgressUpdates()
         progressUpdateJob = viewModelScope.launch {
             while (true) {
-                _currentPosition.postValue(repository.getCurrentPosition())
+                val position = repository.getCurrentPosition()
+                _currentPosition.postValue(position)
+
+                if (position >= 30000) {
+                    onPlaybackCompleted()
+                    break
+                }
+
                 delay(300)
             }
         }
@@ -77,6 +97,20 @@ class PlayerViewModel(
     private fun stopProgressUpdates() {
         progressUpdateJob?.cancel()
         progressUpdateJob = null
+    }
+
+    private fun onPlaybackCompleted() {
+        pausePlayer()
+        _currentPosition.postValue(0)
+        stopProgressUpdates()
+
+        currentUrl?.let { url ->
+            repository.preparePlayer(
+                url = url,
+                onPrepared = { _playerState.postValue(PlayerState.PREPARED) },
+                onError = { _playerState.postValue(PlayerState.ERROR) }
+            )
+        }
     }
 
     override fun onCleared() {
