@@ -52,9 +52,11 @@ class FindFragment : Fragment() {
     private fun restorePreviousState() {
         lifecycleScope.launch {
             viewModel.currentQuery.collect { query ->
-                if (query.isNotEmpty()) {
+                val currentText = binding.findEditText.text.toString()
+
+                if (query.isNotEmpty() && currentText.isEmpty()) {
                     binding.findEditText.setText(query)
-                } else {
+                } else if (query.isEmpty()) {
                     viewModel.showHistory()
                 }
             }
