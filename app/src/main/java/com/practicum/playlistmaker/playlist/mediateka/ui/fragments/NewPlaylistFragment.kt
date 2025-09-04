@@ -81,13 +81,10 @@ class NewPlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Log.i("PlaylistsFragment", "onViewCreated called")
-
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
-
         setupListeners()
         setupTextWatcher()
         observeViewModel()
-        hideBottomNavigation()
         updateButtonState()
 
         val initialName = binding.nameEditText.text.toString().trim()
@@ -240,43 +237,6 @@ class NewPlaylistFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        showBottomNavigation()
-    }
-
-    private fun hideBottomNavigation() {
-        try {
-            val bottomNavIds = listOf(
-                R.id.bottomNavigationView
-            )
-
-            for (navId in bottomNavIds) {
-                val bottomNav = requireActivity().findViewById<View>(navId)
-                if (bottomNav != null) {
-                    bottomNav.visibility = View.GONE
-                    break
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("NewPlaylist", "Error hiding bottom navigation: ${e.message}")
-        }
-    }
-
-    private fun showBottomNavigation() {
-        try {
-            val bottomNavIds = listOf(
-                R.id.bottomNavigationView
-            )
-
-            for (navId in bottomNavIds) {
-                val bottomNav = requireActivity().findViewById<View>(navId)
-                if (bottomNav != null) {
-                    bottomNav.visibility = View.VISIBLE
-                    break
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("NewPlaylist", "Error showing bottom navigation: ${e.message}")
-        }
     }
 
     companion object {

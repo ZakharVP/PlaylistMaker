@@ -103,8 +103,8 @@ class PlayerFragment : Fragment() {
         playlistsRecyclerView = binding.playlistsRecyclerView
         playlistsAdapter = PlaylistBottomSheetAdapter { playlist ->
             // Обработка выбора плейлиста
-            addTrackToPlaylist(playlist)
             hideBottomSheet()
+            addTrackToPlaylist(playlist)
         }
 
         playlistsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
