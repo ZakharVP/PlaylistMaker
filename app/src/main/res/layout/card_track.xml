@@ -2,8 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/primary_indent_size_62"
-        tools:context=".playlist.settings.ui.SettingsActivity">
+    android:layout_height="@dimen/primary_indent_size_62">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,6 +54,7 @@
                         android:id="@+id/name_track_singers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxWidth="@dimen/primary_indent_size_210"
                         tools:text="The Beatles"
                         android:textColor="?attr/colorOnPrimarySurface"
                         android:textSize="@dimen/main_screen_primary_text_size_11"
@@ -77,7 +77,8 @@
                         tools:text="2:55"
                         android:textColor="?attr/colorOnPrimarySurface"
                         android:textSize="@dimen/main_screen_primary_text_size_11"
-                        />
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
                 </LinearLayout>
 
                 
