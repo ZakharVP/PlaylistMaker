@@ -1,9 +1,10 @@
 package com.practicum.playlistmaker.playlist.sharing.data.models
 
 data class Playlist(
-    val id: String,
+    val id: Long,
     val name: String,
     val description: String,
-    val coverUrl: String?,
-    val tracks: List<Track>
+    val coverUri: String?,
+    val tracks: List<Track>,
+    val tracksCount: Int
 )

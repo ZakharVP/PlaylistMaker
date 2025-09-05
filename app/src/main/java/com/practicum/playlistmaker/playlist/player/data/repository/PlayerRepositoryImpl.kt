@@ -8,10 +8,13 @@ class PlayerRepositoryImpl(
     private val mediaPlayer: MediaPlayer
 ) : PlayerRepository {
 
+    private var onCompletionListener: (() -> Unit)? = null
+
     override fun preparePlayer(url: String, onPrepared: () -> Unit, onError: () -> Unit) {
 
         mediaPlayer.apply {
             try {
+                reset()
                 setDataSource(url)
                 prepareAsync()
                 setOnPreparedListener { onPrepared() }
@@ -19,10 +22,18 @@ class PlayerRepositoryImpl(
                     onError()
                     true
                 }
+                setOnCompletionListener {
+                    onCompletionListener?.invoke()
+                }
+
             } catch (e: IOException) {
                 onError()
             }
         }
+    }
+
+    fun setOnCompletionListener(listener: () -> Unit) {
+        onCompletionListener = listener
     }
 
     override fun startPlayer() {
@@ -31,6 +42,10 @@ class PlayerRepositoryImpl(
 
     override fun pausePlayer() {
         mediaPlayer.pause()
+    }
+
+    override fun reset() {
+        mediaPlayer.reset()
     }
 
     override fun getCurrentPosition(): Int = mediaPlayer.currentPosition ?: 0

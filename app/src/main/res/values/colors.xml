@@ -12,6 +12,16 @@
 
     <color name="nav_icon_active">@color/yp_blue</color>
     <color name="nav_icon_inactive">@color/yp_black</color>
-
     <color name="bottom_nav_background">@color/yp_white</color>
+    <color name="bottom_sheet_background">@color/yp_white</color>
+
+    <color name="gray">#FFCCCCCC</color>
+    <color name="blue">#FF2196F3</color>
+    <color name="blue_disabled">#FFBBDEFB</color>
+
+    <color name="create_playlist_button_bg_light">@color/yp_black</color>
+    <color name="create_playlist_button_text_light">@color/yp_white</color>
+    <color name="create_playlist_button_bg_dark">@color/yp_white</color>
+    <color name="create_playlist_button_text_dark">@color/yp_black</color>
+
 </resources>

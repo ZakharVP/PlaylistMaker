@@ -29,28 +29,35 @@
     <string name="network_error_bottom_message" translatable="false">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="network_error_button" translatable="false">Обновить</string>
 
-    <string name="favorites_title">Избранные треки</string>
-    <string name="playlists_title">Плейлисты</string>
+    <string name="favorites_title" translatable="false">Избранные треки</string>
+    <string name="playlists_title" translatable="false">Плейлисты</string>
     <string name="playlist_new_button" translatable="false">Новый плейлист</string>
     <string name="playlist_empty" translatable="false">Вы не создали\nни одного плейлиста</string>
     <string name="mediateka_empty" translatable="false">Ваша медиатека пуста</string>
+    <string name="create_playlist" translatable="false">Создать новый</string>
+    <string name="create" translatable="false">Создать</string>
+    <string name="add_playlist" translatable="false">Добавить в плейлист</string>
+    <string name="cover_playlist" translatable="false">Обложка плейлиста</string>
+
+    <string name="name_playlist" translatable="false">Название*</string>
+    <string name="description_playlist" translatable="false">Описание</string>
 
 
-    <string name="title_activity_settings2">SettingsActivity2</string>
+    <string name="title_activity_settings2" translatable="false">SettingsActivity2</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
+    <string name="messages_header" translatable="false">Messages</string>
+    <string name="sync_header" translatable="false">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
+    <string name="signature_title" translatable="false">Your signature</string>
+    <string name="reply_title" translatable="false">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    <string name="sync_title" translatable="false">Sync email periodically</string>
+    <string name="attachment_title" translatable="false">Download incoming attachments</string>
+    <string name="attachment_summary_on" translatable="false">Automatically download attachments for incoming emails
     </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="attachment_summary_off" translatable="false">Only download attachments when manually requested</string>
 
 </resources>
