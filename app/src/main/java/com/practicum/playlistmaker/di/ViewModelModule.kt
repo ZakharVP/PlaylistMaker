@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.di
 import com.practicum.playlistmaker.playlist.main.ui.MainViewModel
 import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.FavoritesViewModel
 import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.NewPlaylistViewModel
+import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.PlaylistDetailViewModel
 import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.PlaylistsViewModel
 import com.practicum.playlistmaker.playlist.player.ui.viewmodels.FavoriteViewModel
 import com.practicum.playlistmaker.playlist.player.ui.viewmodels.PlayerViewModel
@@ -27,4 +28,6 @@ val viewModelModule = module {
     viewModel { FavoriteViewModel(get()) }
 
     viewModel { NewPlaylistViewModel(get(), androidContext()) }
+
+    viewModel { PlaylistDetailViewModel(get()) }
 }

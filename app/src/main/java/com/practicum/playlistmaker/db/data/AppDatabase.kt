@@ -23,4 +23,15 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
     abstract fun trackDao(): TrackDao
     abstract fun playlistTrackDao(): PlaylistTrackDao
+
+    companion object {
+        fun buildDatabase(context: Context): AppDatabase {
+            return Room.databaseBuilder(
+                context,
+                AppDatabase::class.java,
+                "app_database"
+            ).fallbackToDestructiveMigration()
+                .build()
+        }
+    }
 }

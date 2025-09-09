@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.mediateka.domain.interactor.PlaylistInteractor
+import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,10 +24,14 @@ class NewPlaylistViewModel(
     val createPlaylistState: StateFlow<CreatePlaylistState> = _createPlaylistState
 
     private var coverUri: Uri? = null
+    private var editingPlaylistId: Long? = null
 
-    // Добавляем метод setCoverUri
     fun setCoverUri(uri: Uri?) {
         coverUri = uri
+    }
+
+    fun setEditingPlaylistId(playlistId: Long?) {
+        editingPlaylistId = playlistId
     }
 
     fun createPlaylist(name: String, description: String) {
@@ -40,6 +45,27 @@ class NewPlaylistViewModel(
                 _createPlaylistState.value = CreatePlaylistState.Error(e.message ?: "Неизвестная ошибка")
             }
         }
+    }
+
+    fun updatePlaylist(name: String, description: String) {
+        viewModelScope.launch {
+            _createPlaylistState.value = CreatePlaylistState.Loading
+            try {
+                editingPlaylistId?.let { playlistId ->
+                    val coverPath = coverUri?.let { copyImageToInternalStorage(it) }
+                    playlistInteractor.updatePlaylist(playlistId, name, description, coverPath)
+                    _createPlaylistState.value = CreatePlaylistState.Success(playlistId)
+                } ?: run {
+                    _createPlaylistState.value = CreatePlaylistState.Error("ID плейлиста не указан")
+                }
+            } catch (e: Exception) {
+                _createPlaylistState.value = CreatePlaylistState.Error(e.message ?: "Неизвестная ошибка")
+            }
+        }
+    }
+
+    suspend fun getPlaylistById(playlistId: Long): Playlist? {
+        return playlistInteractor.getPlaylistByIdSync(playlistId)
     }
 
     private fun copyImageToInternalStorage(uri: Uri): String? {

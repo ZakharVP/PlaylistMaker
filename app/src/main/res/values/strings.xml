@@ -31,7 +31,10 @@
 
     <string name="favorites_title" translatable="false">Избранные треки</string>
     <string name="playlists_title" translatable="false">Плейлисты</string>
+
     <string name="playlist_new_button" translatable="false">Новый плейлист</string>
+    <string name="edit_playlist_title" translatable="false">Редактирование</string>
+
     <string name="playlist_empty" translatable="false">Вы не создали\nни одного плейлиста</string>
     <string name="mediateka_empty" translatable="false">Ваша медиатека пуста</string>
     <string name="create_playlist" translatable="false">Создать новый</string>
@@ -59,5 +62,24 @@
     <string name="attachment_summary_on" translatable="false">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off" translatable="false">Only download attachments when manually requested</string>
+
+    <string name="playlist" translatable="false">Плейлист</string>
+    <string name="minutes_format" translatable="false">%s мин</string>
+
+    <string name="delete_track_title" translatable="false">Удалить трек</string>
+    <string name="delete_track_message" translatable="false">Хотите удалить трек \"%s\" из плейлиста?</string>
+    <string name="yes" translatable="false">ДА</string>
+    <string name="no" translatable="false">НЕТ</string>
+
+    <string name="ok" translatable="false">OK</string>
+    <string name="share" translatable="false">Поделиться</string>
+    <string name="edit" translatable="false">Редактировать информацию</string>
+    <string name="delete" translatable="false">Удалить плейлист</string>
+    <string name="share_error_title" translatable="false">Поделиться плейлистом</string>
+    <string name="share_error_message" translatable="false">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="share_playlist" translatable="false">Поделиться плейлистом</string>
+    <string name="delete_playlist_title" translatable="false">Удалить плейлист</string>
+    <string name="delete_playlist_message" translatable="false">Хотите удалить плейлист?</string>
+    <string name="tracks_count" translatable="false">%d треков</string>
 
 </resources>

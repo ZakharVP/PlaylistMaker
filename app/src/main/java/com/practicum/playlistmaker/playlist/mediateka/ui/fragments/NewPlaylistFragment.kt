@@ -24,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.NewPlaylistViewModel
+import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -35,6 +36,8 @@ class NewPlaylistFragment : Fragment() {
 
     private var hasUnsavedChanges: Boolean = false
     private var isCreating: Boolean = false
+    private var isEditMode: Boolean = false
+    private var editingPlaylist: Playlist? = null
 
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -43,7 +46,7 @@ class NewPlaylistFragment : Fragment() {
             result.data?.data?.let { uri ->
                 viewModel.setCoverUri(uri)
                 loadImage(uri)
-                hasUnsavedChanges = true // ДОБАВЛЕНО: отмечаем изменения
+                hasUnsavedChanges = true
             }
         }
     }
@@ -61,7 +64,12 @@ class NewPlaylistFragment : Fragment() {
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (hasUnsavedChanges && !isCreating) {
-                showExitConfirmationDialog()
+                if (isEditMode) {
+                    // В режиме редактирования просто выходим без подтверждения
+                    findNavController().navigateUp()
+                } else {
+                    showExitConfirmationDialog()
+                }
             } else {
                 isEnabled = false
                 requireActivity().onBackPressed()
@@ -80,6 +88,14 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val playlistId = arguments?.getLong("playlistId") ?: -1L
+        if (playlistId != -1L) {
+            isEditMode = true
+            viewModel.setEditingPlaylistId(playlistId)
+            binding.newPlaylist.text = getString(R.string.edit_playlist_title)
+            loadPlaylistData(playlistId)
+        }
+
         Log.i("PlaylistsFragment", "onViewCreated called")
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
         setupListeners()
@@ -92,10 +108,38 @@ class NewPlaylistFragment : Fragment() {
         android.util.Log.d("NewPlaylistFragment", "Initial: name='$initialName', description='$initialDescription'")
     }
 
+    private fun loadPlaylistData(playlistId: Long) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val playlist = viewModel.getPlaylistById(playlistId)
+            playlist?.let { setupEditMode(it) }
+        }
+    }
+
+    private fun setupEditMode(playlist: Playlist) {
+        // Заполняем поля данными плейлиста
+        binding.nameEditText.setText(playlist.name)
+        binding.descriptionEditText.setText(playlist.description ?: "")
+
+        // Загружаем обложку
+        if (!playlist.coverUri.isNullOrBlank()) {
+            Glide.with(requireContext())
+                .load(playlist.coverUri)
+                .placeholder(R.drawable.no_image_placeholder)
+                .into(binding.coverImageView)
+            viewModel.setCoverUri(Uri.parse(playlist.coverUri))
+        }
+
+        // Передаем ID плейлиста во ViewModel
+        viewModel.setEditingPlaylistId(playlist.id)
+
+        // Сбрасываем флаг изменений, так как это начальное состояние
+        hasUnsavedChanges = false
+    }
+
     private fun setupListeners() {
         // Кнопка назад
         binding.backButton.setOnClickListener {
-            if (hasUnsavedChanges && !isCreating) {
+            if (hasUnsavedChanges && !isCreating && !isEditMode) {
                 showExitConfirmationDialog()
             } else {
                 findNavController().navigateUp()
@@ -107,14 +151,18 @@ class NewPlaylistFragment : Fragment() {
             pickImageFromGallery()
         }
 
-        // Создание плейлиста
+        // Создание/сохранение плейлиста
         binding.saveButton.setOnClickListener {
             val name = binding.nameEditText.text.toString().trim()
             val description = binding.descriptionEditText.text.toString().trim()
 
             if (name.isNotEmpty()) {
                 isCreating = true
-                viewModel.createPlaylist(name, description)
+                if (isEditMode) {
+                    viewModel.updatePlaylist(name, description)
+                } else {
+                    viewModel.createPlaylist(name, description)
+                }
             } else {
                 binding.nameEditText.error = "Введите название плейлиста"
             }
@@ -170,14 +218,15 @@ class NewPlaylistFragment : Fragment() {
                 when (state) {
                     is NewPlaylistViewModel.CreatePlaylistState.Loading -> {
                         binding.saveButton.isEnabled = false
-                        binding.saveButton.text = "Создание..."
+                        binding.saveButton.text = if (isEditMode) "Сохранение..." else "Создание..."
                     }
                     is NewPlaylistViewModel.CreatePlaylistState.Success -> {
                         val name = binding.nameEditText.text.toString().trim()
+                        val message = if (isEditMode) "Плейлист \"$name\" обновлен!" else "Плейлист \"$name\" создан!"
 
                         Toast.makeText(
                             requireContext(),
-                            "Плейлист \"$name\" создан!",
+                            message,
                             Toast.LENGTH_SHORT
                         ).show()
                         findNavController().navigateUp()
@@ -185,7 +234,7 @@ class NewPlaylistFragment : Fragment() {
                     is NewPlaylistViewModel.CreatePlaylistState.Error -> {
                         isCreating = false
                         binding.saveButton.isEnabled = true
-                        binding.saveButton.text = "Создать"
+                        binding.saveButton.text = if (isEditMode) "Сохранить" else "Создать"
                         Toast.makeText(requireContext(), "Ошибка: ${state.message}", Toast.LENGTH_SHORT).show()
                     }
                     else -> {}

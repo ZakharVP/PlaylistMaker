@@ -10,7 +10,7 @@ data class PlaylistEntity(
     val name: String,
     val description: String,
     val coverUri: String? = null,
-    val trackIds: String = "[]", // JSON array of track IDs
+    val trackIds: String = "[]",
     val tracksCount: Int = 0,
     val createdAt: Long = System.currentTimeMillis()
 )

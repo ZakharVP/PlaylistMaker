@@ -29,6 +29,7 @@ class RootActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.playerFragment -> binding.bottomNavigationView.visibility = View.GONE
                 R.id.newPlaylistFragment -> binding.bottomNavigationView.visibility = View.GONE
+                R.id.playlistDetailFragment -> binding.bottomNavigationView.visibility = View.GONE
                 else -> binding.bottomNavigationView.visibility = View.VISIBLE
             }
         }

@@ -26,7 +26,7 @@ class PlaylistInteractor(
         return repository.getAllPlaylists()
     }
 
-    suspend fun getPlaylistById(id: Long): Playlist? {
+    fun getPlaylistById(id: Long): Flow<Playlist?> {
         return repository.getPlaylistById(id)
     }
 
@@ -45,4 +45,39 @@ class PlaylistInteractor(
     suspend fun addTrackToPlaylist(playlistId: Long, track: Track) {
         repository.addTrackToPlaylist(playlistId, track)
     }
+
+    fun getTracksForPlaylist(trackIds: List<String>): Flow<List<Track>> {
+        return repository.getTracksForPlaylist(trackIds)
+    }
+
+    suspend fun getPlaylistByIdSync(id: Long): Playlist? {
+        return repository.getPlaylistById(id).first()
+    }
+
+    suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: String) {
+        repository.removeTrackFromPlaylist(playlistId, trackId)
+    }
+
+    suspend fun deletePlaylist(playlistId: Long) {
+        repository.deletePlaylist(playlistId)
+    }
+
+
+    suspend fun updatePlaylist(playlistId: Long, name: String, description: String, coverPath: String?) {
+        // Получаем текущий плейлист
+        val currentPlaylist = repository.getPlaylistByIdSync(playlistId)
+
+        // Создаем обновленный плейлист
+        val updatedPlaylist = currentPlaylist?.copy(
+            name = name,
+            description = description,
+            coverUri = coverPath ?: currentPlaylist.coverUri
+        )
+
+        // Сохраняем изменения
+        if (updatedPlaylist != null) {
+            repository.updatePlaylist(updatedPlaylist)
+        }
+    }
+
 }

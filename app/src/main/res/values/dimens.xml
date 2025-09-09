@@ -23,6 +23,7 @@
     <dimen name="primary_indent_size_106">106dp</dimen>
     <dimen name="primary_indent_size_148">148dp</dimen>
     <dimen name="primary_indent_size_120">120dp</dimen>
+    <dimen name="primary_indent_size_200">200dp</dimen>
     <dimen name="primary_indent_size_210">210dp</dimen>
     <dimen name="primary_indent_size_320">320dp</dimen>
     <dimen name="primary_indent_size_400">400dp</dimen>

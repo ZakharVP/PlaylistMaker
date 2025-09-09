@@ -68,4 +68,5 @@ val repositoryModule = module {
     single {
         FavoritesUseCase(get())
     }
+
 }

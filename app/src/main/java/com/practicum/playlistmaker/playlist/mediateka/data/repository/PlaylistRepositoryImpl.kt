@@ -12,9 +12,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class PlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
@@ -28,7 +31,54 @@ class PlaylistRepositoryImpl(
         CoroutineScope(Dispatchers.IO).launch {
             refreshTrigger.emit(Unit)
         }
+    }
 
+    // Добавляем метод удаления плейлиста
+    override suspend fun deletePlaylist(playlistId: Long) {
+        // 1. Получаем плейлист для получения списка треков
+        val playlistEntity = playlistDao.getPlaylistByIdSync(playlistId) ?: return
+
+        // 2. Получаем список треков этого плейлиста
+        val trackIds = try {
+            gson.fromJson(playlistEntity.trackIds, Array<String>::class.java)?.toList() ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+
+        // 3. Удаляем сам плейлист
+        playlistDao.deletePlaylist(playlistId)
+
+        // 4. Очищаем неиспользуемые треки
+        cleanupUnusedTracks(trackIds)
+
+        // 5. Обновляем список плейлистов
+        refreshPlaylists()
+    }
+
+    // Метод для очистки неиспользуемых треков
+    private suspend fun cleanupUnusedTracks(trackIds: List<String>) {
+        for (trackId in trackIds) {
+            // Проверяем, используется ли трек в других плейлистах
+            val isTrackUsed = isTrackUsedInOtherPlaylists(trackId)
+            if (!isTrackUsed) {
+                // Если трек больше нигде не используется - удаляем его
+                playlistTrackDao.deleteTrack(trackId)
+            }
+        }
+    }
+
+    // Проверяет, используется ли трек в других плейлистах
+    private suspend fun isTrackUsedInOtherPlaylists(trackId: String): Boolean {
+        val allPlaylists = playlistDao.getAllPlaylists().first()
+        return allPlaylists.any { playlistEntity ->
+            try {
+                val playlistTrackIds = gson.fromJson(playlistEntity.trackIds, Array<String>::class.java)
+                    ?.toList() ?: emptyList()
+                playlistTrackIds.contains(trackId)
+            } catch (e: Exception) {
+                false
+            }
+        }
     }
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {
@@ -41,6 +91,22 @@ class PlaylistRepositoryImpl(
                         null
                     }
                 }
+            }
+        }
+    }
+
+    override fun getPlaylistById(id: Long): Flow<Playlist?> {
+        return playlistDao.getPlaylistById(id).map { entity ->
+            entity?.toDomain(gson)
+        }
+    }
+
+    override fun getTracksForPlaylist(trackIds: List<String>): Flow<List<Track>> {
+        return if (trackIds.isEmpty()) {
+            flowOf(emptyList())
+        } else {
+            playlistTrackDao.getTracksByIds(trackIds).map { entities ->
+                entities.map { it.toDomain() }
             }
         }
     }
@@ -66,19 +132,46 @@ class PlaylistRepositoryImpl(
         )
     }
 
-    private fun PlaylistEntity.toDomain(gson: Gson): Playlist {
+    override suspend fun getTracksForPlaylistIds(trackIds: List<String>): List<Track> {
+        return if (trackIds.isEmpty()) {
+            emptyList()
+        } else {
+            playlistTrackDao.getTracksByIdsSync(trackIds).map { it.toDomain() }
+        }
+    }
+
+    private suspend fun PlaylistEntity.toDomain(gson: Gson): Playlist {
         val trackIdList: List<String> = try {
             gson.fromJson(trackIds, Array<String>::class.java)?.toList() ?: emptyList()
         } catch (e: Exception) {
             emptyList()
         }
+
+        val tracks = getTracksForPlaylistIds(trackIdList)
+
         return Playlist(
             id = id,
             name = name,
             description = description,
             coverUri = coverUri,
-            tracks = emptyList(),
-            tracksCount = tracksCount
+            tracks = tracks,
+            tracksCount = tracks.size
+        )
+    }
+
+    private fun PlaylistTrackEntity.toDomain(): Track {
+        return Track(
+            trackId = trackId,
+            trackName = trackName,
+            artistName = artistName,
+            trackTimeMillisString = trackTimeMillisString,
+            artworkUrl = artworkUrl,
+            collectionName = collectionName,
+            releaseYear = releaseYear,
+            genre = genre,
+            country = country,
+            previewUrl = previewUrl,
+            trackTime = trackTime
         )
     }
 
@@ -86,20 +179,12 @@ class PlaylistRepositoryImpl(
         playlistDao.update(playlist.toEntity(gson))
     }
 
-    override suspend fun getPlaylistById(id: Long): Playlist? {
-        return try {
-            playlistDao.getPlaylistById(id)?.toDomain(gson)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
     override suspend fun addTrackToPlaylist(playlistId: Long, track: Track) {
         // 1. Сохранить трек в таблицу треков плейлистов
         playlistTrackDao.insert(track.toPlaylistTrackEntity())
 
         // 2. Получить плейлист и обновить его
-        val playlistEntity = playlistDao.getPlaylistById(playlistId) ?: return
+        val playlistEntity = playlistDao.getPlaylistByIdSync(playlistId) ?: return
 
         val currentTrackIds = gson.fromJson(playlistEntity.trackIds, Array<String>::class.java)?.toList() ?: emptyList()
         if (currentTrackIds.contains(track.trackId)) return // Проверка на дубликат
@@ -120,9 +205,9 @@ class PlaylistRepositoryImpl(
             trackName = trackName,
             artistName = artistName,
             trackTimeMillisString = trackTimeMillisString,
-            artworkUrl = artworkUrl, // проверьте правильное название поля!
+            artworkUrl = artworkUrl,
             collectionName = collectionName,
-            releaseYear = releaseYear.take(4),
+            releaseYear = releaseYear,
             genre = genre,
             country = country,
             previewUrl = previewUrl,
@@ -131,4 +216,69 @@ class PlaylistRepositoryImpl(
         )
     }
 
+    override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: String) {
+        // 1. Получаем плейлист
+        val playlistEntity = playlistDao.getPlaylistByIdSync(playlistId) ?: return
+
+        // 2. Удаляем trackId из списка
+        val currentTrackIds = gson.fromJson(playlistEntity.trackIds, Array<String>::class.java)
+            ?.toList() ?: emptyList()
+
+        val updatedTrackIds = currentTrackIds.filter { it != trackId }
+        val updatedEntity = playlistEntity.copy(
+            trackIds = gson.toJson(updatedTrackIds),
+            tracksCount = updatedTrackIds.size
+        )
+
+        // 3. Обновляем плейлист
+        playlistDao.update(updatedEntity)
+
+        // 4. Проверяем, используется ли трек в других плейлистах
+        if (!isTrackUsedInOtherPlaylists(trackId)) {
+            playlistTrackDao.deleteTrack(trackId)
+        }
+
+        refreshPlaylists()
+    }
+
+    override suspend fun getPlaylistByIdSync(id: Long): Playlist? {
+        return playlistDao.getPlaylistByIdSync(id)?.let { entity ->
+
+            val trackIdList: List<String> = try {
+                gson.fromJson(entity.trackIds, Array<String>::class.java)?.toList() ?: emptyList()
+            } catch (e: Exception) {
+                emptyList()
+            }
+
+            val tracks = getTracksForPlaylistIds(trackIdList)
+
+            Playlist(
+                id = entity.id,
+                name = entity.name,
+                description = entity.description,
+                coverUri = entity.coverUri,
+                tracks = tracks,
+                tracksCount = tracks.size
+            )
+        }
+    }
+
+    private suspend fun PlaylistEntity.toPlaylist(): Playlist {
+        val trackIdList: List<String> = try {
+            gson.fromJson(trackIds, Array<String>::class.java)?.toList() ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+
+        val tracks = getTracksForPlaylistIds(trackIdList)
+
+        return Playlist(
+            id = id,
+            name = name,
+            description = description,
+            coverUri = coverUri,
+            tracks = tracks,
+            tracksCount = tracks.size
+        )
+    }
 }
