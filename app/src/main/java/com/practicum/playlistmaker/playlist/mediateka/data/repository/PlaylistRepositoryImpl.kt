@@ -106,7 +106,8 @@ class PlaylistRepositoryImpl(
             flowOf(emptyList())
         } else {
             playlistTrackDao.getTracksByIds(trackIds).map { entities ->
-                entities.map { it.toDomain() }
+                val trackMap = entities.associateBy { it.trackId }
+                trackIds.mapNotNull { trackId -> trackMap[trackId]?.toDomain() }
             }
         }
     }
@@ -136,7 +137,9 @@ class PlaylistRepositoryImpl(
         return if (trackIds.isEmpty()) {
             emptyList()
         } else {
-            playlistTrackDao.getTracksByIdsSync(trackIds).map { it.toDomain() }
+            val entities = playlistTrackDao.getTracksByIdsSync(trackIds)
+            val trackMap = entities.associateBy { it.trackId }
+            trackIds.mapNotNull { trackId -> trackMap[trackId]?.toDomain() }
         }
     }
 
