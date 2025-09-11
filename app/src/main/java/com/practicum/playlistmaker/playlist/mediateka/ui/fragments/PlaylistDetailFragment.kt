@@ -94,15 +94,13 @@ class PlaylistDetailFragment : Fragment() {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     binding.dimBackground.visibility = View.VISIBLE
                     binding.menuSheet.visibility = View.VISIBLE
-                    // Скрываем основной Bottom Sheet с треками
+                    // Скрываем основной Bottom Sheet с треками/сообщением
                     binding.bottomSheet.visibility = View.GONE
                 } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     binding.dimBackground.visibility = View.GONE
                     binding.menuSheet.visibility = View.GONE
-                    // Показываем основной Bottom Sheet с треками, если они есть
-                    if (viewModel.tracks.value.isNotEmpty()) {
-                        binding.bottomSheet.visibility = View.VISIBLE
-                    }
+                    // Всегда показываем Bottom Sheet (с треками или сообщением)
+                    binding.bottomSheet.visibility = View.VISIBLE
                 }
             }
 
@@ -451,10 +449,17 @@ class PlaylistDetailFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.tracks.collect { tracks ->
                     tracksAdapter.submitList(tracks)
+
                     if (tracks.isNotEmpty()) {
+                        // Есть треки - показываем список, скрываем сообщение
+                        binding.tracksRecyclerView.visibility = View.VISIBLE
+                        binding.emptyPlaylistMessage.visibility = View.GONE
                         binding.bottomSheet.visibility = View.VISIBLE
                     } else {
-                        binding.bottomSheet.visibility = View.GONE
+                        // Нет треков - скрываем список, показываем сообщение
+                        binding.tracksRecyclerView.visibility = View.GONE
+                        binding.emptyPlaylistMessage.visibility = View.VISIBLE
+                        binding.bottomSheet.visibility = View.VISIBLE // Всегда показываем Bottom Sheet
                     }
                 }
             }

@@ -82,4 +82,6 @@
     <string name="delete_playlist_message" translatable="false">Хотите удалить плейлист \"%s\"?</string>
     <string name="tracks_count" translatable="false">%d треков</string>
 
+    <string name="empty_playlist_message" translatable="false">В плейлисте пока нет треков</string>
+
 </resources>
