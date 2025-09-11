@@ -149,7 +149,7 @@ class PlaylistDetailViewModel(
                 trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> "$trackCount трека"
                 else -> "$trackCount треков"
             }
-            "$trackCountText • ${_totalDuration.value}"
+            "$trackCountText"
         }
     }
 }
