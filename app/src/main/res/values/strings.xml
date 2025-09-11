@@ -79,7 +79,7 @@
     <string name="share_error_message" translatable="false">В этом плейлисте нет списка треков, которым можно поделиться</string>
     <string name="share_playlist" translatable="false">Поделиться плейлистом</string>
     <string name="delete_playlist_title" translatable="false">Удалить плейлист</string>
-    <string name="delete_playlist_message" translatable="false">Хотите удалить плейлист?</string>
+    <string name="delete_playlist_message" translatable="false">Хотите удалить плейлист \"%s\"?</string>
     <string name="tracks_count" translatable="false">%d треков</string>
 
 </resources>

@@ -196,17 +196,91 @@ class PlaylistDetailFragment : Fragment() {
     }
 
     private fun showDeletePlaylistDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.delete_playlist_title))
-            .setMessage(getString(R.string.delete_playlist_message))
-            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
-                dialog.dismiss()
+        val playlistName = viewModel.playlist.value?.name ?: getString(R.string.playlist)
+
+        val builder = MaterialAlertDialogBuilder(requireContext(), R.style.RoundedDialogDeleteTheme)
+        builder.setMessage(getString(R.string.delete_playlist_message, playlistName))
+        builder.setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+        builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            deletePlaylist()
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.setOnShowListener {
+            val window = dialog.window
+            window?.setBackgroundDrawableResource(R.drawable.rounded_dialog_delete_background)
+
+            // Получаем кнопки
+            val positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+            // Универсальная обработка кнопки
+            fun shrinkButton(button: View?) {
+                if (button == null) return
+
+                // Сброс минимальной ширины у View и у MaterialButton (если это он)
+                button.minimumWidth = 0
+                if (button is MaterialButton) {
+                    button.minWidth = 0
+                    button.setMinWidth(0)
+                }
+
+                // Попытка изменить LayoutParams: делаем WRAP_CONTENT и убираем вес
+                val lp = button.layoutParams
+                when (lp) {
+                    is LinearLayout.LayoutParams -> {
+                        lp.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                        lp.weight = 0f
+                        // margin между кнопками (по желанию)
+                        lp.marginEnd = 8.dpToPx(requireContext())
+                        button.layoutParams = lp
+                    }
+                    is ViewGroup.MarginLayoutParams -> {
+                        lp.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                        lp.marginEnd = 1.dpToPx(requireContext())
+                        button.layoutParams = lp
+                    }
+                    else -> {
+                        button.layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    }
+                }
+
+                // Внутренние отступы и цвет текста
+                button.setPadding(
+                    8.dpToPx(requireContext()),
+                    1.dpToPx(requireContext()),
+                    8.dpToPx(requireContext()),
+                    1.dpToPx(requireContext())
+                )
+                if (button is Button) {
+                    button.setTextColor(ContextCompat.getColor(requireContext(), R.color.yp_blue))
+                }
             }
-            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-                deletePlaylist()
-                dialog.dismiss()
+
+            shrinkButton(positive)
+            shrinkButton(negative)
+
+            // Попытка привести контейнер к горизонтальному режиму и выровнять кнопки вправо
+            val content = window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+            val buttonBar = content?.findViewById<ViewGroup>(com.google.android.material.R.id.buttonPanel)
+            if (buttonBar is LinearLayout) {
+                buttonBar.orientation = LinearLayout.HORIZONTAL
+                buttonBar.gravity = Gravity.END
+                // padding вокруг контейнера
+                buttonBar.setPadding(
+                    1.dpToPx(requireContext()),
+                    1.dpToPx(requireContext()),
+                    1.dpToPx(requireContext()),
+                    1.dpToPx(requireContext())
+                )
             }
-            .show()
+        }
+
+        dialog.show()
     }
 
     private fun deletePlaylist() {
