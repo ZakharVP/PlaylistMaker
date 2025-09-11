@@ -1,11 +1,18 @@
 package com.practicum.playlistmaker.playlist.mediateka.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ScrollView
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,8 +27,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.playlist.mediateka.ui.adapters.PlaylistTracksAdapter
+import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 
 class PlaylistDetailFragment : Fragment() {
 
@@ -237,18 +246,107 @@ class PlaylistDetailFragment : Fragment() {
         }
     }
 
-    private fun showDeleteTrackDialog(track: com.practicum.playlistmaker.playlist.sharing.data.models.Track) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.delete_track_title))
-            .setMessage(getString(R.string.delete_track_message, track.trackName))
-            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+
+
+    private fun showDeleteTrackDialog(track: Track) {
+            val builder = MaterialAlertDialogBuilder(requireContext(), R.style.RoundedDialogDeleteTheme)
+            builder.setMessage(getString(R.string.delete_track_message))
+            builder.setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+            builder.setPositiveButton(R.string.yes) { dialog, _ ->
                 viewModel.removeTrack(track.trackId)
                 dialog.dismiss()
             }
-            .show()
+
+            val dialog = builder.create()
+            dialog.setOnShowListener {
+                val window = dialog.window
+                window?.setBackgroundDrawableResource(R.drawable.rounded_dialog_delete_background)
+
+                // Получаем кнопки
+                val positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                val negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+                // Универсальная обработка кнопки
+                fun shrinkButton(button: View?) {
+                    if (button == null) return
+
+                    // Сброс минимальной ширины у View и у MaterialButton (если это он)
+                    button.minimumWidth = 0
+                    if (button is MaterialButton) {
+                        button.minWidth = 0
+                        button.setMinWidth(0)
+                    }
+
+                    // Попытка изменить LayoutParams: делаем WRAP_CONTENT и убираем вес
+                    val lp = button.layoutParams
+                    when (lp) {
+                        is LinearLayout.LayoutParams -> {
+                            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                            lp.weight = 0f
+                            // margin между кнопками (по желанию)
+                            lp.marginEnd = 8.dpToPx(requireContext())
+                            button.layoutParams = lp
+                        }
+                        is ViewGroup.MarginLayoutParams -> {
+                            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                            lp.marginEnd = 1.dpToPx(requireContext())
+                            button.layoutParams = lp
+                        }
+                        else -> {
+                            button.layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+                        }
+                    }
+
+                    // Внутренние отступы и цвет текста
+                    button.setPadding(
+                        8.dpToPx(requireContext()),
+                        1.dpToPx(requireContext()),
+                        8.dpToPx(requireContext()),
+                        1.dpToPx(requireContext())
+                    )
+                    if (button is Button) {
+                        button.setTextColor(ContextCompat.getColor(requireContext(), R.color.yp_blue))
+                    }
+                }
+
+                shrinkButton(positive)
+                shrinkButton(negative)
+
+                // Попытка привести контейнер к горизонтальному режиму и выровнять кнопки вправо
+                val content = window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
+                val buttonBar = content?.findViewById<ViewGroup>(com.google.android.material.R.id.buttonPanel)
+                if (buttonBar is LinearLayout) {
+                    buttonBar.orientation = LinearLayout.HORIZONTAL
+                    buttonBar.gravity = Gravity.END
+                    // padding вокруг контейнера
+                    buttonBar.setPadding(
+                        1.dpToPx(requireContext()),
+                        1.dpToPx(requireContext()),
+                        1.dpToPx(requireContext()),
+                        1.dpToPx(requireContext())
+                    )
+                }
+            }
+
+            dialog.show()
+        }
+
+
+    fun Int.dpToPx(context: Context): Int {
+        return (this * context.resources.displayMetrics.density).toInt()
+    }
+
+    fun logChildViews(viewGroup: ViewGroup, depth: Int) {
+        for (i in 0 until viewGroup.childCount) {
+            val child = viewGroup.getChildAt(i)
+            Log.d("Buttons", "${"  ".repeat(depth)}${child.javaClass.simpleName} id: ${child.id}")
+            if (child is ViewGroup) {
+                logChildViews(child, depth + 1)
+            }
+        }
     }
 
     private fun setupBackButton() {

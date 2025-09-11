@@ -67,7 +67,7 @@
     <string name="minutes_format" translatable="false">%s мин</string>
 
     <string name="delete_track_title" translatable="false">Удалить трек</string>
-    <string name="delete_track_message" translatable="false">Хотите удалить трек \"%s\" из плейлиста?</string>
+    <string name="delete_track_message" translatable="false">Хотите удалить трек?</string>
     <string name="yes" translatable="false">ДА</string>
     <string name="no" translatable="false">НЕТ</string>
 
