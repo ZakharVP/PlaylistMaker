@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -30,6 +31,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.playlist.mediateka.ui.adapters.PlaylistTracksAdapter
+import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.DeleteState
 import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 
@@ -280,10 +282,7 @@ class PlaylistDetailFragment : Fragment() {
     }
 
     private fun deletePlaylist() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.deletePlaylist()
-            findNavController().navigateUp()
-        }
+        viewModel.deletePlaylist()
     }
 
     private fun setupBottomSheet() {
@@ -461,6 +460,27 @@ class PlaylistDetailFragment : Fragment() {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.deleteState.collect { state ->
+                    when (state) {
+                        is DeleteState.Loading -> {
+                        }
+                        is DeleteState.Success -> {
+                            Toast.makeText(requireContext(), getString(R.string.playlist_deleted_toast), Toast.LENGTH_SHORT).show()
+                            findNavController().navigateUp()
+                        }
+                        is DeleteState.Error -> {
+                            Toast.makeText(requireContext(), "Ошибка: ${state.message}", Toast.LENGTH_SHORT).show()
+                        }
+                        is DeleteState.Idle -> {
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private fun updateUI(playlist: Playlist) {

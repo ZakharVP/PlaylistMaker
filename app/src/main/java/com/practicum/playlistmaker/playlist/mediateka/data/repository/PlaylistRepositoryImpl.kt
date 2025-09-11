@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.playlist.mediateka.data.repository
 
+import android.util.Log
 import com.google.gson.Gson
 import com.practicum.playlistmaker.db.dao.PlaylistDao
 import com.practicum.playlistmaker.db.dao.PlaylistTrackDao
@@ -18,6 +19,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+
+private const val TAG = "PlaylistRepositoryImpl"
 
 class PlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
@@ -33,27 +37,40 @@ class PlaylistRepositoryImpl(
         }
     }
 
-    // Добавляем метод удаления плейлиста
     override suspend fun deletePlaylist(playlistId: Long) {
-        // 1. Получаем плейлист для получения списка треков
-        val playlistEntity = playlistDao.getPlaylistByIdSync(playlistId) ?: return
+        try {
+            withContext(Dispatchers.IO) {
+                val playlistEntity = playlistDao.getPlaylistByIdSync(playlistId)
+                if (playlistEntity == null) {
+                    Log.w(TAG, "deletePlaylist: playlist not found, id=$playlistId")
+                    return@withContext
+                }
 
-        // 2. Получаем список треков этого плейлиста
-        val trackIds = try {
-            gson.fromJson(playlistEntity.trackIds, Array<String>::class.java)?.toList() ?: emptyList()
+                val trackIds = try {
+                    gson.fromJson(playlistEntity.trackIds, Array<String>::class.java)?.toList() ?: emptyList()
+                } catch (e: Exception) {
+                    emptyList()
+                }
+
+                Log.d(TAG, "Deleting playlist id=$playlistId, tracksCount=${trackIds.size}")
+
+                // Удаляем сам плейлист
+                playlistDao.deletePlaylist(playlistId)
+
+                // Очищаем неиспользуемые треки
+                cleanupUnusedTracks(trackIds)
+
+                // Обновляем список (emit)
+                refreshPlaylists()
+
+                Log.d(TAG, "deletePlaylist finished for id=$playlistId")
+            }
         } catch (e: Exception) {
-            emptyList()
+            Log.e(TAG, "deletePlaylist error for id=$playlistId: ${e.message}", e)
+            throw e
         }
-
-        // 3. Удаляем сам плейлист
-        playlistDao.deletePlaylist(playlistId)
-
-        // 4. Очищаем неиспользуемые треки
-        cleanupUnusedTracks(trackIds)
-
-        // 5. Обновляем список плейлистов
-        refreshPlaylists()
     }
+
 
     // Метод для очистки неиспользуемых треков
     private suspend fun cleanupUnusedTracks(trackIds: List<String>) {

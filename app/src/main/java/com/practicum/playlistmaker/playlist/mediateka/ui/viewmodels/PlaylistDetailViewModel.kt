@@ -10,6 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+// Стейт для операции удаления
+sealed class DeleteState {
+    object Idle : DeleteState()
+    object Loading : DeleteState()
+    object Success : DeleteState()
+    data class Error(val message: String) : DeleteState()
+}
+
 class PlaylistDetailViewModel(
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
@@ -24,6 +32,10 @@ class PlaylistDetailViewModel(
     val totalDuration: StateFlow<String> = _totalDuration.asStateFlow()
 
     private val _playlistId = MutableStateFlow<Long?>(null)
+
+    // Стейт удаления
+    private val _deleteState = MutableStateFlow<DeleteState>(DeleteState.Idle)
+    val deleteState: StateFlow<DeleteState> = _deleteState.asStateFlow()
 
     fun loadPlaylistData(playlistId: Long) {
         _playlistId.value = playlistId
@@ -83,11 +95,18 @@ class PlaylistDetailViewModel(
         }
     }
 
-    // Добавляем метод для удаления плейлиста
     fun deletePlaylist() {
+        val id = _playlistId.value ?: return
         viewModelScope.launch {
-            _playlistId.value?.let { playlistId ->
-                playlistInteractor.deletePlaylist(playlistId)
+            _deleteState.value = DeleteState.Loading
+            try {
+                playlistInteractor.deletePlaylist(id)
+                _playlist.value = null
+                _tracks.value = emptyList()
+                _playlistId.value = null
+                _deleteState.value = DeleteState.Success
+            } catch (e: Exception) {
+                _deleteState.value = DeleteState.Error(e.message ?: "Ошибка при удалении")
             }
         }
     }
