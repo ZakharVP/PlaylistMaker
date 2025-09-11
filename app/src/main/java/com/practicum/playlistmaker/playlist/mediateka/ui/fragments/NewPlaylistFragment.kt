@@ -88,8 +88,8 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val playlistId = arguments?.getLong("playlistId") ?: -1L
-        if (playlistId != -1L) {
+        val playlistId = arguments?.getLong("playlistId", -1L) ?: -1L
+        if (playlistId != -1L && playlistId != 0L) {
             isEditMode = true
             viewModel.setEditingPlaylistId(playlistId)
             binding.newPlaylist.text = getString(R.string.edit_playlist_title)

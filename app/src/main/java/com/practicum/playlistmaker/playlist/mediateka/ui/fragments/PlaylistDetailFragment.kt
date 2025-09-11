@@ -118,12 +118,9 @@ class PlaylistDetailFragment : Fragment() {
 
         binding.editOption.setOnClickListener {
             viewModel.playlist.value?.let { playlist ->
-                val bundle = Bundle().apply {
-                    putLong("playlistId", playlist.id)
-                }
                 findNavController().navigate(
                     R.id.action_playlistDetailFragment_to_newPlaylistFragment,
-                    bundle
+                    bundleOf("playlistId" to playlist.id)
                 )
             }
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
