@@ -103,7 +103,6 @@ class PlayerFragment : Fragment() {
         playlistsRecyclerView = binding.playlistsRecyclerView
         playlistsAdapter = PlaylistBottomSheetAdapter { playlist ->
             // Обработка выбора плейлиста
-            hideBottomSheet()
             addTrackToPlaylist(playlist)
         }
 
@@ -158,17 +157,25 @@ class PlayerFragment : Fragment() {
         } else {
             @Suppress("DEPRECATION")
             arguments?.getParcelable(TRACK_EXTRA) as? Track
-        }
+        } ?: return
 
-        track?.let {
-            // Добавьте эту проверку, если метод addTrackToPlaylist suspend
-            viewLifecycleOwner.lifecycleScope.launch {
-                try {
-                    playlistInteractor.addTrackToPlaylist(playlist.id, track)
-                    Toast.makeText(requireContext(), "Трек добавлен в ${playlist.name}", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Ошибка добавления трека", Toast.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // 1) Получаем актуальный плейлист из БД и проверяем наличие трека
+                val existingPlaylist = playlistInteractor.getPlaylistByIdSync(playlist.id)
+                val alreadyExists = existingPlaylist?.tracks?.any { it.trackId == track.trackId } == true
+
+                if (alreadyExists) {
+                    Toast.makeText(requireContext(), "Трек уже добавлен в этот плейлист", Toast.LENGTH_SHORT).show()
+                    return@launch
                 }
+
+                // 2)
+                playlistInteractor.addTrackToPlaylist(playlist.id, track)
+                Toast.makeText(requireContext(), "Трек добавлен в ${playlist.name}", Toast.LENGTH_SHORT).show()
+                hideBottomSheet()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Ошибка добавления трека", Toast.LENGTH_SHORT).show()
             }
         }
     }
