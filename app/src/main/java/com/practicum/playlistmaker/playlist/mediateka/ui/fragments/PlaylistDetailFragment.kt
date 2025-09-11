@@ -31,7 +31,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.playlist.mediateka.ui.adapters.PlaylistTracksAdapter
-import com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels.DeleteState
+import com.practicum.playlistmaker.playlist.sharing.DeleteState
 import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 

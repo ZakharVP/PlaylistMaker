@@ -3,20 +3,13 @@ package com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.mediateka.domain.interactor.PlaylistInteractor
+import com.practicum.playlistmaker.playlist.sharing.DeleteState
 import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-// Стейт для операции удаления
-sealed class DeleteState {
-    object Idle : DeleteState()
-    object Loading : DeleteState()
-    object Success : DeleteState()
-    data class Error(val message: String) : DeleteState()
-}
 
 class PlaylistDetailViewModel(
     private val playlistInteractor: PlaylistInteractor
