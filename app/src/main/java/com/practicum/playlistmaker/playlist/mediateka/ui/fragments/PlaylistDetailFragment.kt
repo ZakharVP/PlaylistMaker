@@ -30,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.playlist.mediateka.ui.adapters.PlaylistTracksAdapter
+import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 
 class PlaylistDetailFragment : Fragment() {
@@ -460,7 +461,7 @@ class PlaylistDetailFragment : Fragment() {
         }
     }
 
-    private fun updateUI(playlist: com.practicum.playlistmaker.playlist.sharing.data.models.Playlist) {
+    private fun updateUI(playlist: Playlist) {
         binding.playlistTitle.text = playlist.name ?: ""
 
         if (playlist.coverUri != null && playlist.coverUri.isNotBlank()) {
