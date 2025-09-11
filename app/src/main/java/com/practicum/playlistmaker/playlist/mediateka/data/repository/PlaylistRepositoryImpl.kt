@@ -107,6 +107,7 @@ class PlaylistRepositoryImpl(
         } else {
             playlistTrackDao.getTracksByIds(trackIds).map { entities ->
                 val trackMap = entities.associateBy { it.trackId }
+                // Сохраняем порядок из trackIds
                 trackIds.mapNotNull { trackId -> trackMap[trackId]?.toDomain() }
             }
         }
@@ -137,8 +138,13 @@ class PlaylistRepositoryImpl(
         return if (trackIds.isEmpty()) {
             emptyList()
         } else {
-            val entities = playlistTrackDao.getTracksByIdsSync(trackIds)
-            val trackMap = entities.associateBy { it.trackId }
+            // Получаем все треки по IDs
+            val allTracks = playlistTrackDao.getTracksByIdsSync(trackIds)
+
+            // Создаем map для быстрого поиска по trackId
+            val trackMap = allTracks.associateBy { it.trackId }
+
+            // Сохраняем порядок из trackIds (первый в списке - последний добавленный)
             trackIds.mapNotNull { trackId -> trackMap[trackId]?.toDomain() }
         }
     }
@@ -150,6 +156,7 @@ class PlaylistRepositoryImpl(
             emptyList()
         }
 
+        // Получаем треки в порядке trackIdList (сохраняем порядок из JSON)
         val tracks = getTracksForPlaylistIds(trackIdList)
 
         return Playlist(
@@ -192,7 +199,8 @@ class PlaylistRepositoryImpl(
         val currentTrackIds = gson.fromJson(playlistEntity.trackIds, Array<String>::class.java)?.toList() ?: emptyList()
         if (currentTrackIds.contains(track.trackId)) return // Проверка на дубликат
 
-        val updatedTrackIds = currentTrackIds + track.trackId
+        // 3. Добавляем новый trackId в НАЧАЛО списка (последний добавленный будет первым)
+        val updatedTrackIds = listOf(track.trackId) + currentTrackIds
         val updatedEntity = playlistEntity.copy(
             trackIds = gson.toJson(updatedTrackIds),
             tracksCount = updatedTrackIds.size
