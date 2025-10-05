@@ -44,7 +44,10 @@ class PlaylistsFragment : Fragment() {
     private fun setupRecyclerView() {
         Log.i("PlaylistsFragment", "onViewCreated called")
         playlistAdapter = PlaylistAdapter { playlist ->
-            // Обработка клика на плейлист
+            val bundle = Bundle().apply {
+                putLong("playlistId", playlist.id)
+            }
+            findNavController().navigate(R.id.playlistDetailFragment, bundle)
         }
 
         // Используем GridLayoutManager с 2 колонками
