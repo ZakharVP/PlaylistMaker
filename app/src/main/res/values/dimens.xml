@@ -38,4 +38,5 @@
     <dimen name="bottom_sheet_peek_height">100dp</dimen>
     <dimen name="bottom_sheet_expanded_height">400dp</dimen>
     <dimen name="grid_spacing">8dp</dimen>
+    <dimen name="playback_button_size">64dp</dimen>
 </resources>

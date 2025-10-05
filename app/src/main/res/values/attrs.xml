@@ -8,5 +8,11 @@
         <attr name="inactiveColor" format="color|reference"/>
         <attr name="forceBlueStroke" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="PlaybackButtonView">
+        <attr name="playIcon" format="reference"/>
+        <attr name="pauseIcon" format="reference"/>
+    </declare-styleable>
+
 </resources>
 

@@ -203,7 +203,9 @@ class PlayerFragment : Fragment() {
 
         binding.nameSingle.text = track.trackName
         binding.authorSingle.text = track.artistName
-        binding.playButton.setOnClickListener { playerViewModel.playbackControl() }
+        binding.playButton.setOnPlaybackClickListener {
+            playerViewModel.playbackControl()
+        }
 
         binding.durationData.text = track.trackTimeMillisString
         binding.albomData.text = track.collectionName
@@ -244,13 +246,14 @@ class PlayerFragment : Fragment() {
     }
 
     private fun updatePlayButton(state: PlayerState) {
-        val iconRes = when {
-            state == PlayerState.PLAYING && isNightMode -> R.drawable.pause_dark
-            state == PlayerState.PLAYING -> R.drawable.pause_light
-            isNightMode -> R.drawable.play_button_dark
-            else -> R.drawable.play_button_light
-        }
-        binding.playButton.setImageResource(iconRes)
+        binding.playButton.isPlaying = state == PlayerState.PLAYING
+        updatePlayButtonIcons()
+    }
+
+    private fun updatePlayButtonIcons() {
+        val playIconRes = if (isNightMode) R.drawable.play_button_dark else R.drawable.play_button_light
+        val pauseIconRes = if (isNightMode) R.drawable.pause_dark else R.drawable.pause_light
+        binding.playButton.setIcons(playIconRes, pauseIconRes)
     }
 
     private fun showBottomSheet() {
