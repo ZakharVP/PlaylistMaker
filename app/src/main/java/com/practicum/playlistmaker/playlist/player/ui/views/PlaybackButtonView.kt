@@ -31,7 +31,6 @@ class PlaybackButtonView @JvmOverloads constructor(
         set(value) {
             field = value
             updateBitmap()
-            invalidate()
         }
 
     init {
@@ -59,10 +58,8 @@ class PlaybackButtonView @JvmOverloads constructor(
         pauseIconRes = pauseRes
         if (width > 0 && height > 0) {
             createBitmaps(width, height)
-            invalidate()
         } else {
             requestLayout()
-            invalidate()
         }
     }
 
@@ -70,15 +67,23 @@ class PlaybackButtonView @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         if (w > 0 && h > 0) {
             createBitmaps(w, h)
+            updateBitmapPosition(w, h)
+        }
+    }
+
+    private fun updateBitmapPosition(w: Int, h: Int) {
+        currentBitmap?.let { bmp ->
+            val left = (w - bmp.width) / 2f
+            val top = (h - bmp.height) / 2f
+            dstRect.set(left, top, left + bmp.width, top + bmp.height)
+        } ?: run {
+            dstRect.setEmpty()
         }
     }
 
     private fun createBitmaps(w: Int, h: Int) {
         playBitmap?.recycle()
         pauseBitmap?.recycle()
-        playBitmap = null
-        pauseBitmap = null
-        currentBitmap = null
 
         playBitmap = drawableToBitmap(playIconRes, w, h)
         pauseBitmap = drawableToBitmap(pauseIconRes, w, h)
@@ -97,13 +102,10 @@ class PlaybackButtonView @JvmOverloads constructor(
 
     private fun updateBitmap() {
         currentBitmap = if (isPlaying) pauseBitmap else playBitmap
-        currentBitmap?.let { bmp ->
-            val left = (width - bmp.width) / 2f
-            val top = (height - bmp.height) / 2f
-            dstRect.set(left, top, left + bmp.width, top + bmp.height)
-        } ?: run {
-            dstRect.setEmpty()
+        if (width > 0 && height > 0) {
+            updateBitmapPosition(width, height)
         }
+        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -115,9 +117,10 @@ class PlaybackButtonView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val minSize = resources.getDimensionPixelSize(R.dimen.playback_button_size)
-        val width = resolveSizeAndState(minSize, widthMeasureSpec, 0)
-        val height = resolveSizeAndState(minSize, heightMeasureSpec, 0)
+        val desiredSize = resources.getDimensionPixelSize(R.dimen.desired_button_size) // 84dp
+
+        val width = resolveSizeAndState(desiredSize, widthMeasureSpec, 0)
+        val height = resolveSizeAndState(desiredSize, heightMeasureSpec, 0)
         setMeasuredDimension(width, height)
     }
 
