@@ -69,14 +69,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/playButton" />
 
-        <ImageButton
+        <com.practicum.playlistmaker.playlist.player.ui.views.PlaybackButtonView
             android:id="@+id/playButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@null"
-            android:src="@drawable/play_button_light"
-            android:text="play button"
+            app:playIcon="@drawable/play_button_light"
+            app:pauseIcon="@drawable/pause_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/authorSingle" />

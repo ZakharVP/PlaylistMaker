@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.2"
+agp = "8.12.3"
 compiler = "4.16.0"
 converterGson = "2.9.0"
 fragmentKtx = "1.8.8"
