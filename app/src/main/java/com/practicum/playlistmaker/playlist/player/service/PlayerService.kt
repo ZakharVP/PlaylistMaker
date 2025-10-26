@@ -123,7 +123,8 @@ class PlayerService : Service(), IPlayerService {
                 _currentPosition.value = pos
 
                 // Останавливаем обновление если трек завершился
-                if (pos >= MAX_PLAYBACK_DURATION_MS) {
+                val duration = mediaPlayer?.duration ?: 0
+                if (duration > 0 && pos >= duration) {
                     onPlaybackCompleted()
                     break
                 }
