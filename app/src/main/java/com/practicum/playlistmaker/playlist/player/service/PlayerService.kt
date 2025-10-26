@@ -123,12 +123,12 @@ class PlayerService : Service(), IPlayerService {
                 _currentPosition.value = pos
 
                 // Останавливаем обновление если трек завершился
-                if (pos >= 30000) {
+                if (pos >= MAX_PLAYBACK_DURATION_MS) {
                     onPlaybackCompleted()
                     break
                 }
 
-                delay(300)
+                delay(PROGRESS_UPDATE_INTERVAL_MS)
             }
         }
     }
@@ -228,5 +228,8 @@ class PlayerService : Service(), IPlayerService {
         const val EXTRA_URL = "extra_url"
         const val EXTRA_ARTIST = "extra_artist"
         const val EXTRA_TITLE = "extra_title"
+
+        private const val PROGRESS_UPDATE_INTERVAL_MS = 300L
+        private const val MAX_PLAYBACK_DURATION_MS = 30000
     }
 }
