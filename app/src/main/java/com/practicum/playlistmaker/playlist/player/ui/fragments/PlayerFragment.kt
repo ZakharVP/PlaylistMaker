@@ -319,9 +319,9 @@ class PlayerFragment : Fragment() {
 
     private fun setupService(track: Track) {
         val intent = Intent(requireContext(), PlayerService::class.java).apply {
-            putExtra("extra_url", track.previewUrl)
-            putExtra("extra_artist", track.artistName)
-            putExtra("extra_title", track.trackName)
+            putExtra(PlayerService.EXTRA_URL, track.previewUrl)
+            putExtra(PlayerService.EXTRA_ARTIST, track.artistName)
+            putExtra(PlayerService.EXTRA_TITLE, track.trackName)
         }
         requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
