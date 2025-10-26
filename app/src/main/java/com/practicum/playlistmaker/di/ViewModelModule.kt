@@ -19,7 +19,7 @@ val viewModelModule = module {
         historyUseCase = get(),
         networkChecker = get()
     ) }
-    viewModel { PlayerViewModel(get(), get()) }
+    viewModel { PlayerViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { MainViewModel(get()) }
 

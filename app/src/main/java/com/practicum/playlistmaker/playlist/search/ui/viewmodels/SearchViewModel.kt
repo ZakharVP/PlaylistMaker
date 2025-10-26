@@ -29,10 +29,6 @@ class SearchViewModel(
     private val networkChecker: NetworkChecker
 ) : ViewModel() {
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-    }
-
     private val _tracks = MutableStateFlow<List<Track>>(emptyList())
     val tracks: StateFlow<List<Track>> = _tracks.asStateFlow()
 
@@ -138,5 +134,9 @@ class SearchViewModel(
     override fun onCleared() {
         super.onCleared()
         searchJob?.cancel()
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }

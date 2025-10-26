@@ -1,13 +1,21 @@
 package com.practicum.playlistmaker.playlist.player.ui.fragments
 
+import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -34,6 +42,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.navigation.fragment.findNavController
+import com.practicum.playlistmaker.playlist.player.service.IPlayerService
+import com.practicum.playlistmaker.playlist.player.service.PlayerService
 
 class PlayerFragment : Fragment() {
 
@@ -47,15 +57,13 @@ class PlayerFragment : Fragment() {
 
     private val playerViewModel: PlayerViewModel by viewModel()
     private val favoriteViewModel: FavoriteViewModel by viewModel()
-    private val playlistInteractor: PlaylistInteractor by inject() // Добавлено
+    private val playlistInteractor: PlaylistInteractor by inject()
 
-    companion object {
-        fun newInstance(track: Track): PlayerFragment {
-            return PlayerFragment().apply {
-                arguments = bundleOf(TRACK_EXTRA to track)
-            }
-        }
-    }
+    private var isServiceBound = false
+    private var playerService: IPlayerService? = null
+    private var currentTrack: Track? = null
+
+    private var isAppInBackground = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,9 +92,12 @@ class PlayerFragment : Fragment() {
             return
         }
 
+        currentTrack = track
+
+        checkNotificationPermission()
         setupBottomSheet()
         setupViews(track)
-        setupPlayer(track.previewUrl)
+        setupService(track)
         setupObservers()
         setupFavoriteButton(track)
     }
@@ -265,20 +276,6 @@ class PlayerFragment : Fragment() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
-    override fun onPause() {
-        super.onPause()
-        playerViewModel.pausePlayer()
-        // Закрываем Bottom Sheet при паузе фрагмента
-        if (::bottomSheetBehavior.isInitialized && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            hideBottomSheet()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
     private fun setupFavoriteButton(track: Track) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -302,5 +299,104 @@ class PlayerFragment : Fragment() {
             R.drawable.like_button
         }
         binding.buttonLikeSingle.setImageResource(iconRes)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as PlayerService.LocalBinder
+            playerService = binder.getService()
+            isServiceBound = true
+
+            // Передаем сервис в ViewModel вместе с данными трека
+            currentTrack?.let { track ->
+                playerViewModel.setPlayerService(playerService!!, track.artistName, track.trackName)
+                playerViewModel.preparePlayer(track.previewUrl)
+            }
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            isServiceBound = false
+            playerService = null
+            playerViewModel.clearPlayerService()
+        }
+    }
+
+    private fun setupService(track: Track) {
+        val intent = Intent(requireContext(), PlayerService::class.java).apply {
+            putExtra(PlayerService.EXTRA_URL, track.previewUrl)
+            putExtra(PlayerService.EXTRA_ARTIST, track.artistName)
+            putExtra(PlayerService.EXTRA_TITLE, track.trackName)
+        }
+        requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isAppInBackground = false
+        // Скрываем уведомление когда возвращаемся в приложение
+        playerViewModel.hideNotification()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isAppInBackground = true
+        playerViewModel.showNotification()
+        if (::bottomSheetBehavior.isInitialized && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            hideBottomSheet()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Отвязываем сервис когда фрагмент уничтожается
+        if (isServiceBound) {
+            requireContext().unbindService(serviceConnection)
+            isServiceBound = false
+            playerViewModel.clearPlayerService()
+        }
+        _binding = null
+    }
+
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Разрешение уже есть, можно показывать уведомления
+                }
+                else -> {
+                    // Запрашиваем разрешение
+                    requestPermissions(
+                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        NOTIFICATION_PERMISSION_REQUEST_CODE
+                    )
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Разрешение получено
+            }
+        }
+    }
+
+    companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+
+        fun newInstance(track: Track): PlayerFragment {
+            return PlayerFragment().apply {
+                arguments = bundleOf(TRACK_EXTRA to track)
+            }
+        }
     }
 }
