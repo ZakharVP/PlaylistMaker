@@ -1,9 +1,11 @@
 package com.practicum.playlistmaker.playlist.player.ui.fragments
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -13,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -91,6 +94,7 @@ class PlayerFragment : Fragment() {
 
         currentTrack = track
 
+        checkNotificationPermission()
         setupBottomSheet()
         setupViews(track)
         setupService(track)
@@ -353,7 +357,42 @@ class PlayerFragment : Fragment() {
         _binding = null
     }
 
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Разрешение уже есть, можно показывать уведомления
+                }
+                else -> {
+                    // Запрашиваем разрешение
+                    requestPermissions(
+                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        NOTIFICATION_PERMISSION_REQUEST_CODE
+                    )
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Разрешение получено
+            }
+        }
+    }
+
     companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+
         fun newInstance(track: Track): PlayerFragment {
             return PlayerFragment().apply {
                 arguments = bundleOf(TRACK_EXTRA to track)
