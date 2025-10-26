@@ -62,14 +62,6 @@ class PlayerFragment : Fragment() {
 
     private var isAppInBackground = false
 
-    companion object {
-        fun newInstance(track: Track): PlayerFragment {
-            return PlayerFragment().apply {
-                arguments = bundleOf(TRACK_EXTRA to track)
-            }
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -359,5 +351,13 @@ class PlayerFragment : Fragment() {
             playerViewModel.clearPlayerService()
         }
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(track: Track): PlayerFragment {
+            return PlayerFragment().apply {
+                arguments = bundleOf(TRACK_EXTRA to track)
+            }
+        }
     }
 }

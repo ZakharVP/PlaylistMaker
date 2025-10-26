@@ -47,16 +47,6 @@ class PlayerService : Service(), IPlayerService {
     private var trackTitle: String? = null
     private var progressJob: Job? = null
 
-    companion object {
-        const val CHANNEL_ID = "player_channel"
-        const val NOTIF_ID = 1
-
-        // Константы для передачи данных
-        const val EXTRA_URL = "extra_url"
-        const val EXTRA_ARTIST = "extra_artist"
-        const val EXTRA_TITLE = "extra_title"
-    }
-
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
@@ -228,5 +218,15 @@ class PlayerService : Service(), IPlayerService {
     override fun onDestroy() {
         super.onDestroy()
         release()
+    }
+
+    companion object {
+        const val CHANNEL_ID = "player_channel"
+        const val NOTIF_ID = 1
+
+        // Константы для передачи данных
+        const val EXTRA_URL = "extra_url"
+        const val EXTRA_ARTIST = "extra_artist"
+        const val EXTRA_TITLE = "extra_title"
     }
 }
