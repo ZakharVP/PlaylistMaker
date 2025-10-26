@@ -5,16 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.mediateka.domain.interactor.PlaylistInteractor
-import com.practicum.playlistmaker.playlist.player.data.repository.PlayerRepositoryImpl
 import com.practicum.playlistmaker.playlist.player.domain.model.PlayerState
-import com.practicum.playlistmaker.playlist.player.domain.repository.PlayerRepository
+import com.practicum.playlistmaker.playlist.player.service.IPlayerService
 import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    private val repository: PlayerRepository,
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
@@ -27,8 +24,50 @@ class PlayerViewModel(
     private val _playlists = MutableLiveData<List<Playlist>>()
     val playlists: LiveData<List<Playlist>> = _playlists
 
-    private var progressUpdateJob: Job? = null
-    private var currentUrl: String? = null
+    private var playerService: IPlayerService? = null
+    private var currentTrackArtist: String? = null
+    private var currentTrackTitle: String? = null
+
+    private var stateJob: Job? = null
+    private var posJob: Job? = null
+
+    fun setPlayerService(service: IPlayerService, artist: String?, title: String?) {
+        // Отменяем старые подписки если есть
+        stateJob?.cancel()
+        posJob?.cancel()
+
+        this.playerService = service
+        this.currentTrackArtist = artist
+        this.currentTrackTitle = title
+
+        stateJob = viewModelScope.launch {
+            service.playerState().collect { state ->
+                _playerState.postValue(state)
+
+                // Автоматически скрываем уведомление когда трек не в PLAYING
+                if (state != PlayerState.PLAYING) {
+                    service.hideForegroundNotification()
+                }
+            }
+        }
+
+        posJob = viewModelScope.launch {
+            service.currentPosition().collect { position ->
+                _currentPosition.postValue(position)
+            }
+        }
+    }
+
+    fun clearPlayerService() {
+        stateJob?.cancel()
+        posJob?.cancel()
+        stateJob = null
+        posJob = null
+
+        playerService = null
+        currentTrackArtist = null
+        currentTrackTitle = null
+    }
 
     fun loadPlaylists() {
         viewModelScope.launch {
@@ -38,84 +77,42 @@ class PlayerViewModel(
         }
     }
 
-    init {
-        // Для PlayerRepositoryImpl с поддержкой completion listener
-        (repository as? PlayerRepositoryImpl)?.setOnCompletionListener {
-            onPlaybackCompleted()
-        }
-    }
-
     fun preparePlayer(url: String) {
-        currentUrl = url
-        repository.preparePlayer(
-            url = url,
-            onPrepared = {
-                _playerState.postValue(PlayerState.PREPARED)
-                _currentPosition.postValue(0)
-            },
-            onError = { _playerState.postValue(PlayerState.ERROR) }
-        )
+        playerService?.prepare(url, currentTrackArtist, currentTrackTitle)
     }
 
     fun playbackControl() {
         when (_playerState.value) {
             PlayerState.PLAYING -> pausePlayer()
             PlayerState.PREPARED, PlayerState.PAUSED -> startPlayer()
-            else -> {} // Добавлен default case
+            else -> {}
         }
     }
 
     private fun startPlayer() {
-        repository.startPlayer()
-        _playerState.postValue(PlayerState.PLAYING)
-        startProgressUpdates()
+        playerService?.play()
+        // Уведомление показывается в сервисе при старте воспроизведения
     }
 
     fun pausePlayer() {
-        repository.pausePlayer()
-        _playerState.postValue(PlayerState.PAUSED)
-        stopProgressUpdates()
+        playerService?.pause()
+        // Уведомление скрывается автоматически через StateFlow колбэк
     }
 
-    private fun startProgressUpdates() {
-        stopProgressUpdates()
-        progressUpdateJob = viewModelScope.launch {
-            while (true) {
-                val position = repository.getCurrentPosition()
-                _currentPosition.postValue(position)
-
-                if (position >= 30000) {
-                    onPlaybackCompleted()
-                    break
-                }
-
-                delay(300)
-            }
+    fun showNotification() {
+        if (_playerState.value == PlayerState.PLAYING) {
+            playerService?.showForegroundNotification()
         }
     }
 
-    private fun stopProgressUpdates() {
-        progressUpdateJob?.cancel()
-        progressUpdateJob = null
-    }
-
-    private fun onPlaybackCompleted() {
-        pausePlayer()
-        _currentPosition.postValue(0)
-        stopProgressUpdates()
-
-        currentUrl?.let { url ->
-            repository.preparePlayer(
-                url = url,
-                onPrepared = { _playerState.postValue(PlayerState.PREPARED) },
-                onError = { _playerState.postValue(PlayerState.ERROR) }
-            )
-        }
+    fun hideNotification() {
+        playerService?.hideForegroundNotification()
     }
 
     override fun onCleared() {
         super.onCleared()
-        stopProgressUpdates()
-        repository.releasePlayer()
+        stateJob?.cancel()
+        posJob?.cancel()
     }
+
 }
