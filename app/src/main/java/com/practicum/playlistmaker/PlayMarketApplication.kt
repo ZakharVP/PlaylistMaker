@@ -11,10 +11,16 @@ import com.practicum.playlistmaker.di.databaseModule
 import com.practicum.playlistmaker.di.repositoryModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.viewModelModule
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.logger.Level
 
 class PlayMarketApplication: Application() {
+
+    private val _themeState = MutableStateFlow(false)
+    val themeState: StateFlow<Boolean> = _themeState.asStateFlow()
 
     override fun onCreate() {
         super.onCreate()
@@ -24,25 +30,33 @@ class PlayMarketApplication: Application() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@PlayMarketApplication)
-            modules(dataModule, repositoryModule, interactorModule, viewModelModule, databaseModule)
+            modules(
+                databaseModule,
+                dataModule,
+                repositoryModule,
+                interactorModule,
+                viewModelModule
+                )
         }
 
     }
 
     private fun initTheme() {
-        // Получаем SharedPreferences
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-
-        // Проверяем сохраненную тему (по умолчанию светлая)
         val darkThemeEnabled = sharedPreferences.getBoolean(
             Config.DARK_THEME_ENABLED,
             false
         )
 
-        // Устанавливаем тему приложения
+        _themeState.value = darkThemeEnabled
+        applyTheme(darkThemeEnabled)
+    }
+
+    fun applyTheme(isDarkTheme: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES
+            if (isDarkTheme) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
         )
+        _themeState.value = isDarkTheme
     }
 }

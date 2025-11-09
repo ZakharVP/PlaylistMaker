@@ -17,4 +17,10 @@
     <string name="clear_history">Clear history</string>
     <string name="history">You were looking for</string>
 
+    <string name="back">back</string>
+    <string name="search_hint">search hint</string>
+    <string name="clear">clear</string>
+    <string name="track_cover">track cover</string>
+    <string name="button_forward">button forward</string>
+
 </resources>

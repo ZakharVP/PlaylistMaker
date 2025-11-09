@@ -84,4 +84,10 @@
     <string name="playlist_deleted_toast" translatable="false">Плейлист удален</string>
     <string name="empty_playlist_message" translatable="false">В плейлисте пока нет треков</string>
 
+    <string name="back">Назад</string>
+    <string name="search_hint">Введите название трека</string>
+    <string name="clear">Очистить</string>
+    <string name="track_cover">Обложка трека</string>
+    <string name="button_forward">Стрелка вправо</string>
+
 </resources>
