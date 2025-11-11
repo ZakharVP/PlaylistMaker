@@ -31,6 +31,7 @@ lifecycle = "2.9.2"
 room = "2.7.2"
 legacySupportV4 = "1.0.0"
 lifecycleLivedataKtx = "2.9.2"
+accompanistNavigation = "0.36.0"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -77,6 +78,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

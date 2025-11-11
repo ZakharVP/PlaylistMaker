@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
+@NonRestartableComposable
 fun PlaylistsScreen(
     viewModel: PlaylistsViewModel = koinViewModel(),
     onCreatePlaylist: () -> Unit = {},
