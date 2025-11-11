@@ -19,13 +19,10 @@ import org.koin.core.logger.Level
 
 class PlayMarketApplication: Application() {
 
-    private val _themeState = MutableStateFlow(false)
-    val themeState: StateFlow<Boolean> = _themeState.asStateFlow()
-
     override fun onCreate() {
         super.onCreate()
 
-        initTheme()
+        ThemeManager.initTheme(this)
 
         startKoin {
             androidLogger(Level.DEBUG)
@@ -39,24 +36,5 @@ class PlayMarketApplication: Application() {
                 )
         }
 
-    }
-
-    private fun initTheme() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val darkThemeEnabled = sharedPreferences.getBoolean(
-            Config.DARK_THEME_ENABLED,
-            false
-        )
-
-        _themeState.value = darkThemeEnabled
-        applyTheme(darkThemeEnabled)
-    }
-
-    fun applyTheme(isDarkTheme: Boolean) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (isDarkTheme) AppCompatDelegate.MODE_NIGHT_YES
-            else AppCompatDelegate.MODE_NIGHT_NO
-        )
-        _themeState.value = isDarkTheme
     }
 }

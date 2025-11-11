@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.ConstantsApp.BundleConstants.TRACK_EXTRA
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.search.ui.compose.FindScreen
-import com.practicum.playlistmaker.playlist.settings.ui.SettingsViewModel
 import com.practicum.playlistmaker.ui.ObserveAppTheme
 import com.practicum.playlistmaker.ui.PlaylistMakerTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -23,7 +22,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class FindFragment : Fragment() {
 
     private val searchViewModel: SearchViewModel by viewModel()
-    private val settingsViewModel: SettingsViewModel by viewModel(ownerProducer = { requireActivity() })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +31,6 @@ class FindFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                // Используем ObserveAppTheme для наблюдения за глобальной темой
                 ObserveAppTheme { isDarkTheme ->
                     PlaylistMakerTheme(darkTheme = isDarkTheme) {
                         FindScreen(

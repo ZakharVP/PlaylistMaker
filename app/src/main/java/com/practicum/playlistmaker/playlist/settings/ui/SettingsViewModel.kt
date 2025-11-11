@@ -10,22 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsViewModel(private val interactor: SettingsInteractor) : ViewModel() {
-    private val _themeState = MutableStateFlow(SettingsTheme(false))
-    val themeState: StateFlow<SettingsTheme> = _themeState.asStateFlow()
 
-    init {
-        loadInitialTheme()
-    }
-
-    private fun loadInitialTheme() {
-        val currentTheme = interactor.getSettingsTheme()
-        _themeState.value = currentTheme
+    fun getCurrentTheme(): SettingsTheme {
+        return interactor.getSettingsTheme()
     }
 
     fun toggleTheme() {
-        val current = _themeState.value
-        val newTheme = current.copy(darkThemeEnabled = !current.darkThemeEnabled)
-        _themeState.value = newTheme
+        val currentTheme = getCurrentTheme()
+        val newTheme = currentTheme.copy(darkThemeEnabled = !currentTheme.darkThemeEnabled)
         interactor.saveSettingsTheme(newTheme)
     }
 }

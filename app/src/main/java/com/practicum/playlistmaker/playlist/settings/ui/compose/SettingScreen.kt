@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.ThemeManager
 import com.practicum.playlistmaker.playlist.settings.ui.SettingsViewModel
 import com.practicum.playlistmaker.ui.PlaylistMakerTheme
 import kotlinx.coroutines.delay
@@ -209,16 +210,14 @@ fun SettingsScreenWithViewModel(
     onBackClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onSupportClick: () -> Unit = {},
-    onTermsClick: () -> Unit = {},
-    onThemeToggle: (Boolean) -> Unit = {}
+    onTermsClick: () -> Unit = {}
 ) {
-    val themeState by viewModel.themeState.collectAsStateWithLifecycle()
+    val isDarkTheme = ThemeManager.themeState.collectAsStateWithLifecycle().value
 
     SettingsScreen(
-        isDarkTheme = themeState.darkThemeEnabled,
+        isDarkTheme = isDarkTheme,
         onThemeChange = { isChecked ->
             viewModel.toggleTheme()
-            onThemeToggle(isChecked)
         },
         onBackClick = onBackClick,
         onShareClick = onShareClick,
