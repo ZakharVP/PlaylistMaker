@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.playlist.mediateka.ui.compose.playlists
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -135,11 +136,10 @@ private fun EmptyPlaylistsState() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
+            Image(
                 painter = painterResource(R.drawable.no_songs),
                 contentDescription = null,
-                modifier = Modifier.size(120.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.size(120.dp)
             )
             Text(
                 text = stringResource(R.string.playlist_empty),
