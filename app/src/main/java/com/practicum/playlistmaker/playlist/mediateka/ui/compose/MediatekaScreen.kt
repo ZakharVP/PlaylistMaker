@@ -55,14 +55,6 @@ fun MediatekaScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Start
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_arrow_back),
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
                 }
             )
         }
