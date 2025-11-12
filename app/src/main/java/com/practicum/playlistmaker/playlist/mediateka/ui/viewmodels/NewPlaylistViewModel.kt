@@ -1,7 +1,9 @@
 package com.practicum.playlistmaker.playlist.mediateka.ui.viewmodels
 
+import android.app.Application
 import android.content.Context
 import android.net.Uri
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.mediateka.domain.interactor.PlaylistInteractor
@@ -17,8 +19,8 @@ import java.util.Locale
 
 class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
-    private val context: Context
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
 
     private val _createPlaylistState = MutableStateFlow<CreatePlaylistState>(CreatePlaylistState.Idle)
     val createPlaylistState: StateFlow<CreatePlaylistState> = _createPlaylistState
@@ -70,6 +72,7 @@ class NewPlaylistViewModel(
 
     private fun copyImageToInternalStorage(uri: Uri): String? {
         return try {
+            val context = getApplication<Application>()
             val contentResolver = context.contentResolver
             val inputStream = contentResolver.openInputStream(uri)
 

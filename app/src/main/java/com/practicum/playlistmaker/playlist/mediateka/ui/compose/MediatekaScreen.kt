@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -19,7 +17,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -27,14 +24,15 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.mediateka.ui.compose.favorites.FavoritesScreen
 import com.practicum.playlistmaker.playlist.mediateka.ui.compose.playlists.PlaylistsScreen
+import com.practicum.playlistmaker.playlist.sharing.data.models.Playlist
+import com.practicum.playlistmaker.playlist.sharing.data.models.Track
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun MediatekaScreen(
-    onBackClick: () -> Unit,
     onCreatePlaylist: () -> Unit = {},
-    onPlaylistClick: (com.practicum.playlistmaker.playlist.sharing.data.models.Playlist) -> Unit = {},
-    onTrackClick: (com.practicum.playlistmaker.playlist.sharing.data.models.Track) -> Unit = {}
+    onPlaylistClick: (Playlist) -> Unit = {},
+    onTrackClick: (Track) -> Unit = {}
 ) {
     val tabs = listOf(
         stringResource(R.string.favorites_title),

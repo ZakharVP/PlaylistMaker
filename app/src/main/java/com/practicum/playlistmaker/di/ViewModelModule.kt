@@ -31,10 +31,10 @@ val viewModelModule = module {
     viewModel { PlaylistDetailViewModel(get()) }
     viewModel { MediatekaViewModel() }
 
-    viewModel { (context: Context) ->
+    viewModel {
         NewPlaylistViewModel(
             playlistInteractor = get(),
-            context = context
+            application = get()
         )
     }
 
