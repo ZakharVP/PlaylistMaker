@@ -5,24 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.playlist.settings.domain.SettingsInteractor
 import com.practicum.playlistmaker.playlist.settings.domain.model.SettingsTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsViewModel(private val interactor: SettingsInteractor) : ViewModel() {
-    private val _themeState = MutableLiveData<SettingsTheme>()
-    val themeState: LiveData<SettingsTheme> = _themeState
 
-    init {
-        loadInitialTheme()
-    }
-
-    private fun loadInitialTheme() {
-        _themeState.value = interactor.getSettingsTheme()
+    fun getCurrentTheme(): SettingsTheme {
+        return interactor.getSettingsTheme()
     }
 
     fun toggleTheme() {
-        _themeState.value?.let { current ->
-            val newTheme = current.copy(darkThemeEnabled = !current.darkThemeEnabled)
-            _themeState.value = newTheme
-            interactor.saveSettingsTheme(newTheme)
-        }
+        val currentTheme = getCurrentTheme()
+        val newTheme = currentTheme.copy(darkThemeEnabled = !currentTheme.darkThemeEnabled)
+        interactor.saveSettingsTheme(newTheme)
     }
 }

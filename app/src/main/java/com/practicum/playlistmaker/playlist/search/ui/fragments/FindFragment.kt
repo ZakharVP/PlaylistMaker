@@ -1,180 +1,58 @@
 package com.practicum.playlistmaker.playlist.search.ui.fragments
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.practicum.playlistmaker.databinding.FragmentFindBinding
-import com.practicum.playlistmaker.playlist.search.ui.adapters.TrackAdapter
-import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchState
 import com.practicum.playlistmaker.playlist.search.ui.viewmodels.SearchViewModel
 import com.practicum.playlistmaker.playlist.sharing.data.models.Track
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.ConstantsApp.BundleConstants.TRACK_EXTRA
 import com.practicum.playlistmaker.R
-import kotlinx.coroutines.launch
+import com.practicum.playlistmaker.playlist.search.ui.compose.FindScreen
+import com.practicum.playlistmaker.ui.ObserveAppTheme
+import com.practicum.playlistmaker.ui.PlaylistMakerTheme
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class FindFragment : Fragment() {
 
-    private var _binding: FragmentFindBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: SearchViewModel by viewModel()
-    private val adapter = TrackAdapter { onTrackClick(it) }
+    private val searchViewModel: SearchViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentFindBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupToolbar()
-        setupRecyclerView()
-        setupSearchView()
-        setupObservers()
-        setupListeners()
-
-        restorePreviousState()
-    }
-
-    private fun restorePreviousState() {
-        lifecycleScope.launch {
-            viewModel.currentQuery.collect { query ->
-                val currentText = binding.findEditText.text.toString()
-
-                if (query.isNotEmpty() && currentText.isEmpty()) {
-                    binding.findEditText.setText(query)
-                } else if (query.isEmpty()) {
-                    viewModel.showHistory()
-                }
-            }
-        }
-    }
-
-    private fun setupToolbar() {
-        binding.toolBarFind.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-    }
-
-    private fun setupRecyclerView() {
-        binding.recyclerView.adapter = adapter
-    }
-
-    private fun setupSearchView() {
-        binding.findEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearIcon.isVisible = !s.isNullOrEmpty()
-                s?.toString()?.let {
-                    viewModel.setCurrentQuery(it)
-                    if (binding.findEditText.hasFocus()) {
-                        viewModel.searchDebounced(it)
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                ObserveAppTheme { isDarkTheme ->
+                    PlaylistMakerTheme(darkTheme = isDarkTheme) {
+                        FindScreen(
+                            viewModel = searchViewModel,
+                            onTrackClick = { track -> onTrackClick(track) },
+                            onBackClick = { onBackClick() }
+                        )
                     }
                 }
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        binding.findEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val query = binding.findEditText.text.toString()
-                viewModel.searchDebounced(query)
-                true
-            } else {
-                false
-            }
-        }
-    }
-
-    private fun setupObservers() {
-        lifecycleScope.launch {
-            viewModel.tracks.collect { tracks ->
-                adapter.submitList(tracks)
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.state.collect { state ->
-                Log.d("SearchState", "New state: $state")
-                binding.progressBar.isVisible = state is SearchState.Loading
-                binding.scrollViewOne.isVisible = state is SearchState.Content || state is SearchState.History
-                binding.noSongs.isVisible = state is SearchState.Empty
-                binding.networkError.isVisible = state is SearchState.NetworkError
-
-                binding.searchHint.isVisible = false
-                binding.clearHistory.isVisible = false
-
-                when (state) {
-                    is SearchState.History -> {
-                        val hasHistory = state.tracks.isNotEmpty()
-                        binding.searchHint.isVisible = hasHistory
-                        binding.clearHistory.isVisible = hasHistory
-                        adapter.submitList(state.tracks)
-                    }
-                    is SearchState.Content -> adapter.submitList(state.tracks)
-                    is SearchState.Empty,
-                    is SearchState.NetworkError -> adapter.submitList(emptyList())
-                    else -> Unit
-                }
-            }
-        }
-    }
-
-    private fun setupListeners() {
-        binding.clearHistory.setOnClickListener {
-            viewModel.clearHistory()
-        }
-        binding.clearIcon.setOnClickListener {
-            binding.findEditText.setText("")
-        }
-
-        binding.buttonUpdate.setOnClickListener {
-            viewModel.retryLastSearch()
         }
     }
 
     private fun onTrackClick(track: Track) {
-        viewModel.addToHistory(track)
-
+        searchViewModel.addToHistory(track)
         findNavController().navigate(
             R.id.action_findFragment_to_playerFragment,
             bundleOf(TRACK_EXTRA to track)
         )
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun onBackClick() {
+        parentFragmentManager.popBackStack()
     }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("current_query", viewModel.currentQuery.value)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        savedInstanceState?.getString("current_query")?.let { query ->
-            if (query.isNotEmpty()) {
-                binding.findEditText.setText(query)
-                viewModel.setCurrentQuery(query)
-            }
-        }
-    }
-
 }

@@ -52,6 +52,8 @@ class PlayerFragment : Fragment() {
     private var isNightMode: Boolean = false
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
+    private var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback? = null
+
     private lateinit var playlistsAdapter: PlaylistBottomSheetAdapter
     private lateinit var playlistsRecyclerView: RecyclerView
 
@@ -64,6 +66,7 @@ class PlayerFragment : Fragment() {
     private var currentTrack: Track? = null
 
     private var isAppInBackground = false
+    private var isFragmentDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,6 +74,7 @@ class PlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
+        isFragmentDestroyed = false
         return binding.root
     }
 
@@ -122,14 +126,19 @@ class PlayerFragment : Fragment() {
 
         // Добавлено наблюдение за списком плейлистов
         playerViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
-            playlistsAdapter.updateList(playlists.toList())
-            if (playlists.isNotEmpty() && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                playlistsRecyclerView.scrollToPosition(0)
+            if (!isFragmentDestroyed) {
+                playlistsAdapter.updateList(playlists.toList())
+                if (playlists.isNotEmpty() && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    playlistsRecyclerView.scrollToPosition(0)
+                }
             }
         }
 
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        // Сохраняем callback в переменную класса
+        bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (isFragmentDestroyed) return
+
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlay.visibility = View.GONE
@@ -144,11 +153,15 @@ class PlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (isFragmentDestroyed) return
+
                 // Плавное изменение прозрачности overlay
                 binding.overlay.alpha = slideOffset
                 binding.overlay.visibility = if (slideOffset > 0) View.VISIBLE else View.GONE
             }
-        })
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback!!)
 
         // Обработчик клика на overlay (закрывает Bottom Sheet)
         binding.overlay.setOnClickListener {
@@ -268,12 +281,16 @@ class PlayerFragment : Fragment() {
     }
 
     private fun showBottomSheet() {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        playerViewModel.loadPlaylists()
+        if (!isFragmentDestroyed) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            playerViewModel.loadPlaylists()
+        }
     }
 
     private fun hideBottomSheet() {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        if (!isFragmentDestroyed) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun setupFavoriteButton(track: Track) {
@@ -348,12 +365,21 @@ class PlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Отвязываем сервис когда фрагмент уничтожается
+        isFragmentDestroyed = true
+
+        if (::bottomSheetBehavior.isInitialized) {
+            bottomSheetCallback?.let { callback ->
+                bottomSheetBehavior.removeBottomSheetCallback(callback)
+            }
+        }
+        bottomSheetCallback = null
+
         if (isServiceBound) {
             requireContext().unbindService(serviceConnection)
             isServiceBound = false
             playerViewModel.clearPlayerService()
         }
+
         _binding = null
     }
 
